@@ -1024,11 +1024,24 @@ function getCoords(addr) {
 function initLeafMap() {
   if (leafMap) return;
   leafMap = L.map('mapEl', {center:[37.47,126.73],zoom:11});
-  // CARTO Voyager - 한국어 지명 포함, file:// 완전 지원
-  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png', {
-    attribution:'© OpenStreetMap © CARTO',
-    subdomains:'abcd', maxZoom:20, minZoom:3
-  }).addTo(leafMap);
+  const TILES2 = [
+    { url:'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+      opts:{subdomains:'abcd',attribution:'© OpenStreetMap © CARTO',maxZoom:20,crossOrigin:true} },
+    { url:'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+      opts:{subdomains:'abcd',attribution:'© OpenStreetMap © CARTO',maxZoom:20} },
+    { url:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      opts:{subdomains:'abc',attribution:'© OpenStreetMap',maxZoom:19} }
+  ];
+  let tl2=null, ec2=0, ti2=0;
+  function tryTile2(i) {
+    if(i>=TILES2.length) return;
+    if(tl2) leafMap.removeLayer(tl2);
+    const t=TILES2[i]; ec2=0;
+    tl2=L.tileLayer(t.url,t.opts);
+    tl2.on('tileerror',()=>{ ec2++; if(ec2>=3&&i<TILES2.length-1) tryTile2(i+1); });
+    tl2.addTo(leafMap);
+  }
+  tryTile2(0);
 }
 
 function setMapFilter(val, btn) {
