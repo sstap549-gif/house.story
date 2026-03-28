@@ -1,1 +1,1203 @@
-# house.story
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>돌고래하우스 | 구옥 매물 매칭 시스템</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Bebas+Neue&display=swap');
+:root{
+  --navy:#0d1b2a;--blue:#1e5fa8;--cyan:#00b4d8;--green:#2dc653;
+  --red:#e63946;--gold:#f4a442;--purple:#9b5de5;--orange:#ff6b35;
+  --bg:#0a1628;--panel:#111f35;--card:#152540;--border:#1e3a5f;
+  --text:#e8f1ff;--muted:#7a9cc0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(90deg,var(--navy),#0d2240);border-bottom:1px solid var(--border);padding:9px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);letter-spacing:2px;}
+.logo span{color:var(--gold);}
+.logo-sub{font-size:10px;color:var(--muted);border-left:1px solid var(--border);padding-left:10px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:3px 11px;font-size:11px;display:flex;align-items:center;gap:4px;}
+.sc .n{font-weight:700;font-size:12px;}
+.topbar-r{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+.tbtn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;white-space:nowrap;}
+.tbtn:hover{border-color:var(--orange);color:var(--orange);}
+.tbtn.primary{background:var(--orange);border-color:var(--orange);color:#fff;}
+.tbtn.green{background:var(--green);border-color:var(--green);color:#fff;}
+
+/* TABS */
+.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
+.tab{padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.tab.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+.content{flex:1;overflow:hidden;display:flex;}
+.pane{display:none;flex:1;overflow:hidden;}
+.pane.active{display:flex;}
+
+/* ── 매칭 탭 ── */
+.match-layout{flex:1;display:flex;overflow:hidden;}
+
+/* 왼쪽: 고객 목록 */
+.cust-panel{width:260px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.cust-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.cust-head-title{font-size:12px;font-weight:700;color:var(--orange);display:flex;justify-content:space-between;align-items:center;}
+.cust-search{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 9px;font-size:11px;font-family:inherit;width:100%;}
+.cust-search:focus{outline:none;border-color:var(--orange);}
+.cust-filter{display:flex;gap:4px;flex-wrap:wrap;}
+.cf{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;cursor:pointer;color:var(--muted);font-family:inherit;transition:all .1s;}
+.cf.on{background:rgba(255,107,53,.2);border-color:var(--orange);color:var(--orange);font-weight:700;}
+.cust-list{flex:1;overflow-y:auto;}
+.cust-list::-webkit-scrollbar{width:3px;}
+.cust-list::-webkit-scrollbar-thumb{background:var(--border);}
+.cust-card{padding:9px 12px;border-bottom:1px solid rgba(30,58,95,.5);cursor:pointer;transition:background .1s;}
+.cust-card:hover{background:var(--card);}
+.cust-card.active{background:rgba(255,107,53,.12);border-left:3px solid var(--orange);}
+.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.cc-phone{font-size:12px;font-weight:700;}
+.cc-badge{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700;}
+.p-red{background:rgba(230,57,70,.2);color:var(--red);}
+.p-orange{background:rgba(255,107,53,.2);color:var(--orange);}
+.p-yellow{background:rgba(244,164,66,.2);color:var(--gold);}
+.p-gray{background:rgba(100,120,150,.2);color:var(--muted);}
+.cc-region{font-size:10px;color:var(--muted);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cc-cond{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* 가운데: 고객 상세 + 매칭 */
+.match-center{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.match-center-top{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sel-cust{display:none;}
+.sel-cust.on{display:block;}
+.no-sel{padding:40px;text-align:center;color:var(--muted);font-size:13px;}
+.cust-detail-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.cd-chip{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;}
+.cd-chip span{color:var(--muted);font-size:10px;}
+.cd-chip strong{color:var(--text);}
+.cd-note{font-size:11px;color:var(--gold);background:rgba(244,164,66,.08);border:1px solid rgba(244,164,66,.2);border-radius:6px;padding:6px 10px;line-height:1.6;}
+.match-actions{display:flex;gap:7px;margin-top:8px;}
+.match-run-btn{background:var(--purple);border:none;color:#fff;border-radius:7px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.match-run-btn:hover{opacity:.85;}
+
+.match-results{flex:1;overflow-y:auto;padding:12px;}
+.match-results::-webkit-scrollbar{width:4px;}
+.match-results::-webkit-scrollbar-thumb{background:var(--border);}
+.mr-head{font-size:11px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;}
+.mr-head strong{color:var(--orange);}
+.res-card{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .12s;position:relative;}
+.res-card:hover{border-color:var(--orange);transform:translateX(2px);}
+.res-card.r1{border-color:var(--gold);background:rgba(244,164,66,.06);}
+.res-card.r2{border-color:var(--cyan);}
+.res-card.r3{border-color:var(--purple);}
+.res-rank{position:absolute;top:8px;right:10px;font-size:18px;}
+.res-name{font-size:13px;font-weight:900;margin-bottom:2px;}
+.res-addr{font-size:10px;color:var(--muted);margin-bottom:6px;}
+.res-score{display:inline-flex;align-items:center;gap:4px;background:rgba(155,93,229,.15);border:1px solid rgba(155,93,229,.3);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;color:var(--purple);margin-bottom:6px;}
+.res-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;}
+.rt{font-size:9px;padding:2px 7px;border-radius:3px;font-weight:700;}
+.rt-or{background:rgba(255,107,53,.15);color:var(--orange);}
+.rt-gr{background:rgba(45,198,83,.15);color:var(--green);}
+.rt-bl{background:rgba(30,95,168,.2);color:#90c4f8;}
+.rt-pu{background:rgba(155,93,229,.15);color:var(--purple);}
+.rt-go{background:rgba(244,164,66,.15);color:var(--gold);}
+.res-price{font-size:15px;font-weight:900;color:var(--orange);}
+.res-why{margin-top:7px;padding-top:7px;border-top:1px solid var(--border);}
+.res-why-item{font-size:10px;color:var(--muted);display:flex;gap:4px;margin-bottom:1px;}
+.res-why-item .dot{color:var(--green);}
+
+/* ── 매물 탭 ── */
+.prop-layout{flex:1;display:flex;overflow:hidden;}
+.prop-list-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.list-tb{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
+.list-tb select,.list-tb input{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 9px;font-size:11px;font-family:inherit;}
+.list-tb input{width:150px;}
+.lc{margin-left:auto;font-size:11px;color:var(--muted);}
+.lc strong{color:var(--cyan);}
+.tw{flex:1;overflow:auto;}
+.tw::-webkit-scrollbar{width:4px;height:4px;}
+.tw::-webkit-scrollbar-thumb{background:var(--border);}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:1000px;}
+thead th{background:var(--panel);padding:7px 9px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;z-index:5;}
+tbody tr{border-bottom:1px solid rgba(30,58,95,.35);cursor:pointer;transition:background .1s;}
+tbody tr:hover{background:rgba(255,107,53,.07);}
+tbody td{padding:7px 9px;vertical-align:middle;}
+.bdg{display:inline-block;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700;}
+.b-empty{background:rgba(45,198,83,.15);color:var(--green);}
+.b-lived{background:rgba(100,120,150,.12);color:var(--muted);}
+.b-r{background:rgba(155,93,229,.15);color:var(--purple);}
+.ph{font-weight:700;color:var(--orange);}
+
+/* 매물 폼 패널 */
+.prop-form-panel{width:300px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.pfp-title{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--orange);display:flex;align-items:center;justify-content:space-between;}
+.pfp-body{flex:1;overflow-y:auto;padding:12px 14px;}
+.pfp-body::-webkit-scrollbar{width:3px;}
+.pfp-body::-webkit-scrollbar-thumb{background:var(--border);}
+.ff{margin-bottom:10px;}
+.ff label{font-size:10px;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;}
+.ff input,.ff select,.ff textarea{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:7px 9px;font-size:12px;font-family:inherit;width:100%;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--orange);}
+.ff input::placeholder{color:var(--muted);opacity:.5;}
+.ff textarea{resize:vertical;min-height:50px;}
+.ff select option{background:var(--card);}
+.ff-row{display:flex;gap:6px;}
+.ff-row .ff{flex:1;}
+.ox{display:flex;gap:4px;}
+.ox-btn{flex:1;padding:6px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .12s;font-family:inherit;}
+.ox-btn.o.on{background:rgba(45,198,83,.2);border-color:var(--green);color:var(--green);}
+.ox-btn.x.on{background:rgba(230,57,70,.12);border-color:var(--red);color:var(--red);}
+.pfp-foot{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:6px;}
+.pfp-save{flex:1;background:var(--orange);border:none;color:#fff;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.pfp-del{background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.3);color:var(--red);border-radius:7px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* ── 고객 탭 ── */
+.cdb-layout{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.cdb-tb{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-shrink:0;align-items:center;flex-wrap:wrap;}
+.cdb-tb select,.cdb-tb input{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 9px;font-size:11px;font-family:inherit;}
+.cdb-tb input{width:170px;}
+.cdb-wrap{flex:1;overflow:auto;}
+.cdb-wrap::-webkit-scrollbar{width:4px;height:4px;}
+.cdb-wrap::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* ── 지도 ── */
+.map-g{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.mg-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 24px;max-width:540px;width:100%;text-align:center;}
+.mg-step{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:12px 15px;max-width:540px;width:100%;display:flex;gap:12px;align-items:flex-start;}
+.sn{background:var(--orange);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;flex-shrink:0;margin-top:2px;}
+.st{font-weight:700;font-size:12px;margin-bottom:2px;}
+.sd{font-size:11px;color:var(--muted);line-height:1.7;}
+
+/* 모달 */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.on{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:22px;max-width:460px;width:100%;max-height:85vh;overflow-y:auto;position:relative;}
+.modal::-webkit-scrollbar{width:4px;}
+.modal::-webkit-scrollbar-thumb{background:var(--border);}
+.modal-x{position:absolute;top:10px;right:12px;background:var(--card);border:1px solid var(--border);color:var(--muted);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;}
+.modal-name{font-size:17px;font-weight:900;color:var(--orange);margin-bottom:3px;}
+.modal-addr{font-size:11px;color:var(--muted);margin-bottom:14px;}
+.modal-pbox{background:linear-gradient(135deg,rgba(255,107,53,.2),rgba(244,164,66,.1));border:1px solid rgba(255,107,53,.3);border-radius:8px;padding:12px;text-align:center;margin-bottom:12px;}
+.modal-p{font-size:24px;font-weight:900;color:var(--orange);}
+.modal-psub{font-size:11px;color:var(--muted);margin-top:3px;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.mi{background:var(--card);border-radius:6px;padding:7px 9px;}
+.mil{font-size:9px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;}
+.miv{font-size:12px;font-weight:700;}
+.miv.or{color:var(--orange);}
+.miv.gr{color:var(--green);}
+.miv.pu{color:var(--purple);}
+.modal-feat{background:rgba(244,164,66,.08);border:1px solid rgba(244,164,66,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--gold);line-height:1.7;}
+.modal-mapbtn{display:block;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;text-decoration:none;text-align:center;}
+
+/* 커스텀 confirm */
+.cfm-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;display:none;align-items:center;justify-content:center;}
+.cfm-bg.on{display:flex;}
+.cfm-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px 28px;min-width:260px;text-align:center;}
+.cfm-msg{font-size:14px;font-weight:700;margin-bottom:18px;}
+.cfm-btns{display:flex;gap:8px;justify-content:center;}
+.cfm-ok{background:var(--red);border:none;color:#fff;border-radius:7px;padding:9px 24px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.cfm-cancel{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:9px 24px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* toast */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--green);color:#fff;padding:9px 20px;border-radius:7px;font-size:12px;font-weight:700;z-index:9999;transition:transform .25s;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--red);}
+
+code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange);font-size:10px;}
+@keyframes bounce{0%{transform:translateY(0) scale(1);}30%{transform:translateY(-12px) scale(1.1);}60%{transform:translateY(-4px) scale(1.05);}100%{transform:translateY(0) scale(1);}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">🐬 돌고래<span>하우스</span></div>
+  <div class="logo-sub">구옥 매물 매칭</div>
+  <div class="sc">매물 <span class="n" id="stProp" style="color:var(--orange)">0</span></div>
+  <div class="sc">공실 <span class="n" id="stEmpty" style="color:var(--green)">0</span></div>
+  <div class="sc">고객 <span class="n" id="stCust" style="color:var(--cyan)">0</span></div>
+  <div class="topbar-r">
+    <button class="tbtn" onclick="document.getElementById('xlsxCust').click()">📂 고객DB 불러오기</button>
+    <input type="file" id="xlsxCust" accept=".xlsx,.xls" style="display:none" onchange="loadCustomerDB(this)">
+    <button class="tbtn" onclick="doExport()">📥 엑셀 내보내기</button>
+    <button class="tbtn primary" onclick="openPropForm(null)">＋ 매물 등록</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tabMatch" onclick="goTab('match',this)">🎯 손님 매칭</div>
+  <div class="tab" id="tabProp" onclick="goTab('prop',this)">🏠 매물 관리</div>
+  <div class="tab" id="tabCust" onclick="goTab('cust',this)">👥 고객 DB</div>
+  <div class="tab" id="tabMap" onclick="goTab('map',this)">🗺️ 매물 지도</div>
+</div>
+
+<div class="content">
+
+  <!-- ── 매칭 탭 ── -->
+  <div class="pane active" id="paneMatch">
+    <div class="match-layout">
+
+      <!-- 고객 목록 -->
+      <div class="cust-panel">
+        <div class="cust-head">
+          <div class="cust-head-title">
+            👥 고객 목록
+            <span id="custListCount" style="font-size:10px;color:var(--muted)">0명</span>
+          </div>
+          <input class="cust-search" id="custSearch" placeholder="🔍 번호/지역 검색" oninput="renderCustList()">
+          <div class="cust-filter" id="custFilter">
+            <button class="cf on" onclick="toggleCF(this,'')">전체</button>
+            <button class="cf" onclick="toggleCF(this,'🔴')">🔴최우선</button>
+            <button class="cf" onclick="toggleCF(this,'🟠')">🟠상</button>
+            <button class="cf" onclick="toggleCF(this,'🟡')">🟡중</button>
+          </div>
+        </div>
+        <div class="cust-list" id="custList"></div>
+      </div>
+
+      <!-- 매칭 센터 -->
+      <div class="match-center">
+        <div class="match-center-top">
+          <div class="no-sel" id="noSel">← 왼쪽에서 손님을 선택하면<br>자동으로 매물을 매칭해드립니다</div>
+          <div class="sel-cust" id="selCust">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+              <div>
+                <div style="font-size:14px;font-weight:900;color:var(--text)" id="scPhone"></div>
+                <div style="font-size:11px;color:var(--muted)" id="scRegion"></div>
+              </div>
+              <span class="cc-badge" id="scBadge"></span>
+            </div>
+            <div class="cust-detail-row" id="scChips"></div>
+            <div class="cd-note" id="scNote"></div>
+            <div class="match-actions">
+              <button class="match-run-btn" onclick="runMatch()">🎯 매칭 실행</button>
+              <span id="matchScore" style="font-size:11px;color:var(--muted);align-self:center"></span>
+            </div>
+          </div>
+        </div>
+        <div class="match-results" id="matchResults">
+          <div style="text-align:center;padding:50px;color:var(--muted);font-size:12px">
+            손님을 선택하고 매칭 실행 버튼을 눌러주세요
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 매물 관리 탭 ── -->
+  <div class="pane" id="paneProp">
+    <div class="prop-layout">
+      <div class="prop-list-wrap">
+        <div class="list-tb">
+          <select id="flType" onchange="renderPropList()">
+            <option value="">전체 유형</option>
+            <option>주택</option><option>오피</option><option>아파트</option><option>단독주택</option>
+          </select>
+          <select id="flRegion" onchange="renderPropList()">
+            <option value="">전체 지역</option>
+            <option>인천</option><option>서울</option><option>경기</option><option>부천</option>
+            <option>안산</option><option>수원</option><option>파주</option><option>평택</option><option>안양</option>
+          </select>
+          <select id="flEmpty" onchange="renderPropList()">
+            <option value="">공실+거주</option>
+            <option value="공실">공실만</option>
+            <option value="거주">거주중만</option>
+          </select>
+          <input id="flKw" placeholder="🔍 단지명/주소 검색" oninput="renderPropList()">
+          <span class="lc" id="propListCount"><strong>0</strong>건</span>
+        </div>
+        <div class="tw">
+          <table>
+            <thead><tr>
+              <th>유형</th><th>단지명</th><th>주소</th><th>구조</th><th>년식</th>
+              <th>매매가</th><th>대출비율</th><th>상태</th><th>R</th><th>특징</th>
+            </tr></thead>
+            <tbody id="propBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="prop-form-panel" id="propFormPanel">
+        <div class="pfp-title">
+          <span id="pfpTitle">➕ 매물 등록</span>
+          <button class="tbtn" style="font-size:10px" onclick="openPropForm(null)">새로 입력</button>
+        </div>
+        <div class="pfp-body">
+          <input type="hidden" id="pfId">
+          <div class="ff"><label>유형</label>
+            <select id="pfType"><option>주택</option><option>오피</option><option>아파트</option><option>단독주택</option></select>
+          </div>
+          <div class="ff"><label>단지/건물명 *</label><input id="pfName" placeholder="예: 하늘빌2차"></div>
+          <div class="ff"><label>주소 *</label><input id="pfAddr" placeholder="예: 인천 미추홀구 도화동 440-7"></div>
+          <div class="ff-row">
+            <div class="ff"><label>방/욕실</label>
+              <select id="pfStruct">
+                <option>방1화1</option><option>방2화1</option><option>방3화1</option>
+                <option selected>방3화2</option><option>방4화2</option><option>방5화2</option>
+              </select>
+            </div>
+            <div class="ff"><label>년식(2자리)</label><input id="pfYear" type="number" placeholder="예: 15" min="0" max="25"></div>
+          </div>
+          <div class="ff-row">
+            <div class="ff"><label>매매가(만원) *</label><input id="pfPrice" type="number" placeholder="예: 17000"></div>
+            <div class="ff"><label>대출비율</label>
+              <select id="pfLoan">
+                <option>권9:1</option><option selected>권8:2</option><option>권7:3</option>
+                <option>권6:4</option><option>R5</option><option>R7</option>
+                <option>R8</option><option>R10</option><option>R15</option><option>R20</option>
+              </select>
+            </div>
+          </div>
+          <div class="ff"><label>공실 여부</label>
+            <div class="ox">
+              <button class="ox-btn o" data-f="pfEmpty" onclick="setOX(this)">공실</button>
+              <button class="ox-btn x on" data-f="pfEmpty" onclick="setOX(this)">거주중</button>
+            </div>
+            <input type="hidden" id="pfEmpty" value="X">
+          </div>
+          <div class="ff"><label>R 금액 (단위: 100만원)</label>
+            <input id="pfR" type="number" placeholder="예: 10 = 1000만원" oninput="showRHint(this.value)">
+            <span style="font-size:10px;color:var(--muted)" id="pfRHint"></span>
+          </div>
+          <div class="ff"><label>특징/메모</label>
+            <textarea id="pfFeat" placeholder="뷰, 복층, 테라스, 역세권, 재개발 등"></textarea>
+          </div>
+        </div>
+        <div class="pfp-foot">
+          <button class="pfp-del" id="pfDelBtn" style="display:none" onclick="delProp()">삭제</button>
+          <button class="pfp-save" onclick="saveProp()">💾 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 고객 DB 탭 ── -->
+  <div class="pane" id="paneCust">
+    <div class="cdb-layout">
+      <div class="cdb-tb">
+        <select id="cdbPri" onchange="renderCustDB()">
+          <option value="">전체 우선순위</option>
+          <option value="🔴">🔴 최우선/연락필요</option>
+          <option value="🟠">🟠 상/매물찾기</option>
+          <option value="🟡">🟡 중/컨설팅</option>
+          <option value="❌">❌ 불가/지역불가</option>
+          <option value="✅">✅ 계약완료</option>
+        </select>
+        <input id="cdbKw" placeholder="🔍 번호/지역/메모 검색" oninput="renderCustDB()" style="width:200px">
+        <span class="lc" id="cdbCount"><strong>0</strong>명</span>
+        <button class="tbtn" style="margin-left:auto" onclick="document.getElementById('xlsxCust').click()">📂 엑셀 다시 불러오기</button>
+      </div>
+      <div class="cdb-wrap">
+        <table>
+          <thead><tr>
+            <th>번호</th><th>문의일</th><th>연락처</th><th>유입</th><th>희망지역</th>
+            <th>신용KCB</th><th>기대출</th><th>가용현금</th><th>무입주</th>
+            <th>우선순위</th><th>특이사항</th><th>이사일정</th><th>관리현황</th>
+          </tr></thead>
+          <tbody id="custBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 지도 탭 ── -->
+  <div class="pane" id="paneMap">
+    <div style="flex:1;display:flex;overflow:hidden;">
+      <!-- 지도 왼쪽 패널 -->
+      <div style="width:260px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
+        <div style="padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
+          <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:7px;">🗺️ 매물 지도</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;" id="mapFilterWrap">
+            <button class="cf on" onclick="setMapFilter('all',this)">전체</button>
+            <button class="cf" onclick="setMapFilter('empty',this)">공실만</button>
+            <button class="cf" onclick="setMapFilter('r',this)">R포함</button>
+          </div>
+          <select id="mapRegionFilter" onchange="renderMap()" style="background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;width:100%;">
+            <option value="">전체 지역</option>
+            <option>인천</option><option>서울</option><option>경기</option>
+            <option>부천</option><option>안산</option><option>수원</option><option>파주</option>
+          </select>
+        </div>
+        <div style="flex:1;overflow-y:auto;" id="mapPropList"></div>
+        <div style="padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;">
+          <button onclick="doExport()" style="background:var(--orange);border:none;color:#fff;border-radius:6px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">📥 엑셀 내보내기</button>
+        </div>
+      </div>
+      <!-- 지도 -->
+      <div id="mapEl" style="flex:1;"></div>
+      <!-- 지도 상세 -->
+      <div id="mapDetail" style="width:250px;background:var(--panel);border-left:1px solid var(--border);display:none;flex-direction:column;overflow:hidden;flex-shrink:0;position:relative;">
+        <button onclick="document.getElementById('mapDetail').style.display='none'" style="position:absolute;top:8px;right:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;z-index:5;">✕</button>
+        <div id="mapDetailContent" style="overflow-y:auto;flex:1;padding:14px;"></div>
+        <button id="mapEditBtn" style="margin:0 12px 12px;background:var(--orange);border:none;color:#fff;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ 매물 수정</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 상세 모달 -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- 커스텀 confirm -->
+<div class="cfm-bg" id="cfmBg">
+  <div class="cfm-box">
+    <div class="cfm-msg" id="cfmMsg"></div>
+    <div class="cfm-btns">
+      <button class="cfm-ok" id="cfmOk">삭제</button>
+      <button class="cfm-cancel" onclick="document.getElementById('cfmBg').classList.remove('on')">취소</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// 초기 매물 데이터 (속지에서 파싱)
+// ══════════════════════════════════════════════════════════
+const INIT_PROPS = [
+  {id:1,type:'주택',name:'하늘빌2차',addr:'인천 미추홀구 도화동 440-7',struct:'방3화2',year:11,price:14800,loan:'권7:3',empty:false,r:0,feat:''},
+  {id:2,type:'주택',name:'골드프라임',addr:'인천 미추홀구 도화동 479',struct:'방3화2',year:16,price:17500,loan:'권8:2',empty:false,r:0,feat:'뷰'},
+  {id:3,type:'주택',name:'남송개슬',addr:'인천 미추홀구 도화동 489-2',struct:'방3화2',year:8,price:13800,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:4,type:'주택',name:'가야빌라',addr:'인천 미추홀구 도화동 507-58',struct:'방3화2',year:93,price:8000,loan:'권8:2',empty:true,r:0,feat:'금액인하'},
+  {id:5,type:'주택',name:'벨라지오',addr:'인천 미추홀구 도화동 440-3',struct:'방3화1',year:12,price:15000,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:6,type:'주택',name:'BS웰하우스',addr:'인천 미추홀구 도화동 501-3',struct:'방3화2',year:14,price:15700,loan:'권9:1',empty:true,r:0,feat:''},
+  {id:7,type:'주택',name:'청담개슬',addr:'인천 미추홀구 도화동 641-15',struct:'방3화2',year:19,price:20800,loan:'권8:2',empty:false,r:0,feat:''},
+  {id:8,type:'주택',name:'두신빌리지',addr:'인천 미추홀구 도화동 641-54',struct:'방3화1',year:12,price:9000,loan:'권7:3',empty:true,r:0,feat:''},
+  {id:9,type:'주택',name:'롯데맨션',addr:'인천 미추홀구 도화동 83-9',struct:'방3화2',year:98,price:14000,loan:'권8:2',empty:false,r:0,feat:'보류'},
+  {id:10,type:'주택',name:'문학트리플타운',addr:'인천 미추홀구 문학동 102-1',struct:'방3화2',year:21,price:25500,loan:'권7:3',empty:false,r:0,feat:''},
+  {id:11,type:'주택',name:'다다하이빌',addr:'인천 미추홀구 문학동 153',struct:'방3화1',year:3,price:6500,loan:'권7:3',empty:false,r:0,feat:'저렴한집'},
+  {id:12,type:'주택',name:'명승드림빌',addr:'인천 미추홀구 문학동 329-9',struct:'방2화1',year:3,price:12000,loan:'권7:3',empty:false,r:0,feat:'풀리모델링 1인거주'},
+  {id:13,type:'주택',name:'전원아트빌',addr:'인천 미추홀구 문학동 361-2',struct:'방3화2',year:1,price:12000,loan:'권7:3',empty:false,r:0,feat:''},
+  {id:14,type:'주택',name:'캐슬베리',addr:'인천 미추홀구 문학동 364-1',struct:'방3화1',year:16,price:14000,loan:'권8:2',empty:false,r:0,feat:''},
+  {id:15,type:'주택',name:'성진고급빌라',addr:'인천 미추홀구 문학동 371-7',struct:'방3화1',year:97,price:16100,loan:'권7:3',empty:false,r:0,feat:''},
+  {id:16,type:'주택',name:'대영가든빌라',addr:'인천 미추홀구 문학동 383-2',struct:'방3화2',year:1,price:7500,loan:'권7:3',empty:true,r:0,feat:'저렴'},
+  {id:17,type:'주택',name:'대건퀸스빌',addr:'인천 미추홀구 문학동 401-6',struct:'방3화1',year:1,price:7500,loan:'권7:3',empty:true,r:0,feat:'저렴'},
+  {id:18,type:'주택',name:'밀레니엄캐슬',addr:'인천 미추홀구 숭의동 3-40',struct:'방3화1',year:13,price:14000,loan:'권8:2',empty:false,r:0,feat:''},
+  {id:19,type:'주택',name:'희성베스트빌',addr:'인천 미추홀구 숭의동 7-186',struct:'방3화2',year:11,price:10500,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:20,type:'주택',name:'더블',addr:'인천 미추홀구 숭의동 76-12',struct:'방3화2',year:19,price:25000,loan:'권9:1',empty:false,r:0,feat:''},
+  {id:21,type:'주택',name:'센트럴뷰',addr:'인천 미추홀구 숭의동 303-29',struct:'방3화2',year:17,price:17000,loan:'권7:3',empty:false,r:0,feat:''},
+  {id:22,type:'주택',name:'진주빌라',addr:'인천 미추홀구 숭의동 4-8',struct:'방2화1',year:90,price:5000,loan:'권6:4',empty:true,r:0,feat:'저렴'},
+  {id:23,type:'주택',name:'상상카운티',addr:'인천 미추홀구 용현동 44-11',struct:'방3화1',year:3,price:12000,loan:'권7:3',empty:true,r:0,feat:'자주식주차'},
+  {id:24,type:'주택',name:'GGI',addr:'인천 미추홀구 용현동 536-7',struct:'방3화2',year:15,price:15500,loan:'R10',empty:true,r:10,feat:'옵션초대박 엘베OK'},
+  {id:25,type:'주택',name:'밀레니엄',addr:'인천 미추홀구 주안동 965-1',struct:'방3화2',year:16,price:17500,loan:'권9:1',empty:false,r:0,feat:''},
+  {id:26,type:'주택',name:'호산빌라',addr:'인천 미추홀구 관교동 316-6',struct:'방3화1',year:91,price:6500,loan:'R5',empty:false,r:5,feat:'인천터미널역 도보10분'},
+  {id:27,type:'오피',name:'티오피 시그니처',addr:'인천 미추홀구 도화동 545-14',struct:'방3화2',year:21,price:21000,loan:'권8:2',empty:false,r:0,feat:'남향뷰'},
+  {id:28,type:'오피',name:'더프레스티움',addr:'인천 미추홀구 도화동 642-17',struct:'방3화2',year:20,price:28000,loan:'권8:2',empty:false,r:0,feat:'뷰'},
+  {id:29,type:'오피',name:'작품',addr:'인천 미추홀구 도화동 391-9',struct:'방3화2',year:21,price:27500,loan:'권7:3',empty:true,r:0,feat:''},
+  {id:30,type:'오피',name:'휴프라임',addr:'인천 미추홀구 숭의동 303-1',struct:'방3화2',year:18,price:23000,loan:'권8:2',empty:false,r:0,feat:''},
+  {id:31,type:'오피',name:'엑슬루타워',addr:'인천 미추홀구 용현동 659',struct:'방3화2',year:11,price:25000,loan:'R15',empty:true,r:15,feat:'240 R10/250 R15'},
+  {id:32,type:'오피',name:'편한자이캐슬',addr:'인천 미추홀구 주안동 177-9',struct:'방3화2',year:18,price:16000,loan:'권7:3',empty:false,r:0,feat:'리모델링지원'},
+  {id:33,type:'오피',name:'트인자리애',addr:'인천 미추홀구 주안동 75-8',struct:'방2화1',year:13,price:9800,loan:'권8:2',empty:false,r:0,feat:'1억이하투룸 가성비최고'},
+  {id:34,type:'아파트',name:'더젠시티',addr:'인천 미추홀구 도화동 437-4',struct:'방3화2',year:15,price:17500,loan:'권8:2',empty:false,r:0,feat:''},
+  {id:35,type:'아파트',name:'연주프라임',addr:'인천 미추홀구 도화동 442-4',struct:'방3화2',year:15,price:15000,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:36,type:'아파트',name:'삼성캐슬',addr:'인천 미추홀구 주안동 220-13',struct:'방3화2',year:16,price:20000,loan:'권8:2',empty:true,r:0,feat:'뷰'},
+  {id:37,type:'아파트',name:'이츠아파트',addr:'인천 미추홀구 주안동 50-1',struct:'방3화2',year:15,price:18500,loan:'권8:2',empty:false,r:0,feat:'박지교세/입주청소지원'},
+  {id:38,type:'아파트',name:'청도스카이뷰',addr:'인천 미추홀구 주안동 980-6',struct:'방3화1',year:4,price:18000,loan:'R5',empty:false,r:5,feat:'석암초 3분'},
+  {id:39,type:'아파트',name:'더미추홀퍼스트',addr:'인천 미추홀구 숭의동 121-7',struct:'방3화2',year:20,price:26500,loan:'권8:2',empty:false,r:0,feat:''},
+  {id:40,type:'아파트',name:'한우리',addr:'인천 미추홀구 숭의동 1-10',struct:'방3화1',year:15,price:16500,loan:'권8:2',empty:false,r:0,feat:''},
+  // 기타 지역
+  {id:41,type:'주택',name:'삼각산빌리지',addr:'서울 강북구 미아동 791-3286',struct:'방3화1',year:8,price:17000,loan:'권9:1',empty:false,r:0,feat:'재개발확정'},
+  {id:42,type:'주택',name:'덕용팰리스',addr:'서울 강서구 화곡동 360-2',struct:'방2화1',year:19,price:21000,loan:'권7:3',empty:true,r:0,feat:''},
+  {id:43,type:'주택',name:'현대그린빌라',addr:'서울 구로구 궁동 278-9',struct:'방3화1',year:94,price:21000,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:44,type:'주택',name:'더파라다이스힐',addr:'경기 김포시 풍무동 561-7',struct:'방3화2',year:19,price:20000,loan:'R20',empty:false,r:20,feat:'단지형준신축 자주식'},
+  {id:45,type:'주택',name:'파인캐슬',addr:'경기 안산시 고잔동 123-11',struct:'방3화1',year:15,price:18500,loan:'R7',empty:true,r:7,feat:''},
+  {id:46,type:'주택',name:'크리스탈타운',addr:'경기 안산시 본오동 1136-5',struct:'방3화2',year:15,price:25500,loan:'권8:2',empty:false,r:0,feat:'개인창고'},
+  {id:47,type:'주택',name:'노블시티',addr:'경기 안산시 선부동 1049-1',struct:'방3화1',year:22,price:27500,loan:'권9:1',empty:false,r:0,feat:'복층+테라스2'},
+  {id:48,type:'주택',name:'까사리움',addr:'경기 안양시 만안구 627-156',struct:'방2화1',year:17,price:17000,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:49,type:'아파트',name:'두보아파트2차',addr:'경기 파주시 금촌동 234-20',struct:'방3화2',year:96,price:16500,loan:'권8:2',empty:false,r:0,feat:'5월말공실'},
+  {id:50,type:'아파트',name:'경동아파트',addr:'경기 수원시 조원동 739-12',struct:'방3화1',year:90,price:12500,loan:'권8:2',empty:true,r:0,feat:''},
+  {id:51,type:'주택',name:'하이네스',addr:'인천 남동구 간석동 106-10',struct:'방3화2',year:17,price:19000,loan:'R10',empty:false,r:10,feat:'더블역세권 강력추천'},
+  {id:52,type:'아파트',name:'룩소르6차',addr:'인천 남동구 구월동 1129-8',struct:'방3화2',year:16,price:17000,loan:'R10',empty:false,r:10,feat:'예술회관 5분 뷰'},
+  {id:53,type:'아파트',name:'위더스타운',addr:'경기 부천시 심정동 180-38',struct:'방3화2',year:17,price:18000,loan:'R5',empty:false,r:5,feat:'백운역 도보3분 뷰'},
+  {id:54,type:'주택',name:'대성쉐르빌',addr:'경기 부천시 고강동 364-5',struct:'방3화2',year:16,price:20000,loan:'R8',empty:true,r:8,feat:'리모델링 공중'},
+];
+
+const PROP_KEY = 'dh_old_props_v2';
+const CUST_KEY = 'dh_old_custs_v2';
+let nxtId = 55;
+
+let props = JSON.parse(localStorage.getItem(PROP_KEY) || 'null') || INIT_PROPS;
+let custs = JSON.parse(localStorage.getItem(CUST_KEY) || '[]');
+let selCust = null;
+let cfFilter = '';
+
+function saveProps() { try{localStorage.setItem(PROP_KEY,JSON.stringify(props));}catch(e){} updateStats(); }
+function saveCusts() { try{localStorage.setItem(CUST_KEY,JSON.stringify(custs));}catch(e){} updateStats(); }
+
+function updateStats() {
+  document.getElementById('stProp').textContent = props.length;
+  document.getElementById('stEmpty').textContent = props.filter(p=>p.empty).length;
+  document.getElementById('stCust').textContent = custs.length;
+}
+
+// ── 탭 ──────────────────────────────────────────────────
+function goTab(name,el) {
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const map={match:'paneMatch',prop:'paneProp',cust:'paneCust',map:'paneMap'};
+  document.getElementById(map[name]).classList.add('active');
+  el.classList.add('active');
+  if(name==='prop') renderPropList();
+  if(name==='cust') renderCustDB();
+  if(name==='map') setTimeout(()=>{initLeafMap();renderMap();},80);
+}
+
+// ── 고객DB 불러오기 ──────────────────────────────────────
+function loadCustomerDB(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wb = XLSX.read(e.target.result, {type:'array'});
+    let loaded = 0;
+    wb.SheetNames.forEach(sn => {
+      const ws = wb.Sheets[sn];
+      const raw = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      if (raw.length < 2) return;
+      // 헤더 찾기
+      let hRow = -1;
+      for (let i=0;i<Math.min(5,raw.length);i++) {
+        if (raw[i].some(c=>String(c).includes('연락처')||String(c).includes('희망지역'))) { hRow=i; break; }
+      }
+      if (hRow<0) return;
+      const hs = raw[hRow].map(h=>String(h).trim());
+      const get = (row,nm) => { const i=hs.findIndex(h=>h.includes(nm)); return i>=0?String(row[i]||'').trim():''; };
+      for (let i=hRow+1;i<raw.length;i++) {
+        const row = raw[i];
+        if (row.every(c=>c===''||c===null)) continue;
+        const phone = get(row,'연락처');
+        if (!phone||phone==='연락처') continue;
+        if (custs.find(c=>c.phone===phone)) continue; // 중복 제외
+        custs.push({
+          id: Date.now()+i,
+          no: get(row,'No')||String(i),
+          date: get(row,'문의일')||get(row,'일'),
+          phone,
+          channel: get(row,'유입')||get(row,'채널'),
+          region: get(row,'희망지역'),
+          kcb: get(row,'KCB')||get(row,'신용점수(KCB)'),
+          nice: get(row,'나이스')||get(row,'신용점수(나이스)'),
+          debt: get(row,'기대출'),
+          cash: get(row,'가용현금'),
+          noinput: get(row,'무입주'),
+          income: get(row,'소득')||get(row,'직장'),
+          note: get(row,'특이사항')||get(row,'통화내용')||get(row,'조건'),
+          schedule: get(row,'이사일정'),
+          meeting: get(row,'미팅일정'),
+          priority: get(row,'우선순위'),
+          status: get(row,'관리현황')||get(row,'현황'),
+          matchedProps: [],
+        });
+        loaded++;
+      }
+    });
+    saveCusts();
+    renderCustList();
+    renderCustDB();
+    toast(`✓ ${loaded}명 불러오기 완료`);
+  };
+  reader.readAsArrayBuffer(file);
+  input.value='';
+}
+
+// ── 고객 목록 (매칭 탭 왼쪽) ───────────────────────────
+function toggleCF(btn, val) {
+  document.querySelectorAll('.cf').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  cfFilter = val;
+  renderCustList();
+}
+
+function renderCustList() {
+  const kw = document.getElementById('custSearch').value.toLowerCase();
+  const filtered = custs.filter(c => {
+    if (cfFilter && !c.priority.includes(cfFilter)) return false;
+    if (kw && !c.phone.includes(kw) && !(c.region||'').toLowerCase().includes(kw) && !(c.note||'').toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  document.getElementById('custListCount').textContent = filtered.length+'명';
+  const el = document.getElementById('custList');
+  if (!filtered.length) { el.innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:var(--muted)">고객 없음.<br>위에서 엑셀을 불러오세요.</div>'; return; }
+  el.innerHTML = filtered.map(c => {
+    const pri = c.priority||'';
+    const bCls = pri.includes('🔴')?'p-red':pri.includes('🟠')?'p-orange':pri.includes('🟡')?'p-yellow':'p-gray';
+    const isActive = selCust && selCust.id===c.id;
+    return `<div class="cust-card ${isActive?'active':''}" onclick="selectCust(${c.id})">
+      <div class="cc-top">
+        <span class="cc-phone">${c.phone}</span>
+        <span class="cc-badge ${bCls}">${pri.replace(/[🔴🟠🟡❌✅]/g,'').trim().slice(0,6)}</span>
+      </div>
+      <div class="cc-region">${c.region||'지역미정'}</div>
+      <div class="cc-cond">${(c.note||'').slice(0,35)}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectCust(id) {
+  selCust = custs.find(c=>c.id===id);
+  if (!selCust) return;
+  renderCustList();
+  document.getElementById('noSel').style.display='none';
+  document.getElementById('selCust').classList.add('on');
+  document.getElementById('scPhone').textContent = selCust.phone;
+  document.getElementById('scRegion').textContent = selCust.region||'지역미정';
+  const pri = selCust.priority||'';
+  const bCls = pri.includes('🔴')?'p-red':pri.includes('🟠')?'p-orange':pri.includes('🟡')?'p-yellow':'p-gray';
+  document.getElementById('scBadge').className='cc-badge '+bCls;
+  document.getElementById('scBadge').textContent = pri;
+  // 칩
+  const chips = [];
+  if (selCust.kcb && selCust.kcb!=='-') chips.push(`<div class="cd-chip"><span>신용KCB</span> <strong>${selCust.kcb}</strong></div>`);
+  if (selCust.debt && selCust.debt!=='-') chips.push(`<div class="cd-chip"><span>기대출</span> <strong>${selCust.debt}</strong></div>`);
+  if (selCust.cash && selCust.cash!=='-') chips.push(`<div class="cd-chip"><span>가용현금</span> <strong>${selCust.cash}</strong></div>`);
+  if (selCust.noinput && selCust.noinput==='O') chips.push(`<div class="cd-chip" style="border-color:var(--green);color:var(--green)"><strong>✓ 무입주 가능</strong></div>`);
+  if (selCust.schedule && selCust.schedule!=='-') chips.push(`<div class="cd-chip"><span>이사</span> <strong>${selCust.schedule}</strong></div>`);
+  document.getElementById('scChips').innerHTML = chips.join('');
+  document.getElementById('scNote').textContent = selCust.note||'특이사항 없음';
+  // 자동 매칭
+  runMatch();
+}
+
+// ── 매칭 엔진 ──────────────────────────────────────────
+function runMatch() {
+  if (!selCust) return;
+  const c = selCust;
+  const region = (c.region||'').toLowerCase();
+  const note = (c.note||'').toLowerCase();
+
+  // 예산 파싱
+  let budgetMax = 99999;
+  const bMatch = note.match(/(\d+(?:\.\d+)?)[억만]/g);
+  if (bMatch) {
+    const vals = bMatch.map(b => {
+      if (b.includes('억')) return parseFloat(b)*10000;
+      return parseFloat(b);
+    });
+    budgetMax = Math.max(...vals) * 1.15; // 15% 여유
+    if (budgetMax < 5000) budgetMax = 99999;
+  }
+
+  // 신용 파싱
+  const kcbRaw = c.kcb||'';
+  let kcb = 0;
+  const kcbMatch = kcbRaw.match(/\d+/);
+  if (kcbMatch) kcb = parseInt(kcbMatch[0]);
+  const lowCredit = kcb > 0 && kcb < 650;
+
+  // 무입주 원함?
+  const wantsEmpty = c.noinput === 'O' || note.includes('공실') || note.includes('무입주') || note.includes('전액대출');
+
+  // 방 구조 선호
+  const wants3room = note.includes('3룸') || note.includes('방3') || note.includes('쓰리룸') || note.includes('25평');
+  const wants2room = note.includes('2룸') || note.includes('방2') || note.includes('투룸');
+  const wantsBig = note.includes('넓') || note.includes('대형') || note.includes('30평') || note.includes('거실넓');
+
+  const results = props.map(p => {
+    let score = 0;
+    const why = [];
+
+    // 예산
+    if (p.price > budgetMax) return null;
+    score += 20; why.push('예산 범위 내');
+
+    // 지역 매칭 (핵심)
+    const pAddr = p.addr.toLowerCase();
+    const regionWords = region.split(/[\s·,\/]+/).filter(w=>w.length>1);
+    let regionMatch = false;
+    for (const rw of regionWords) {
+      if (pAddr.includes(rw) || rw.includes('지역무관') || rw.includes('어디든')) {
+        regionMatch = true; break;
+      }
+      // 광역 매칭
+      if (rw.includes('인천') && pAddr.includes('인천')) { regionMatch=true; break; }
+      if (rw.includes('서울') && pAddr.includes('서울')) { regionMatch=true; break; }
+      if (rw.includes('경기') && (pAddr.includes('경기')||pAddr.includes('부천')||pAddr.includes('안산')||pAddr.includes('수원')||pAddr.includes('파주'))) { regionMatch=true; break; }
+    }
+    if (region.includes('지역무관') || region.includes('어디든') || region===''||region==='-') regionMatch=true;
+    if (regionMatch) { score+=30; why.push('희망 지역 일치'); }
+    else { score-=20; }
+
+    // 공실
+    if (wantsEmpty && p.empty) { score+=25; why.push('공실 가능'); }
+    else if (wantsEmpty && !p.empty) score-=10;
+    else if (p.empty) { score+=5; why.push('공실'); }
+
+    // 방 구조
+    if (wants3room && p.struct.startsWith('방3')) { score+=15; why.push('3룸 구조'); }
+    if (wants2room && p.struct.startsWith('방2')) { score+=15; why.push('2룸 구조'); }
+    if (wantsBig && (p.struct.includes('방3화2')||p.struct.includes('방4'))) { score+=10; why.push('넓은 구조'); }
+
+    // R
+    if (p.r > 0) { score+=8; why.push('R '+(p.r*100).toLocaleString()+'만'); }
+
+    // 저신용 → 대출비율 낮은 것 우선
+    if (lowCredit && (p.loan.includes('권9')||p.loan.startsWith('R'))) { score+=10; why.push('저신용 적합 대출구조'); }
+
+    // 특수 조건
+    if (note.includes('뷰') && p.feat.includes('뷰')) { score+=8; why.push('뷰'); }
+    if (note.includes('복층') && p.feat.includes('복층')) { score+=8; why.push('복층'); }
+    if (note.includes('테라스') && (p.feat.includes('테라스')||p.struct.includes('테'))) { score+=8; why.push('테라스'); }
+    if (note.includes('재개발') && p.feat.includes('재개발')) { score+=12; why.push('재개발'); }
+    if (note.includes('역세권') && p.feat.includes('역')) { score+=8; why.push('역세권'); }
+    if ((note.includes('저렴')||note.includes('1억')) && p.price < 15000) { score+=10; why.push('저가 매물'); }
+    if (note.includes('신축')||note.includes('준신축')) { if(p.year>=15) {score+=5; why.push('비교적 신축');} }
+
+    // 년식 보너스
+    if (p.year >= 18) score+=3;
+
+    return {...p, score, why};
+  }).filter(Boolean).sort((a,b)=>b.score-a.score);
+
+  document.getElementById('matchScore').textContent = `총 ${results.length}건`;
+
+  const el = document.getElementById('matchResults');
+  if (!results.length) {
+    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:12px">😅 조건에 맞는 매물이 없습니다.</div>';
+    return;
+  }
+
+  el.innerHTML = '<div class="mr-head"><span>매칭 결과 <strong>' + results.length + '</strong>건 (점수순)</span><span style="font-size:10px">클릭하면 상세보기</span></div>' +
+    results.slice(0,20).map((p,i) => {
+      const rCls = i===0?'r1':i===1?'r2':i===2?'r3':'';
+      const rEmoji = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+      const tags = [];
+      if (p.empty) tags.push('<span class="rt rt-gr">공실</span>');
+      if (p.r>0) tags.push('<span class="rt rt-pu">R'+(p.r*100)+'만</span>');
+      if (p.feat.includes('뷰')) tags.push('<span class="rt rt-go">뷰</span>');
+      if (p.feat.includes('복층')) tags.push('<span class="rt rt-go">복층</span>');
+      if (p.feat.includes('재개발')) tags.push('<span class="rt" style="background:rgba(230,57,70,.15);color:var(--red)">재개발</span>');
+      if (p.feat.includes('역')) tags.push('<span class="rt rt-bl">역세권</span>');
+      tags.push('<span class="rt rt-or">'+p.loan+'</span>');
+      tags.push('<span class="rt rt-bl">'+p.struct+'</span>');
+      return `<div class="res-card ${rCls}" onclick="showDetail(${p.id})">
+        <div class="res-rank">${rEmoji}</div>
+        <div class="res-name">${p.name}</div>
+        <div class="res-addr">${p.addr}</div>
+        <div class="res-score">매칭 ${p.score}점</div>
+        <div class="res-tags">${tags.join('')}</div>
+        <div class="res-price">${p.price.toLocaleString()}만원</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${p.type} · ${p.year<10?'0'+p.year:p.year}년식${p.feat?' · '+p.feat.slice(0,20):''}</div>
+        <div class="res-why">${p.why.map(w=>`<div class="res-why-item"><span class="dot">✓</span>${w}</div>`).join('')}</div>
+      </div>`;
+    }).join('');
+}
+
+// ── 매물 목록 ──────────────────────────────────────────
+function renderPropList() {
+  const type  = document.getElementById('flType').value;
+  const reg   = document.getElementById('flRegion').value;
+  const empty = document.getElementById('flEmpty').value;
+  const kw    = document.getElementById('flKw').value.toLowerCase();
+  const f = props.filter(p=>{
+    if(type && !p.type.includes(type)) return false;
+    if(reg && !p.addr.includes(reg)) return false;
+    if(empty==='공실' && !p.empty) return false;
+    if(empty==='거주' && p.empty) return false;
+    if(kw && !p.name.toLowerCase().includes(kw) && !p.addr.toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  document.getElementById('propListCount').innerHTML='<strong>'+f.length+'</strong>건';
+  const tbody=document.getElementById('propBody');
+  if(!f.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--muted)">매물 없음</td></tr>';return;}
+  tbody.innerHTML=f.map(p=>`
+    <tr onclick="openPropForm(${p.id})">
+      <td style="color:var(--muted)">${p.type}</td>
+      <td><strong>${p.name}</strong></td>
+      <td style="color:var(--muted);font-size:10px">${p.addr}</td>
+      <td>${p.struct}</td>
+      <td style="color:var(--muted)">${p.year<10?'0'+p.year:p.year}년식</td>
+      <td class="ph">${p.price.toLocaleString()}만</td>
+      <td style="font-size:10px">${p.loan}</td>
+      <td>${p.empty?'<span class="bdg b-empty">공실</span>':'<span class="bdg b-lived">거주중</span>'}</td>
+      <td>${p.r>0?'<span class="bdg b-r">R'+(p.r*100)+'만</span>':'-'}</td>
+      <td style="font-size:10px;color:var(--gold)">${p.feat||'-'}</td>
+    </tr>`).join('');
+}
+
+// ── 매물 폼 ────────────────────────────────────────────
+function openPropForm(id) {
+  goTab('prop', document.getElementById('tabProp'));
+  const p = id ? props.find(x=>x.id===id) : null;
+  document.getElementById('pfpTitle').textContent = p ? '✏️ 매물 수정' : '➕ 매물 등록';
+  document.getElementById('pfDelBtn').style.display = p ? '' : 'none';
+  document.getElementById('pfId').value = p ? p.id : '';
+  document.getElementById('pfType').value = p?.type||'주택';
+  document.getElementById('pfName').value = p?.name||'';
+  document.getElementById('pfAddr').value = p?.addr||'';
+  document.getElementById('pfStruct').value = p?.struct||'방3화2';
+  document.getElementById('pfYear').value = p?.year||'';
+  document.getElementById('pfPrice').value = p?.price||'';
+  document.getElementById('pfLoan').value = p?.loan||'권8:2';
+  document.getElementById('pfR').value = p?.r||'';
+  document.getElementById('pfRHint').textContent = p?.r ? '= '+(p.r*100).toLocaleString()+'만원' : '';
+  document.getElementById('pfFeat').value = p?.feat||'';
+  setOX2('pfEmpty', p?.empty ? 'O' : 'X');
+}
+
+function setOX(btn) {
+  const f = btn.dataset.f;
+  btn.closest('.ox').querySelectorAll('.ox-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(f).value = btn.classList.contains('o') ? 'O' : 'X';
+}
+
+function setOX2(fieldId, val) {
+  document.getElementById(fieldId).value = val;
+  const grp = document.getElementById(fieldId).previousElementSibling;
+  if (!grp?.classList.contains('ox')) return;
+  grp.querySelectorAll('.ox-btn').forEach(b=>{
+    b.classList.remove('on');
+    if((val==='O'&&b.classList.contains('o'))||(val==='X'&&b.classList.contains('x'))) b.classList.add('on');
+  });
+}
+
+function showRHint(v) {
+  const n=parseInt(v);
+  document.getElementById('pfRHint').textContent = n>0?'= '+(n*100).toLocaleString()+'만원':'';
+}
+
+function saveProp() {
+  const name = document.getElementById('pfName').value.trim();
+  const addr = document.getElementById('pfAddr').value.trim();
+  const price = document.getElementById('pfPrice').value;
+  if(!name||!addr||!price){toast('단지명, 주소, 매매가는 필수입니다.',true);return;}
+  const editId = document.getElementById('pfId').value;
+  const p = {
+    id: editId ? parseInt(editId) : nxtId++,
+    type: document.getElementById('pfType').value,
+    name, addr,
+    struct: document.getElementById('pfStruct').value,
+    year: parseInt(document.getElementById('pfYear').value)||0,
+    price: parseInt(price)||0,
+    loan: document.getElementById('pfLoan').value,
+    empty: document.getElementById('pfEmpty').value==='O',
+    r: parseInt(document.getElementById('pfR').value)||0,
+    feat: document.getElementById('pfFeat').value,
+  };
+  if(editId){const i=props.findIndex(x=>x.id===parseInt(editId));if(i>=0)props[i]=p;else props.push(p);}
+  else props.push(p);
+  saveProps(); renderPropList();
+  toast(editId?'✅ 수정되었습니다!':'✅ 저장되었습니다!');
+}
+
+function delProp() {
+  const id=parseInt(document.getElementById('pfId').value);
+  if(!id)return;
+  document.getElementById('cfmMsg').textContent='이 매물을 삭제할까요?';
+  document.getElementById('cfmBg').classList.add('on');
+  document.getElementById('cfmOk').onclick=()=>{
+    props=props.filter(p=>p.id!==id);
+    saveProps(); renderPropList(); openPropForm(null);
+    document.getElementById('cfmBg').classList.remove('on');
+    toast('🗑️ 삭제되었습니다.');
+  };
+}
+
+// ── 고객 DB 탭 ─────────────────────────────────────────
+function renderCustDB() {
+  const pri = document.getElementById('cdbPri').value;
+  const kw  = document.getElementById('cdbKw').value.toLowerCase();
+  const f = custs.filter(c=>{
+    if(pri && !(c.priority||'').includes(pri)) return false;
+    if(kw && !c.phone.includes(kw) && !(c.region||'').toLowerCase().includes(kw) && !(c.note||'').toLowerCase().includes(kw)) return false;
+    return true;
+  });
+  document.getElementById('cdbCount').innerHTML='<strong>'+f.length+'</strong>명';
+  const tbody=document.getElementById('custBody');
+  if(!f.length){tbody.innerHTML='<tr><td colspan="13" style="text-align:center;padding:30px;color:var(--muted)">고객 없음</td></tr>';return;}
+  const priColor=(p)=>p.includes('🔴')?'color:var(--red)':p.includes('🟠')?'color:var(--orange)':p.includes('🟡')?'color:var(--gold)':'color:var(--muted)';
+  tbody.innerHTML=f.map(c=>`
+    <tr onclick="selectCust(${c.id});goTab('match',document.getElementById('tabMatch'))">
+      <td style="color:var(--muted)">${c.no}</td>
+      <td style="color:var(--muted)">${c.date||'-'}</td>
+      <td style="font-weight:700">${c.phone}</td>
+      <td style="font-size:10px;color:var(--muted)">${c.channel||'-'}</td>
+      <td>${c.region||'-'}</td>
+      <td style="font-size:11px">${c.kcb||'-'}</td>
+      <td style="font-size:10px;color:var(--muted)">${c.debt||'-'}</td>
+      <td style="font-size:10px;color:var(--muted)">${c.cash||'-'}</td>
+      <td>${c.noinput==='O'?'<span style="color:var(--green);font-weight:700">O</span>':c.noinput||'-'}</td>
+      <td style="font-size:11px;font-weight:700;${priColor(c.priority||'')}">${c.priority||'-'}</td>
+      <td style="font-size:10px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.note||'-'}</td>
+      <td style="font-size:10px;color:var(--muted)">${c.schedule||'-'}</td>
+      <td style="font-size:10px;color:var(--gold)">${c.status||'-'}</td>
+    </tr>`).join('');
+}
+
+// ── 상세 모달 ──────────────────────────────────────────
+function showDetail(id) {
+  const p=props.find(x=>x.id===id);
+  if(!p) return;
+  const yr=p.year<10?'0'+p.year:p.year;
+  document.getElementById('modalContent').innerHTML=
+    '<div class="modal-name">'+p.name+'</div>'+
+    '<div class="modal-addr">'+p.addr+'</div>'+
+    '<div class="modal-pbox">'+
+      '<div style="font-size:10px;color:var(--muted);margin-bottom:2px">매매가</div>'+
+      '<div class="modal-p">'+p.price.toLocaleString()+'만원</div>'+
+      '<div class="modal-psub">'+p.loan+(p.r>0?' &nbsp;|&nbsp; R '+(p.r*100).toLocaleString()+'만':'')+'</div>'+
+    '</div>'+
+    '<div class="modal-grid">'+
+      '<div class="mi"><div class="mil">유형</div><div class="miv">'+p.type+'</div></div>'+
+      '<div class="mi"><div class="mil">구조</div><div class="miv or">'+p.struct+'</div></div>'+
+      '<div class="mi"><div class="mil">년식</div><div class="miv">'+yr+'년식</div></div>'+
+      '<div class="mi"><div class="mil">공실여부</div><div class="miv '+(p.empty?'gr':'')+'">'+(p.empty?'✓ 공실':'거주중')+'</div></div>'+
+    '</div>'+
+    (p.feat?'<div class="modal-feat">✨ '+p.feat+'</div>':'');
+  // 네이버지도 버튼
+  const btn = document.createElement('button');
+  btn.className = 'modal-mapbtn';
+  btn.textContent = '🗺️ 네이버지도에서 위치 확인';
+  btn.onclick = () => window.open('https://map.naver.com/p/search/'+encodeURIComponent(p.addr), '_blank');
+  document.getElementById('modalContent').appendChild(btn);
+  document.getElementById('modalBg').classList.add('on');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('on');}
+
+// ── 엑셀 내보내기 ──────────────────────────────────────
+function doExport(){
+  if (typeof XLSX === 'undefined') { toast('잠시 후 다시 시도해주세요.', true); return; }
+  if(!props.length){toast('매물이 없습니다.',true);return;}
+  const h=['유형','단지명','주소','구조','년식','매매가(만원)','대출비율','공실여부','R금액(만원)','특징','마커설명'];
+  const rows=props.map(p=>{
+    const yr=p.year<10?'0'+p.year:p.year;
+    return[p.type,p.name,p.addr,p.struct,yr+'년식',p.price,p.loan,p.empty?'공실':'거주중',p.r>0?p.r*100:0,p.feat,
+      p.price.toLocaleString()+'만 | '+p.loan+(p.r>0?' | R'+(p.r*100)+'만':'')+(p.empty?' | 공실':'')+(p.feat?' | '+p.feat:'')];
+  });
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([h,...rows]);
+  ws['!cols']=[8,20,32,13,7,13,10,7,11,18,40].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws,'전체매물');
+  const eRows=props.filter(p=>p.empty).map(p=>{const yr=p.year<10?'0'+p.year:p.year;return[p.type,p.name,p.addr,p.struct,yr+'년식',p.price,p.loan,'공실',p.r>0?p.r*100:0,p.feat,p.price.toLocaleString()+'만 | '+p.loan+(p.r>0?' | R'+(p.r*100)+'만':'')+(p.feat?' | '+p.feat:'')];});
+  const ws2=XLSX.utils.aoa_to_sheet([h,...eRows]);
+  ws2['!cols']=ws['!cols'];
+  XLSX.utils.book_append_sheet(wb,ws2,'공실만');
+  XLSX.writeFile(wb,'돌고래_구옥_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toast('엑셀 저장 완료 ✓');
+}
+
+// ── 지도 ──────────────────────────────────────────────
+let leafMap = null, leafMarkers = {}, mapFilter = 'all';
+
+// 지역 → 대략 좌표 (주소 파싱 불가 시 폴백)
+const REGION_COORDS = {
+  '인천 미추홀구':[37.455,126.660],'인천 남동구':[37.449,126.731],
+  '인천 서구':[37.544,126.673],'인천 부평구':[37.508,126.722],
+  '인천 계양구':[37.537,126.738],'인천 연수구':[37.410,126.679],
+  '서울 강북구':[37.640,127.012],'서울 강서구':[37.551,126.850],
+  '서울 구로구':[37.495,126.888],'서울 금천구':[37.457,126.895],
+  '경기 김포시':[37.615,126.716],'경기 안산시':[37.322,126.831],
+  '경기 안양시':[37.394,126.955],'경기 부천시':[37.504,126.766],
+  '경기 수원시':[37.264,127.029],'경기 파주시':[37.760,126.780],
+  '경기 평택시':[36.992,127.113],
+};
+
+function getCoords(addr) {
+  // 주소에서 지역 추출해 대략 좌표 반환 + 지터 추가
+  for (const [key, coord] of Object.entries(REGION_COORDS)) {
+    const parts = key.split(' ');
+    if (addr.includes(parts[0]) && addr.includes(parts[1])) {
+      return [coord[0]+(Math.random()-.5)*.012, coord[1]+(Math.random()-.5)*.012];
+    }
+  }
+  // 광역만 매칭
+  if (addr.includes('인천')) return [37.456+(Math.random()-.5)*.02, 126.705+(Math.random()-.5)*.02];
+  if (addr.includes('서울')) return [37.560+(Math.random()-.5)*.03, 126.975+(Math.random()-.5)*.03];
+  if (addr.includes('경기')||addr.includes('부천')||addr.includes('안산')||addr.includes('수원')||addr.includes('파주')) {
+    return [37.400+(Math.random()-.5)*.04, 126.850+(Math.random()-.5)*.04];
+  }
+  return [37.50+(Math.random()-.5)*.05, 126.85+(Math.random()-.5)*.05];
+}
+
+function initLeafMap() {
+  if (leafMap) return;
+  leafMap = L.map('mapEl', {center:[37.47,126.73],zoom:11});
+  // CARTO Voyager - 한국어 지명 포함, file:// 완전 지원
+  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png', {
+    attribution:'© OpenStreetMap © CARTO',
+    subdomains:'abcd', maxZoom:20, minZoom:3
+  }).addTo(leafMap);
+}
+
+function setMapFilter(val, btn) {
+  mapFilter = val;
+  document.querySelectorAll('#mapFilterWrap .cf').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  renderMap();
+}
+
+let activeMarkerId = null;
+
+function makeIcon(clr, active, struct) {
+  const lbl = (struct||'방3').slice(0,3);
+  return L.divIcon({
+    html: active
+      // 강조: 빨간 테두리 + 바운스 + 크게
+      ? '<div style="animation:bounce .4s ease">' +
+        '<svg width="44" height="54" viewBox="0 0 44 54" xmlns="http://www.w3.org/2000/svg">' +
+        // 빨간 외곽 광선
+        '<circle cx="22" cy="21" r="20" fill="#e63946" opacity=".25"/>' +
+        // 핀 외곽 빨간 테두리
+        '<path d="M22 2C12.611 2 5 9.611 5 19c0 6 3.1 11.3 7.7 14.6L22 52l9.3-18.4C36.9 30.3 39 25 39 19 39 9.611 31.389 2 22 2z" fill="'+clr+'" stroke="#e63946" stroke-width="3"/>' +
+        // 흰 내부 원
+        '<circle cx="22" cy="19" r="9.5" fill="white" opacity=".95"/>' +
+        // 텍스트
+        '<text x="22" y="22.5" text-anchor="middle" font-size="7.5" font-weight="bold" fill="'+clr+'" font-family="Arial">'+lbl+'</text>' +
+        '</svg></div>'
+      // 기본
+      : '<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M14 0C6.268 0 0 6.268 0 14c0 4.667 2.333 8.867 5.833 11.433L14 36l8.167-10.567C25.667 22.867 28 18.667 28 14 28 6.268 21.732 0 14 0z" fill="'+clr+'"/>' +
+        '<circle cx="14" cy="14" r="7" fill="white" opacity=".9"/>' +
+        '<text x="14" y="17.5" text-anchor="middle" font-size="7" font-weight="bold" fill="'+clr+'" font-family="Arial">'+lbl+'</text>' +
+        '</svg>',
+    className:'',
+    iconSize: active ? [44,54] : [28,36],
+    iconAnchor: active ? [22,54] : [14,36]
+  });
+}
+
+function renderMap() {
+  if (!leafMap) return;
+  activeMarkerId = null;
+  // 기존 마커 제거
+  Object.values(leafMarkers).forEach(m=>leafMap.removeLayer(m));
+  leafMarkers = {};
+
+  const regionF = document.getElementById('mapRegionFilter').value;
+  const filtered = props.filter(p => {
+    if (regionF && !p.addr.includes(regionF)) return false;
+    if (mapFilter==='empty' && !p.empty) return false;
+    if (mapFilter==='r' && p.r===0) return false;
+    return true;
+  });
+
+  // 왼쪽 리스트
+  const listEl = document.getElementById('mapPropList');
+  listEl.innerHTML = filtered.map(p => {
+    const color = p.empty ? 'var(--green)' : p.r>0 ? 'var(--purple)' : 'var(--muted)';
+    return `<div style="padding:9px 12px;border-bottom:1px solid rgba(30,58,95,.4);cursor:pointer;transition:background .1s;"
+      onmouseover="this.style.background='var(--card)'" onmouseout="this.style.background=''"
+      onclick="focusMapProp(${p.id})">
+      <div style="font-size:12px;font-weight:700;margin-bottom:2px">${p.name}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${p.addr}</div>
+      <div style="font-size:13px;font-weight:900;color:var(--orange)">${p.price.toLocaleString()}만
+        ${p.empty?'<span style="font-size:9px;color:'+color+';margin-left:4px">공실</span>':''}
+        ${p.r>0?'<span style="font-size:9px;color:var(--purple);margin-left:4px">R'+(p.r*100)+'만</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // 마커 생성
+  const bounds = [];
+  filtered.forEach(p => {
+    const coords = getCoords(p.addr);
+    p._coords = coords; // 재사용용 캐시
+    bounds.push(coords);
+    // 색상: 공실=초록, R있음=보라, 거주중=회색
+    const color = p.empty ? '#2dc653' : p.r>0 ? '#9b5de5' : '#7a9cc0';
+    const svgIcon = makeIcon(color, false, p.struct);
+    const marker = L.marker(coords, {icon:svgIcon}).addTo(leafMap);
+    // 클릭하면 강조 + 상세 표시
+    marker.on('click', () => {
+      // 이전 활성 마커 원상복구
+      if (activeMarkerId && leafMarkers[activeMarkerId]) {
+        const prev = props.find(x=>x.id===activeMarkerId);
+        if (prev) {
+          const prevColor = prev.empty ? '#2dc653' : prev.r>0 ? '#9b5de5' : '#7a9cc0';
+          leafMarkers[activeMarkerId].setIcon(makeIcon(prevColor, false, prev.struct));
+          leafMarkers[activeMarkerId].setZIndexOffset(0);
+        }
+      }
+      // 현재 마커 강조
+      activeMarkerId = p.id;
+      marker.setIcon(makeIcon(color, true, p.struct));
+      marker.setZIndexOffset(9999);
+      leafMap.setView(coords, Math.max(leafMap.getZoom(), 15), {animate:true});
+      showMapDetail(p.id);
+    });
+    leafMarkers[p.id] = marker;
+  });
+
+  if (bounds.length > 1) leafMap.fitBounds(bounds, {padding:[30,30]});
+  else if (bounds.length===1) leafMap.setView(bounds[0], 14);
+}
+
+function focusMapProp(id) {
+  const p = props.find(x=>x.id===id);
+  if (!p) return;
+  const coords = p._coords || getCoords(p.addr);
+  // 이전 강조 해제
+  if (activeMarkerId && leafMarkers[activeMarkerId] && activeMarkerId !== id) {
+    const prev = props.find(x=>x.id===activeMarkerId);
+    if (prev) {
+      const prevColor = prev.empty ? '#2dc653' : prev.r>0 ? '#9b5de5' : '#7a9cc0';
+      leafMarkers[activeMarkerId].setIcon(makeIcon(prevColor, false, prev.struct));
+      leafMarkers[activeMarkerId].setZIndexOffset(0);
+    }
+  }
+  // 현재 강조
+  activeMarkerId = id;
+  if (leafMarkers[id]) {
+    const color = p.empty ? '#2dc653' : p.r>0 ? '#9b5de5' : '#7a9cc0';
+    leafMarkers[id].setIcon(makeIcon(color, true, p.struct));
+    leafMarkers[id].setZIndexOffset(9999);
+  }
+  leafMap.flyTo(coords, 16, {animate:true, duration:0.6});
+  showMapDetail(id);
+}
+
+function showMapDetail(id) {
+  const p = props.find(x=>x.id===id);
+  if (!p) return;
+  const detail = document.getElementById('mapDetail');
+  detail.style.display = 'flex';
+  document.getElementById('mapEditBtn').onclick = () => openPropForm(p.id);
+  const yr = p.year < 10 ? '0'+p.year : p.year;
+  document.getElementById('mapDetailContent').innerHTML =
+    '<div style="font-size:15px;font-weight:900;color:var(--orange);margin-bottom:3px">'+p.name+'</div>' +
+    '<div style="font-size:10px;color:var(--muted);margin-bottom:12px">'+p.addr+'</div>' +
+    '<div style="background:linear-gradient(135deg,rgba(255,107,53,.2),rgba(244,164,66,.1));border:1px solid rgba(255,107,53,.3);border-radius:8px;padding:12px;text-align:center;margin-bottom:11px;">' +
+      '<div style="font-size:10px;color:var(--muted);margin-bottom:2px">매매가</div>' +
+      '<div style="font-size:22px;font-weight:900;color:var(--orange)">'+p.price.toLocaleString()+'만</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:3px">'+p.loan+(p.r>0?' | R'+(p.r*100).toLocaleString()+'만':'')+'</div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">유형</div><div style="font-size:12px;font-weight:700">'+p.type+'</div></div>' +
+      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">구조</div><div style="font-size:12px;font-weight:700;color:var(--orange)">'+p.struct+'</div></div>' +
+      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">년식</div><div style="font-size:12px;font-weight:700">'+yr+'년식</div></div>' +
+      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">공실</div><div style="font-size:12px;font-weight:700;'+(p.empty?'color:var(--green)':'')+'">'+(p.empty?'✓ 공실':'거주중')+'</div></div>' +
+    '</div>' +
+    (p.feat?'<div style="background:rgba(244,164,66,.08);border:1px solid rgba(244,164,66,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--gold);line-height:1.6;margin-bottom:10px;">✨ '+p.feat+'</div>':'');
+  // 네이버지도 버튼 (별도로 추가해야 href 작동)
+  const navBtn = document.createElement('button');
+  navBtn.textContent = '🗺️ 네이버지도에서 위치 확인';
+  navBtn.style.cssText = 'background:var(--blue);border:none;color:#fff;border-radius:7px;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:4px;';
+  navBtn.onclick = () => window.open('https://map.naver.com/p/search/'+encodeURIComponent(p.addr), '_blank');
+  document.getElementById('mapDetailContent').appendChild(navBtn);
+}
+
+function toast(msg,isErr){
+  const el=document.getElementById('toastEl');
+  el.textContent=msg;
+  el.className='toast'+(isErr?' err':'')+' show';
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// 초기화
+updateStats();
+renderCustList();
+</script>
+</body>
+</html>
