@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>돌고래하우스 | 구옥 매물 매칭 시스템</title>
+<title>돌고래하우스 | 구옥 매물 매칭</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -17,8 +17,6 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
-
-/* TOPBAR */
 .topbar{background:linear-gradient(90deg,var(--navy),#0d2240);border-bottom:1px solid var(--border);padding:9px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);letter-spacing:2px;}
 .logo span{color:var(--gold);}
@@ -29,21 +27,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tbtn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;white-space:nowrap;}
 .tbtn:hover{border-color:var(--orange);color:var(--orange);}
 .tbtn.primary{background:var(--orange);border-color:var(--orange);color:#fff;}
-.tbtn.green{background:var(--green);border-color:var(--green);color:#fff;}
-
-/* TABS */
 .tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
 .tab{padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);transition:all .15s;white-space:nowrap;}
 .tab.active{color:var(--orange);border-bottom-color:var(--orange);}
-
 .content{flex:1;overflow:hidden;display:flex;}
 .pane{display:none;flex:1;overflow:hidden;}
 .pane.active{display:flex;}
-
-/* ── 매칭 탭 ── */
 .match-layout{flex:1;display:flex;overflow:hidden;}
-
-/* 왼쪽: 고객 목록 */
 .cust-panel{width:260px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
 .cust-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
 .cust-head-title{font-size:12px;font-weight:700;color:var(--orange);display:flex;justify-content:space-between;align-items:center;}
@@ -67,8 +57,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .p-gray{background:rgba(100,120,150,.2);color:var(--muted);}
 .cc-region{font-size:10px;color:var(--muted);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cc-cond{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
-/* 가운데: 고객 상세 + 매칭 */
 .match-center{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .match-center-top{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
 .sel-cust{display:none;}
@@ -82,7 +70,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .match-actions{display:flex;gap:7px;margin-top:8px;}
 .match-run-btn{background:var(--purple);border:none;color:#fff;border-radius:7px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .match-run-btn:hover{opacity:.85;}
-
 .match-results{flex:1;overflow-y:auto;padding:12px;}
 .match-results::-webkit-scrollbar{width:4px;}
 .match-results::-webkit-scrollbar-thumb{background:var(--border);}
@@ -108,19 +95,20 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .res-why{margin-top:7px;padding-top:7px;border-top:1px solid var(--border);}
 .res-why-item{font-size:10px;color:var(--muted);display:flex;gap:4px;margin-bottom:1px;}
 .res-why-item .dot{color:var(--green);}
-
-/* ── 매물 탭 ── */
 .prop-layout{flex:1;display:flex;overflow:hidden;}
 .prop-list-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.list-tb{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
-.list-tb select,.list-tb input{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 9px;font-size:11px;font-family:inherit;}
-.list-tb input{width:150px;}
+.type-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;background:var(--panel);}
+.tt{padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;}
+.tt.on{color:var(--cyan);border-bottom-color:var(--cyan);}
+.list-tb{padding:7px 12px;border-bottom:1px solid var(--border);display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
+.list-tb select,.list-tb input{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 8px;font-size:11px;font-family:inherit;}
+.list-tb input{width:130px;}
 .lc{margin-left:auto;font-size:11px;color:var(--muted);}
 .lc strong{color:var(--cyan);}
 .tw{flex:1;overflow:auto;}
 .tw::-webkit-scrollbar{width:4px;height:4px;}
 .tw::-webkit-scrollbar-thumb{background:var(--border);}
-table{width:100%;border-collapse:collapse;font-size:11px;min-width:1000px;}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:1050px;}
 thead th{background:var(--panel);padding:7px 9px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;z-index:5;}
 tbody tr{border-bottom:1px solid rgba(30,58,95,.35);cursor:pointer;transition:background .1s;}
 tbody tr:hover{background:rgba(255,107,53,.07);}
@@ -130,8 +118,12 @@ tbody td{padding:7px 9px;vertical-align:middle;}
 .b-lived{background:rgba(100,120,150,.12);color:var(--muted);}
 .b-r{background:rgba(155,93,229,.15);color:var(--purple);}
 .ph{font-weight:700;color:var(--orange);}
-
-/* 매물 폼 패널 */
+.price-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;}
+.pb-1s{background:rgba(45,198,83,.15);color:var(--green);}
+.pb-1e{background:rgba(0,180,216,.15);color:var(--cyan);}
+.pb-2s{background:rgba(255,107,53,.15);color:var(--orange);}
+.pb-2e{background:rgba(244,164,66,.15);color:var(--gold);}
+.pb-3p{background:rgba(155,93,229,.15);color:var(--purple);}
 .prop-form-panel{width:300px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
 .pfp-title{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--orange);display:flex;align-items:center;justify-content:space-between;}
 .pfp-body{flex:1;overflow-y:auto;padding:12px 14px;}
@@ -153,8 +145,6 @@ tbody td{padding:7px 9px;vertical-align:middle;}
 .pfp-foot{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:6px;}
 .pfp-save{flex:1;background:var(--orange);border:none;color:#fff;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .pfp-del{background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.3);color:var(--red);border-radius:7px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-
-/* ── 고객 탭 ── */
 .cdb-layout{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .cdb-tb{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-shrink:0;align-items:center;flex-wrap:wrap;}
 .cdb-tb select,.cdb-tb input{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 9px;font-size:11px;font-family:inherit;}
@@ -162,21 +152,9 @@ tbody td{padding:7px 9px;vertical-align:middle;}
 .cdb-wrap{flex:1;overflow:auto;}
 .cdb-wrap::-webkit-scrollbar{width:4px;height:4px;}
 .cdb-wrap::-webkit-scrollbar-thumb{background:var(--border);}
-
-/* ── 지도 ── */
-.map-g{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px;}
-.mg-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 24px;max-width:540px;width:100%;text-align:center;}
-.mg-step{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:12px 15px;max-width:540px;width:100%;display:flex;gap:12px;align-items:flex-start;}
-.sn{background:var(--orange);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;flex-shrink:0;margin-top:2px;}
-.st{font-weight:700;font-size:12px;margin-bottom:2px;}
-.sd{font-size:11px;color:var(--muted);line-height:1.7;}
-
-/* 모달 */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-bg.on{display:flex;}
 .modal{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:22px;max-width:460px;width:100%;max-height:85vh;overflow-y:auto;position:relative;}
-.modal::-webkit-scrollbar{width:4px;}
-.modal::-webkit-scrollbar-thumb{background:var(--border);}
 .modal-x{position:absolute;top:10px;right:12px;background:var(--card);border:1px solid var(--border);color:var(--muted);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;}
 .modal-name{font-size:17px;font-weight:900;color:var(--orange);margin-bottom:3px;}
 .modal-addr{font-size:11px;color:var(--muted);margin-bottom:14px;}
@@ -189,11 +167,7 @@ tbody td{padding:7px 9px;vertical-align:middle;}
 .miv{font-size:12px;font-weight:700;}
 .miv.or{color:var(--orange);}
 .miv.gr{color:var(--green);}
-.miv.pu{color:var(--purple);}
 .modal-feat{background:rgba(244,164,66,.08);border:1px solid rgba(244,164,66,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--gold);line-height:1.7;}
-.modal-mapbtn{display:block;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;text-decoration:none;text-align:center;}
-
-/* 커스텀 confirm */
 .cfm-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;display:none;align-items:center;justify-content:center;}
 .cfm-bg.on{display:flex;}
 .cfm-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px 28px;min-width:260px;text-align:center;}
@@ -201,19 +175,13 @@ tbody td{padding:7px 9px;vertical-align:middle;}
 .cfm-btns{display:flex;gap:8px;justify-content:center;}
 .cfm-ok{background:var(--red);border:none;color:#fff;border-radius:7px;padding:9px 24px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
 .cfm-cancel{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:9px 24px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
-
-/* toast */
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--green);color:#fff;padding:9px 20px;border-radius:7px;font-size:12px;font-weight:700;z-index:9999;transition:transform .25s;pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.err{background:var(--red);}
-
-code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange);font-size:10px;}
 @keyframes bounce{0%{transform:translateY(0) scale(1);}30%{transform:translateY(-12px) scale(1.1);}60%{transform:translateY(-4px) scale(1.05);}100%{transform:translateY(0) scale(1);}}
 </style>
 </head>
 <body>
-
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">🐬 돌고래<span>하우스</span></div>
   <div class="logo-sub">구옥 매물 매칭</div>
@@ -227,30 +195,20 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
     <button class="tbtn primary" onclick="openPropForm(null)">＋ 매물 등록</button>
   </div>
 </div>
-
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" id="tabMatch" onclick="goTab('match',this)">🎯 손님 매칭</div>
   <div class="tab" id="tabProp" onclick="goTab('prop',this)">🏠 매물 관리</div>
   <div class="tab" id="tabCust" onclick="goTab('cust',this)">👥 고객 DB</div>
   <div class="tab" id="tabMap" onclick="goTab('map',this)">🗺️ 매물 지도</div>
 </div>
-
 <div class="content">
-
-  <!-- ── 매칭 탭 ── -->
   <div class="pane active" id="paneMatch">
     <div class="match-layout">
-
-      <!-- 고객 목록 -->
       <div class="cust-panel">
         <div class="cust-head">
-          <div class="cust-head-title">
-            👥 고객 목록
-            <span id="custListCount" style="font-size:10px;color:var(--muted)">0명</span>
-          </div>
+          <div class="cust-head-title">👥 고객 목록<span id="custListCount" style="font-size:10px;color:var(--muted)">0명</span></div>
           <input class="cust-search" id="custSearch" placeholder="🔍 번호/지역 검색" oninput="renderCustList()">
-          <div class="cust-filter" id="custFilter">
+          <div class="cust-filter">
             <button class="cf on" onclick="toggleCF(this,'')">전체</button>
             <button class="cf" onclick="toggleCF(this,'🔴')">🔴최우선</button>
             <button class="cf" onclick="toggleCF(this,'🟠')">🟠상</button>
@@ -259,15 +217,13 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
         </div>
         <div class="cust-list" id="custList"></div>
       </div>
-
-      <!-- 매칭 센터 -->
       <div class="match-center">
         <div class="match-center-top">
           <div class="no-sel" id="noSel">← 왼쪽에서 손님을 선택하면<br>자동으로 매물을 매칭해드립니다</div>
           <div class="sel-cust" id="selCust">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
               <div>
-                <div style="font-size:14px;font-weight:900;color:var(--text)" id="scPhone"></div>
+                <div style="font-size:14px;font-weight:900" id="scPhone"></div>
                 <div style="font-size:11px;color:var(--muted)" id="scRegion"></div>
               </div>
               <span class="cc-badge" id="scBadge"></span>
@@ -281,33 +237,36 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
           </div>
         </div>
         <div class="match-results" id="matchResults">
-          <div style="text-align:center;padding:50px;color:var(--muted);font-size:12px">
-            손님을 선택하고 매칭 실행 버튼을 눌러주세요
-          </div>
+          <div style="text-align:center;padding:50px;color:var(--muted);font-size:12px">손님을 선택하고 매칭 실행 버튼을 눌러주세요</div>
         </div>
       </div>
-
     </div>
   </div>
-
-  <!-- ── 매물 관리 탭 ── -->
   <div class="pane" id="paneProp">
     <div class="prop-layout">
       <div class="prop-list-wrap">
+        <div class="type-tabs">
+          <button class="tt on" onclick="setTypeTab('',this)">전체</button>
+          <button class="tt" onclick="setTypeTab('주택',this)">🏠 주택</button>
+          <button class="tt" onclick="setTypeTab('오피',this)">🏢 오피스텔</button>
+          <button class="tt" onclick="setTypeTab('아파트',this)">🏬 아파트</button>
+          <button class="tt" onclick="setTypeTab('공실',this)">🟢 공실만</button>
+          <button class="tt" onclick="setTypeTab('R',this)">💜 R포함</button>
+        </div>
         <div class="list-tb">
-          <select id="flType" onchange="renderPropList()">
-            <option value="">전체 유형</option>
-            <option>주택</option><option>오피</option><option>아파트</option><option>단독주택</option>
-          </select>
           <select id="flRegion" onchange="renderPropList()">
             <option value="">전체 지역</option>
             <option>인천</option><option>서울</option><option>경기</option><option>부천</option>
-            <option>안산</option><option>수원</option><option>파주</option><option>평택</option><option>안양</option>
+            <option>안산</option><option>수원</option><option>파주</option>
+            <option>부평구</option><option>계양구</option><option>남동구</option><option>미추홀구</option><option>서구</option>
           </select>
-          <select id="flEmpty" onchange="renderPropList()">
-            <option value="">공실+거주</option>
-            <option value="공실">공실만</option>
-            <option value="거주">거주중만</option>
+          <select id="flPrice" onchange="renderPropList()">
+            <option value="">전체 가격</option>
+            <option value="1s">1억 초반 (~1.3억)</option>
+            <option value="1e">1억 후반 (1.3~2억)</option>
+            <option value="2s">2억 초반 (2~2.5억)</option>
+            <option value="2e">2억 후반 (2.5~3억)</option>
+            <option value="3p">3억 이상</option>
           </select>
           <input id="flKw" placeholder="🔍 단지명/주소 검색" oninput="renderPropList()">
           <span class="lc" id="propListCount"><strong>0</strong>건</span>
@@ -316,42 +275,29 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
           <table>
             <thead><tr>
               <th>유형</th><th>단지명</th><th>주소</th><th>구조</th><th>년식</th>
-              <th>매매가</th><th>대출비율</th><th>상태</th><th>R</th><th>특징</th>
+              <th>매매가</th><th>가격대</th><th>대출비율</th><th>상태</th><th>R</th><th>특징</th>
             </tr></thead>
             <tbody id="propBody"></tbody>
           </table>
         </div>
       </div>
-      <div class="prop-form-panel" id="propFormPanel">
+      <div class="prop-form-panel">
         <div class="pfp-title">
           <span id="pfpTitle">➕ 매물 등록</span>
           <button class="tbtn" style="font-size:10px" onclick="openPropForm(null)">새로 입력</button>
         </div>
         <div class="pfp-body">
           <input type="hidden" id="pfId">
-          <div class="ff"><label>유형</label>
-            <select id="pfType"><option>주택</option><option>오피</option><option>아파트</option><option>단독주택</option></select>
-          </div>
+          <div class="ff"><label>유형</label><select id="pfType"><option>주택</option><option>오피</option><option>아파트</option><option>단독주택</option></select></div>
           <div class="ff"><label>단지/건물명 *</label><input id="pfName" placeholder="예: 하늘빌2차"></div>
-          <div class="ff"><label>주소 *</label><input id="pfAddr" placeholder="예: 인천 미추홀구 도화동 440-7"></div>
+          <div class="ff"><label>주소 *</label><input id="pfAddr" placeholder="예: 인천 부평구 부평동 379-11"></div>
           <div class="ff-row">
-            <div class="ff"><label>방/욕실</label>
-              <select id="pfStruct">
-                <option>방1화1</option><option>방2화1</option><option>방3화1</option>
-                <option selected>방3화2</option><option>방4화2</option><option>방5화2</option>
-              </select>
-            </div>
-            <div class="ff"><label>년식(2자리)</label><input id="pfYear" type="number" placeholder="예: 15" min="0" max="25"></div>
+            <div class="ff"><label>방/욕실</label><select id="pfStruct"><option>방1화1</option><option>방2화1</option><option>방3화1</option><option selected>방3화2</option><option>방4화2</option></select></div>
+            <div class="ff"><label>년식</label><input id="pfYear" type="number" placeholder="예: 15"></div>
           </div>
           <div class="ff-row">
             <div class="ff"><label>매매가(만원) *</label><input id="pfPrice" type="number" placeholder="예: 17000"></div>
-            <div class="ff"><label>대출비율</label>
-              <select id="pfLoan">
-                <option>권9:1</option><option selected>권8:2</option><option>권7:3</option>
-                <option>권6:4</option><option>R5</option><option>R7</option>
-                <option>R8</option><option>R10</option><option>R15</option><option>R20</option>
-              </select>
-            </div>
+            <div class="ff"><label>대출비율</label><select id="pfLoan"><option>권9:1</option><option selected>권8:2</option><option>권7:3</option><option>권6:4</option><option>R5</option><option>R7</option><option>R8</option><option>R10</option><option>R15</option><option>R20</option></select></div>
           </div>
           <div class="ff"><label>공실 여부</label>
             <div class="ox">
@@ -360,13 +306,8 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
             </div>
             <input type="hidden" id="pfEmpty" value="X">
           </div>
-          <div class="ff"><label>R 금액 (단위: 100만원)</label>
-            <input id="pfR" type="number" placeholder="예: 10 = 1000만원" oninput="showRHint(this.value)">
-            <span style="font-size:10px;color:var(--muted)" id="pfRHint"></span>
-          </div>
-          <div class="ff"><label>특징/메모</label>
-            <textarea id="pfFeat" placeholder="뷰, 복층, 테라스, 역세권, 재개발 등"></textarea>
-          </div>
+          <div class="ff"><label>R 금액 (단위: 100만원)</label><input id="pfR" type="number" placeholder="10 = 1000만원" oninput="showRHint(this.value)"><span style="font-size:10px;color:var(--muted)" id="pfRHint"></span></div>
+          <div class="ff"><label>특징/메모</label><textarea id="pfFeat" placeholder="뷰, 복층, 역세권 등"></textarea></div>
         </div>
         <div class="pfp-foot">
           <button class="pfp-del" id="pfDelBtn" style="display:none" onclick="delProp()">삭제</button>
@@ -375,40 +316,28 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
       </div>
     </div>
   </div>
-
-  <!-- ── 고객 DB 탭 ── -->
   <div class="pane" id="paneCust">
     <div class="cdb-layout">
       <div class="cdb-tb">
         <select id="cdbPri" onchange="renderCustDB()">
           <option value="">전체 우선순위</option>
-          <option value="🔴">🔴 최우선/연락필요</option>
-          <option value="🟠">🟠 상/매물찾기</option>
-          <option value="🟡">🟡 중/컨설팅</option>
-          <option value="❌">❌ 불가/지역불가</option>
-          <option value="✅">✅ 계약완료</option>
+          <option value="🔴">🔴 최우선</option><option value="🟠">🟠 상</option>
+          <option value="🟡">🟡 중</option><option value="❌">❌ 불가</option><option value="✅">✅ 계약완료</option>
         </select>
         <input id="cdbKw" placeholder="🔍 번호/지역/메모 검색" oninput="renderCustDB()" style="width:200px">
         <span class="lc" id="cdbCount"><strong>0</strong>명</span>
-        <button class="tbtn" style="margin-left:auto" onclick="document.getElementById('xlsxCust').click()">📂 엑셀 다시 불러오기</button>
+        <button class="tbtn" style="margin-left:auto" onclick="document.getElementById('xlsxCust').click()">📂 엑셀 불러오기</button>
       </div>
       <div class="cdb-wrap">
         <table>
-          <thead><tr>
-            <th>번호</th><th>문의일</th><th>연락처</th><th>유입</th><th>희망지역</th>
-            <th>신용KCB</th><th>기대출</th><th>가용현금</th><th>무입주</th>
-            <th>우선순위</th><th>특이사항</th><th>이사일정</th><th>관리현황</th>
-          </tr></thead>
+          <thead><tr><th>번호</th><th>문의일</th><th>연락처</th><th>유입</th><th>희망지역</th><th>신용KCB</th><th>기대출</th><th>가용현금</th><th>무입주</th><th>우선순위</th><th>특이사항</th><th>이사일정</th><th>관리현황</th></tr></thead>
           <tbody id="custBody"></tbody>
         </table>
       </div>
     </div>
   </div>
-
-  <!-- ── 지도 탭 ── -->
   <div class="pane" id="paneMap">
     <div style="flex:1;display:flex;overflow:hidden;">
-      <!-- 지도 왼쪽 패널 -->
       <div style="width:260px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;">
         <div style="padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
           <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:7px;">🗺️ 매물 지도</div>
@@ -419,37 +348,27 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
           </div>
           <select id="mapRegionFilter" onchange="renderMap()" style="background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;width:100%;">
             <option value="">전체 지역</option>
-            <option>인천</option><option>서울</option><option>경기</option>
-            <option>부천</option><option>안산</option><option>수원</option><option>파주</option>
+            <option>인천</option><option>서울</option><option>경기</option><option>부천</option>
+            <option>부평구</option><option>계양구</option><option>남동구</option><option>미추홀구</option>
           </select>
         </div>
         <div style="flex:1;overflow-y:auto;" id="mapPropList"></div>
-        <div style="padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;">
+        <div style="padding:10px 12px;border-top:1px solid var(--border);">
           <button onclick="doExport()" style="background:var(--orange);border:none;color:#fff;border-radius:6px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">📥 엑셀 내보내기</button>
         </div>
       </div>
-      <!-- 지도 -->
       <div id="mapEl" style="flex:1;"></div>
-      <!-- 지도 상세 -->
       <div id="mapDetail" style="width:250px;background:var(--panel);border-left:1px solid var(--border);display:none;flex-direction:column;overflow:hidden;flex-shrink:0;position:relative;">
-        <button onclick="document.getElementById('mapDetail').style.display='none'" style="position:absolute;top:8px;right:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;z-index:5;">✕</button>
+        <button onclick="document.getElementById('mapDetail').style.display='none'" style="position:absolute;top:8px;right:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:12px;z-index:5;">✕</button>
         <div id="mapDetailContent" style="overflow-y:auto;flex:1;padding:14px;"></div>
         <button id="mapEditBtn" style="margin:0 12px 12px;background:var(--orange);border:none;color:#fff;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ 매물 수정</button>
       </div>
     </div>
   </div>
-
 </div>
-
-<!-- 상세 모달 -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <button class="modal-x" onclick="closeModal()">✕</button>
-    <div id="modalContent"></div>
-  </div>
+  <div class="modal"><button class="modal-x" onclick="closeModal()">✕</button><div id="modalContent"></div></div>
 </div>
-
-<!-- 커스텀 confirm -->
 <div class="cfm-bg" id="cfmBg">
   <div class="cfm-box">
     <div class="cfm-msg" id="cfmMsg"></div>
@@ -459,13 +378,9 @@ code{background:var(--card);padding:1px 5px;border-radius:4px;color:var(--orange
     </div>
   </div>
 </div>
-
 <div class="toast" id="toastEl"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-// 초기 매물 데이터 (속지에서 파싱)
-// ══════════════════════════════════════════════════════════
 const INIT_PROPS = [
   {id:1,type:'주택',name:'하늘빌2차',addr:'인천 미추홀구 도화동 440-7',struct:'방3화2',year:11,price:14800,loan:'권7:3',empty:false,r:0,feat:''},
   {id:2,type:'주택',name:'골드프라임',addr:'인천 미추홀구 도화동 479',struct:'방3화2',year:16,price:17500,loan:'권8:2',empty:false,r:0,feat:'뷰'},
@@ -507,7 +422,6 @@ const INIT_PROPS = [
   {id:38,type:'아파트',name:'청도스카이뷰',addr:'인천 미추홀구 주안동 980-6',struct:'방3화1',year:4,price:18000,loan:'R5',empty:false,r:5,feat:'석암초 3분'},
   {id:39,type:'아파트',name:'더미추홀퍼스트',addr:'인천 미추홀구 숭의동 121-7',struct:'방3화2',year:20,price:26500,loan:'권8:2',empty:false,r:0,feat:''},
   {id:40,type:'아파트',name:'한우리',addr:'인천 미추홀구 숭의동 1-10',struct:'방3화1',year:15,price:16500,loan:'권8:2',empty:false,r:0,feat:''},
-  // 기타 지역
   {id:41,type:'주택',name:'삼각산빌리지',addr:'서울 강북구 미아동 791-3286',struct:'방3화1',year:8,price:17000,loan:'권9:1',empty:false,r:0,feat:'재개발확정'},
   {id:42,type:'주택',name:'덕용팰리스',addr:'서울 강서구 화곡동 360-2',struct:'방2화1',year:19,price:21000,loan:'권7:3',empty:true,r:0,feat:''},
   {id:43,type:'주택',name:'현대그린빌라',addr:'서울 구로구 궁동 278-9',struct:'방3화1',year:94,price:21000,loan:'권8:2',empty:true,r:0,feat:''},
@@ -522,695 +436,1029 @@ const INIT_PROPS = [
   {id:52,type:'아파트',name:'룩소르6차',addr:'인천 남동구 구월동 1129-8',struct:'방3화2',year:16,price:17000,loan:'R10',empty:false,r:10,feat:'예술회관 5분 뷰'},
   {id:53,type:'아파트',name:'위더스타운',addr:'경기 부천시 심정동 180-38',struct:'방3화2',year:17,price:18000,loan:'R5',empty:false,r:5,feat:'백운역 도보3분 뷰'},
   {id:54,type:'주택',name:'대성쉐르빌',addr:'경기 부천시 고강동 364-5',struct:'방3화2',year:16,price:20000,loan:'R8',empty:true,r:8,feat:'리모델링 공중'},
+  // ── 추가매물 604건 ──
+{id:55,type:'오피',name:'청담플러리스402엘유오피',addr:'인천 부평구 부평동 379-11',struct:'방3화2',year:14,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 골프전역10분'},
+  {id:56,type:'오피',name:'우주마루2차A동304엘유오피',addr:'인천 부평구 부평동 379-104',struct:'방3화2',year:12,price:18500,loan:'R10',empty:false,r:10,feat:'기본상태 주부 베란다2'},
+  {id:57,type:'오피',name:'청솔스타빌602엘유오피',addr:'인천 부평구 부평동 379-3',struct:'방2화1',year:12,price:15000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 채광굿'},
+  {id:58,type:'오피',name:'무한1003엘유주택',addr:'인천 부평구 부평동 379-52',struct:'방3화1',year:14,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 구조채광굿 현#0329#'},
+  {id:59,type:'오피',name:'투엠레뷰504엘유오피',addr:'인천 부평구 부평동 379-56',struct:'방2화1',year:13,price:14000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 반채광'},
+  {id:60,type:'오피',name:'케이아파트2동201엘유주택',addr:'인천 부평구 부평동 379-77',struct:'방3화2',year:14,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 현#7942'},
+  {id:61,type:'오피',name:'케이아파트2동203엘유오피',addr:'인천 부평구 부평동 379-77',struct:'방24화1',year:14,price:17500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 정남향 구조굿 주말만가능'},
+  {id:62,type:'오피',name:'케이아파트2동1302엘유주택',addr:'인천 부평구 부평동 379-77',struct:'방3화2',year:14,price:21700,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 정남향 통배'},
+  {id:63,type:'오피',name:'케이아파트E1동201엘유오피',addr:'인천 부평구 부평동 379-78',struct:'방3화2',year:12,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 채광약함'},
+  {id:64,type:'오피',name:'베네시안5차701엘유주택',addr:'인천 부평구 부평동 379-82',struct:'방3화2',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 현#0630#'},
+  {id:65,type:'오피',name:'로뎀1차301엘유오피',addr:'인천 부평구 부평동 377-17',struct:'방3화2',year:14,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 채광좋음'},
+  {id:66,type:'오피',name:'로뎀1차704엘유주택',addr:'인천 부평구 부평동 377-17',struct:'방3화1',year:14,price:18500,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 거실트임 현7201'},
+  {id:67,type:'오피',name:'로뎀1차1002엘유주택',addr:'인천 부평구 부평동 377-17',struct:'방3화1',year:14,price:17500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 환함'},
+  {id:68,type:'주택',name:'케림202엘유',addr:'인천 부평구 부평동 377-35',struct:'방2화1',year:2,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리'},
+  {id:69,type:'오피',name:'엘도라도902엘유오피',addr:'인천 부평구 부평동 377-5',struct:'방3화2',year:11,price:19000,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 통배 막힘없음'},
+  {id:70,type:'오피',name:'호향복A동501엘유오피',addr:'인천 부평구 부평동 376-1',struct:'방3화2',year:15,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 남향 이사10월'},
+  {id:71,type:'오피',name:'호향복B동503엘유오피',addr:'인천 부평구 부평동 376-1',struct:'방3화2',year:15,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 채광구조굿 현#3761'},
+  {id:72,type:'오피',name:'피렌체201엘유오피',addr:'인천 부평구 부평동 375-111',struct:'방3화2',year:14,price:21000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:73,type:'주택',name:'태라스빌2동201 근생',addr:'인천 부평구 부평동 375-139',struct:'방3화1',year:11,price:13000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 남향 상태좋음'},
+  {id:74,type:'주택',name:'태라스빌2동301',addr:'인천 부평구 부평동 375-139',struct:'방3화1',year:11,price:15800,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 남향 밝음'},
+  {id:75,type:'오피',name:'예승504엘유오피',addr:'인천 부평구 부평동 375-2',struct:'방3화1',year:12,price:19000,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 정남향'},
+  {id:76,type:'오피',name:'예승1505엘유주택',addr:'인천 부평구 부평동 375-2',struct:'방3화1',year:12,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올수리에정 막힘없음 현#0610'},
+  {id:77,type:'주택',name:'부홍하이즈빌라402',addr:'인천 부평구 부평동 375-87',struct:'방2화1',year:1,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리'},
+  {id:78,type:'오피',name:'솔레어1301엘유오피',addr:'인천 부평구 부평동 373-5',struct:'방3화2',year:16,price:23300,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 뻥뷰 막힘없음'},
+  {id:79,type:'오피',name:'진흥스타홈601엘유오피',addr:'인천 부평구 부평동 370-40',struct:'방3화2',year:18,price:24000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:80,type:'오피',name:'진흥스타홈1203엘유오피',addr:'인천 부평구 부평동 370-40',struct:'방3화2',year:18,price:22500,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 뻥뷰 현#7890'},
+  {id:81,type:'오피',name:'진흥스티홈1306엘유오피',addr:'인천 부평구 부평동 370-42',struct:'방3화2',year:18,price:26000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 남서향'},
+  {id:82,type:'오피',name:'리마즈702엘유오피',addr:'인천 부평구 부평동 396-2',struct:'방3화2',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 남서향'},
+  {id:83,type:'주택',name:'정곡빌리지503엘유',addr:'인천 부평구 부평동 396-52',struct:'방2화1',year:1,price:8500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:84,type:'오피',name:'해피플러스501엘유오피',addr:'인천 부평구 부평동 397-33',struct:'방3화2',year:18,price:16500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:85,type:'주택',name:'주호A동503',addr:'인천 부평구 부평동 399-17',struct:'방2화1',year:2,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올수리 통배란다 채광굿'},
+  {id:86,type:'주택',name:'세중탑스빌B01엘유',addr:'인천 부평구 부평동 399-19',struct:'방2화1',year:0,price:6000,loan:'권8:2',empty:false,r:0,feat:'올수리 채광통좋음 게단넓은반지하'},
+  {id:87,type:'주택',name:'양치타운201엘유',addr:'인천 부평구 부평동 399-21',struct:'방3화1',year:2,price:10000,loan:'권8:2',empty:true,r:0,feat:'올수리 공실'},
+  {id:88,type:'아파트',name:'지선아파트403엘유',addr:'인천 부평구 부평동 400-11',struct:'방3화1',year:2,price:13500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:89,type:'주택',name:'삼성타운B동202',addr:'인천 부평구 부평동 400-12',struct:'방3화1',year:1,price:11500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:90,type:'주택',name:'대신탑스빌1동401',addr:'인천 부평구 부평동 400-19',struct:'방2화1',year:2,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리 남향 채광좋음 상태최상 비번보유'},
+  {id:91,type:'주택',name:'대신탑스빌2동302',addr:'인천 부평구 부평동 400-20',struct:'방2화1',year:1,price:10900,loan:'권8:2',empty:false,r:0,feat:'올수리 통배란다 채광구조쫭'},
+  {id:92,type:'주택',name:'대신탑스빌2동402엘유',addr:'인천 부평구 부평동 400-20',struct:'방2화1',year:1,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리 사방해쫭'},
+  {id:93,type:'주택',name:'현대A동303엘유',addr:'인천 부평구 부평동 400-30',struct:'방2화1',year:1,price:10600,loan:'권8:2',empty:false,r:0,feat:'특올수리 넓은방2'},
+  {id:94,type:'주택',name:'삼성타운A동502엘유',addr:'인천 부평구 부평동 400-3',struct:'방2화1',year:1,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올수리'},
+  {id:95,type:'주택',name:'맹신402엘유',addr:'인천 부평구 부평동 400-6',struct:'방2화1',year:1,price:10500,loan:'권8:2',empty:false,r:0,feat:'올수리 시장역5분'},
+  {id:96,type:'오피',name:'더뷰스테이트403엘유오피',addr:'인천 부평구 부평동 401-2',struct:'방3화1',year:17,price:17000,loan:'R3',empty:false,r:3,feat:'특올수리 주부 동향 막힘없음 현#0135'},
+  {id:97,type:'오피',name:'뉴베베스트101동602엘유주택',addr:'인천 부평구 부평동 401-20',struct:'방3화1',year:10,price:16000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 상태꽤굿 트인집 비번보유'},
+  {id:98,type:'오피',name:'뉴베베스트E102동3동41엘유주택',addr:'인천 부평구 부평동 401-63',struct:'방3화1',year:12,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:99,type:'오피',name:'플러스케슬601엘유주택',addr:'인천 부평구 부평동 401-35',struct:'방3화2',year:10,price:20500,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 남향 막힘없음 베란다2 현#0610'},
+  {id:100,type:'오피',name:'프라디온603엘유오피',addr:'인천 부평구 부평동 401-6',struct:'방3화1',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 동향'},
+  {id:101,type:'주택',name:'상우502',addr:'인천 부평구 부평동 401-8',struct:'방3화2',year:2,price:11700,loan:'권8:2',empty:false,r:0,feat:'특올수리 통배란다'},
+  {id:102,type:'오피',name:'플하우스801엘유오피',addr:'인천 부평구 부평동 406-11',struct:'방3화2',year:16,price:18500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 5시이후 볼수있음 일요일은가능'},
+  {id:103,type:'주택',name:'케림501엘유',addr:'인천 부평구 부평동 406-17',struct:'방2화1',year:2,price:10700,loan:'권8:2',empty:false,r:0,feat:'현상태 통배란다 남향'},
+  {id:104,type:'주택',name:'아미파크1402엘유',addr:'인천 부평구 부평동 406-37',struct:'방3화2',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 사방트임 주말만가능'},
+  {id:105,type:'오피',name:'더위즈502엘유오피',addr:'인천 부평구 부평동 406-42',struct:'방2화1',year:16,price:15700,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 서향 막힘없음'},
+  {id:106,type:'오피',name:'더위즈803엘유오피',addr:'인천 부평구 부평동 406-42',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 막힘없음'},
+  {id:107,type:'오피',name:'타워팰리스A동301엘유오피',addr:'인천 부평구 부평동 407-5',struct:'방3화1',year:17,price:17500,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 현#4075'},
+  {id:108,type:'오피',name:'타워팰리스A동206엘유오피',addr:'인천 부평구 부평동 407-5',struct:'방3화2',year:17,price:17500,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 남향'},
+  {id:109,type:'오피',name:'타워팰리스A동306엘유오피',addr:'인천 부평구 부평동 407-5',struct:'방3화2',year:17,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:110,type:'오피',name:'타워팰리스A동603엘유오피',addr:'인천 부평구 부평동 407-5',struct:'방3화1',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:111,type:'오피',name:'타워팰리스A동1201엘유오피',addr:'인천 부평구 부평동 407-5',struct:'방3화2',year:17,price:18200,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 꺠끗함'},
+  {id:112,type:'오피',name:'타워팰리스B동306엘유오피',addr:'인천 부평구 부평동 407-9',struct:'방3화2',year:17,price:18000,loan:'권8:2',empty:true,r:0,feat:'기본상태 주부 공실'},
+  {id:113,type:'오피',name:'타워팰리스B동406엘유오피',addr:'인천 부평구 부평동 407-9',struct:'방3화2',year:17,price:19200,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:114,type:'오피',name:'타워팰리스B동801엘유오피',addr:'인천 부평구 부평동 407-9',struct:'방3화2',year:17,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부'},
+  {id:115,type:'주택',name:'대승파인502엘유',addr:'인천 부평구 부평동 408-14',struct:'방3화1',year:2,price:9800,loan:'권8:2',empty:true,r:0,feat:'올수리 베란다2 채광쫭좋음 6중중5층 공실'},
+  {id:116,type:'아파트',name:'수림아파트 비동601',addr:'인천 부평구 부평동 408-31',struct:'방3화1',year:3,price:9500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:117,type:'오피',name:'위너스301엘유오피',addr:'인천 부평구 부평동 408-38',struct:'방3화2',year:13,price:14000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:118,type:'오피',name:'캐슬베리1401엘유주택',addr:'인천 부평구 부평동 408-4',struct:'방1.5화1',year:12,price:13000,loan:'권8:2',empty:false,r:0,feat:'기본상태 대형거실 대형방 테라스6평 막힘없음'},
+  {id:119,type:'오피',name:'그랑빌1202엘유오피',addr:'인천 부평구 부평동 409-22',struct:'방3화1',year:17,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 채광굿 현#9999#'},
+  {id:120,type:'주택',name:'성지위너스104동303',addr:'인천 부평구 부평동 409-32',struct:'방2화1',year:2,price:10500,loan:'권8:2',empty:true,r:0,feat:'올수리 채광좋음 공실'},
+  {id:121,type:'오피',name:'미래안위브303엘유오피',addr:'인천 부평구 부평동 409-3',struct:'방3화2',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 현#1234'},
+  {id:122,type:'주택',name:'부홍빌라B02엘유',addr:'인천 부평구 부평동 409-33',struct:'방3화1',year:93,price:7800,loan:'권8:2',empty:false,r:0,feat:'현상태 안방남향 에어컨냉장고세탁기옵션'},
+  {id:123,type:'오피',name:'탑클래스703엘유오피',addr:'인천 부평구 부평동 409-1',struct:'방3화1',year:16,price:18000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 베란다2마혀없음 상태좋음 #0370#'},
+  {id:124,type:'오피',name:'탑클래스1302엘유오피',addr:'인천 부평구 부평동 409-1',struct:'방3화2',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 복향트임 항시봄'},
+  {id:125,type:'주택',name:'성지위너스101동501엘유',addr:'인천 부평구 부평동 409-4',struct:'방2화1',year:2,price:7700,loan:'권8:2',empty:false,r:0,feat:'올수리 채광구조쫭'},
+  {id:126,type:'주택',name:'성지위너스103동202',addr:'인천 부평구 부평동 409-5',struct:'방2화1',year:2,price:10000,loan:'권8:2',empty:false,r:0,feat:'부분수리 시장역5분'},
+  {id:127,type:'주택',name:'성지위너스103동403엘유',addr:'인천 부평구 부평동 409-5',struct:'방3화1',year:2,price:11800,loan:'권8:2',empty:false,r:0,feat:'특올수리 다중도실'},
+  {id:128,type:'오피',name:'엘루이1204엘유오피',addr:'인천 부평구 부평동 409-8',struct:'방2화1',year:20,price:16700,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 막힘없음 에어컨2대세탁기옵션'},
+  {id:129,type:'아파트',name:'신영아파트302엘유',addr:'인천 부평구 부평동 415-24',struct:'방3화2',year:1,price:12000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:130,type:'오피',name:'세일행복해1003엘유주택',addr:'인천 부평구 부평동 415-7',struct:'방3화2',year:16,price:16000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:131,type:'오피',name:'리치카운터902엘유오피',addr:'인천 부평구 부평동 416-31',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 북향 트임'},
+  {id:132,type:'오피',name:'리치카운터1403엘유오피',addr:'인천 부평구 부평동 416-31',struct:'방3화1',year:16,price:21800,loan:'R10',empty:false,r:10,feat:'특올수리 막힘X 채광좋음'},
+  {id:133,type:'오피',name:'포커스뷰401엘유오피',addr:'인천 부평구 부평동 417-13',struct:'방3화1',year:17,price:20500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 채광좋음'},
+  {id:134,type:'오피',name:'파리샹뜨401엘유오피',addr:'인천 부평구 부평동 417-16',struct:'방3화2',year:19,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 서향 막힘없음'},
+  {id:135,type:'주택',name:'해머에버401',addr:'인천 부평구 부평동 417-17',struct:'방3화1',year:14,price:23900,loan:'권8:2',empty:false,r:0,feat:'구청역5분 주거분리 오피 엘유'},
+  {id:136,type:'주택',name:'해머에버1002',addr:'인천 부평구 부평동 417-17',struct:'방3화1',year:14,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올수 주부 환함 오피 엘유'},
+  {id:137,type:'오피',name:'마이홈703엘유주택',addr:'인천 부평구 부평동 417-42',struct:'방3화1',year:13,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 주부 정남향 거실트임 구청역5분6시이후'},
+  {id:138,type:'오피',name:'시티원209오피',addr:'인천 부평구 부평동 431-22',struct:'방3화1',year:16,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 동향 내부팔꿈 테라스4평'},
+  {id:139,type:'오피',name:'DH씨밀레304엘유오피',addr:'인천 부평구 부평동 431-42',struct:'방3화1',year:15,price:21000,loan:'권8:2',empty:false,r:0,feat:'기본 남향'},
+  {id:140,type:'오피',name:'DH씨밀레1305엘유주택',addr:'인천 부평구 부평동 431-42',struct:'방3화1',year:15,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 부평시장역5분 정남향'},
+  {id:141,type:'주택',name:'에코팰리스804호',addr:'인천 부평구 부평동 433-28',struct:'방3화2',year:16,price:20500,loan:'권8:2',empty:false,r:0,feat:'특올 구청역시장역5분 채광굿'},
+  {id:142,type:'주택',name:'HB엘리레슐3차1704호',addr:'인천 부평구 부평동 433-43',struct:'방3화1',year:19,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 시장역구청역부'},
+  {id:143,type:'주택',name:'유토피아1 1401호',addr:'인천 부평구 부평동 433-47',struct:'방3화2',year:16,price:26000,loan:'권8:2',empty:false,r:0,feat:'채광구조굿 시장역10분'},
+  {id:144,type:'주택',name:'마을시피아404주택',addr:'인천 부평구 부평동 433-22',struct:'방3화1',year:15,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 현#9922#'},
+  {id:145,type:'주택',name:'행복의집 L/403',addr:'인천 부평구 부평동 433-119',struct:'방3화1',year:1,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올 환함 채광굿 구조굿'},
+  {id:146,type:'오피',name:'J미다스뷰1102오피',addr:'인천 부평구 부평동 433-120T',struct:'방3화1',year:16,price:14700,loan:'권8:2',empty:false,r:0,feat:'특올 시장역5분 채광굿'},
+  {id:147,type:'오피',name:'포커스뷰903오피',addr:'인천 부평구 부평동 433-127',struct:'방3화2',year:17,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 뻥뷰'},
+  {id:148,type:'아파트',name:'맹승아파트201',addr:'인천 부평구 부평동 433-153',struct:'방3화1',year:2,price:14500,loan:'권8:2',empty:false,r:0,feat:'특올수리 1호라7호상7분 채광굿'},
+  {id:149,type:'아파트',name:'미상아파트204',addr:'인천 부평구 부평동 433-163',struct:'방3화1',year:2,price:11800,loan:'권8:2',empty:false,r:0,feat:'특올 5년전수리'},
+  {id:150,type:'주택',name:'리코팰리스502',addr:'인천 부평구 부평동 433-164',struct:'방3화2',year:16,price:18000,loan:'권8:2',empty:false,r:0,feat:'주거분리 북향 막힘없음 오피 엘유'},
+  {id:151,type:'주택',name:'아미파크204주택',addr:'인천 부평구 부평동 433-174',struct:'방3화1',year:2,price:13500,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:152,type:'주택',name:'해피플러스901',addr:'인천 부평구 부평동 433-179',struct:'방4화2',year:12,price:28200,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 엘유주택'},
+  {id:153,type:'오피',name:'앨비스32 202오피',addr:'인천 부평구 부평동 433-180',struct:'방3화1',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:154,type:'오피',name:'앨비스32 302오피',addr:'인천 부평구 부평동 433-180',struct:'방3화2',year:16,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:155,type:'주택',name:'베네스트203',addr:'인천 부평구 부평동 433-207',struct:'방3화2',year:17,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 시장역 구청역5분'},
+  {id:156,type:'아파트',name:'쌩용아파트2동501근생',addr:'인천 부평구 부평동 433-218',struct:'방3화1',year:2,price:10000,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:157,type:'오피',name:'오델리아502오피',addr:'인천 부평구 부평동 434-1',struct:'방3화2',year:21,price:33000,loan:'권8:2',empty:false,r:0,feat:'특올 남향 주부'},
+  {id:158,type:'오피',name:'오델리아707엘유오피',addr:'인천 부평구 부평동 434-1',struct:'방3화2',year:21,price:32000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 북향막힘없음 베란다다용도실주분'},
+  {id:159,type:'오피',name:'유림홈503오피',addr:'인천 부평구 부평동 434-31',struct:'방3화1',year:12,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 엘유 시장역5분 근생'},
+  {id:160,type:'주택',name:'유림홈홈타운 801호',addr:'인천 부평구 부평동 434-31',struct:'방3화2',year:14,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 엘유 주택 시장역5분'},
+  {id:161,type:'주택',name:'유림스카이빌 401호 근생',addr:'인천 부평구 부평동 434-30',struct:'방3화2',year:12,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올 시장역5분'},
+  {id:162,type:'주택',name:'유림스카이빌1 401호',addr:'인천 부평구 부평동 434-30',struct:'방3화2',year:17,price:16000,loan:'권8:2',empty:false,r:0,feat:'부평시장구청역 10분 채광굿 북중 주부'},
+  {id:163,type:'주택',name:'센트럴 704호',addr:'인천 부평구 부평동 436-15',struct:'방3화2',year:15,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 시장역3분 오피'},
+  {id:164,type:'주택',name:'잠흥은501호',addr:'인천 부평구 부평동 433-19',struct:'방3화1',year:2,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올 구청역10분'},
+  {id:165,type:'주택',name:'긍선빌302',addr:'인천 부평구 부평동 437-7',struct:'방3화2',year:10,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 엘무 4321'},
+  {id:166,type:'아파트',name:'미상아파트셔럴빌204',addr:'인천 부평구 부평동 438-14',struct:'방3화1',year:2,price:11200,loan:'권8:2',empty:false,r:0,feat:'특올 시장역5분'},
+  {id:167,type:'주택',name:'대경503',addr:'인천 부평구 부평동 438-29',struct:'방2화1',year:2,price:10500,loan:'권8:2',empty:false,r:0,feat:'올수리'},
+  {id:168,type:'오피',name:'태강씨티1201엘유주택',addr:'인천 부평구 부평동 439-2',struct:'방3화2',year:18,price:26000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 북향 뻥뷰 지하주차장 상태굿'},
+  {id:169,type:'오피',name:'센트럴타워305엘유오피',addr:'인천 부평구 부평동 441-10',struct:'방3화2',year:15,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:170,type:'오피',name:'센트럴타워905오피',addr:'인천 부평구 부평동 441-10',struct:'방3화2',year:15,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:171,type:'주택',name:'센트럴타워1004',addr:'인천 부평구 부평동 441-2',struct:'방3화2',year:15,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 메2 블랙마장 채광구조굿'},
+  {id:172,type:'주택',name:'경남해피타운E203호',addr:'인천 부평구 부평동 441-10',struct:'방3화2',year:16,price:25500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 엘유 오피 현#4700'},
+  {id:173,type:'오피',name:'경남해피타운901엘유오피',addr:'인천 부평구 부평동 441-10',struct:'방3화1',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'기본 시장역5분'},
+  {id:174,type:'오피',name:'경남해피타운1201엘유오피',addr:'인천 부평구 부평동 441-10',struct:'방3화2',year:16,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 시방트임 통배1 작은배1'},
+  {id:175,type:'주택',name:'리코팰리스303',addr:'인천 부평구 부평동 441-22',struct:'방3화2',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올 현#7925#'},
+  {id:176,type:'주택',name:'리코팰리스901',addr:'인천 부평구 부평동 441-20',struct:'방3화2',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'시장역5분 채광굿 주말예만시전예약'},
+  {id:177,type:'오피',name:'무한래뷰402오피',addr:'인천 부평구 부평동 442-18',struct:'방3화1',year:12,price:17500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 남동향'},
+  {id:178,type:'주택',name:'성진203엘유근생',addr:'인천 부평구 부평동 444-6',struct:'방2화1',year:13,price:9000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:179,type:'오피',name:'시티원209오피',addr:'인천 부평구 부평동 431-22',struct:'방3화1',year:16,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 동향 내부팔꿈 테라스4평'},
+  {id:180,type:'오피',name:'오달리아502오피',addr:'인천 부평구 부평동 434-1',struct:'방3화2',year:21,price:33000,loan:'권8:2',empty:false,r:0,feat:'특올 남향 주부'},
+  {id:181,type:'주택',name:'해솔파크빌2차3803',addr:'인천 부평구 부평동 450-11',struct:'방3화1',year:15,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 대형발코니 랜트리2개 항시볼수있음 오피'},
+  {id:182,type:'아파트',name:'고려아파트3차2동401',addr:'인천 부평구 부평동 450-36',struct:'방2화1',year:1,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 풀옵션'},
+  {id:183,type:'오피',name:'앰타워7차211호오피',addr:'인천 부평구 부평동 451-30',struct:'방3화1',year:16,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 시장역5분 항시봄'},
+  {id:184,type:'주택',name:'앰타워7차313',addr:'인천 부평구 부평동 451-30',struct:'방3화2',year:16,price:29200,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 남향 엘유 오피'},
+  {id:185,type:'주택',name:'앰타워7차505',addr:'인천 부평구 부평동 451-30',struct:'방3화2',year:17,price:27000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 테라스쿰'},
+  {id:186,type:'오피',name:'앰타워7차806오피',addr:'인천 부평구 부평동 451-30',struct:'방3화2',year:17,price:27500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 테라스쿰'},
+  {id:187,type:'오피',name:'앰타워7차1105오피',addr:'인천 부평구 부평동 451-30',struct:'방3화2',year:17,price:32000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 대형베란다 랜트리 이사26년6월'},
+  {id:188,type:'오피',name:'앰타워7차1401오피',addr:'인천 부평구 부평동 451-30',struct:'방3화2',year:14,price:35000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:189,type:'오피',name:'센트럼뷰1차1301오피',addr:'인천 부평구 부평동 451-65',struct:'방4화2',year:16,price:30000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 동향 엘유'},
+  {id:190,type:'주택',name:'건영401',addr:'인천 부평구 부평동 452-1',struct:'방3화1',year:2,price:13200,loan:'권8:2',empty:false,r:0,feat:'주분기 채광구조굿 부평역10분'},
+  {id:191,type:'주택',name:'블루망B동1503',addr:'인천 부평구 부평동 452-11',struct:'방3화1',year:16,price:20200,loan:'권8:2',empty:false,r:0,feat:'특올 주택'},
+  {id:192,type:'주택',name:'블루망B동806',addr:'인천 부평구 부평동 452-26',struct:'방3화2',year:16,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 남향'},
+  {id:193,type:'주택',name:'청솔301',addr:'인천 부평구 부평동 455-9',struct:'방3화1',year:90,price:9500,loan:'권8:2',empty:false,r:0,feat:'부평역10분'},
+  {id:194,type:'오피',name:'투엠501오피',addr:'인천 부평구 부평동 458-3',struct:'방3화1',year:15,price:17200,loan:'권8:2',empty:false,r:0,feat:'특올 부평역10분 정남향 501동9903동'},
+  {id:195,type:'주택',name:'원아그랜드202호',addr:'인천 부평구 부평동 432-2',struct:'방3화1',year:2,price:15000,loan:'권8:2',empty:false,r:0,feat:'주거분리 사방트임 부평역10분 채광굿'},
+  {id:196,type:'주택',name:'그린캐슬502',addr:'인천 부평구 부평동 461-1',struct:'방2화1',year:10,price:14000,loan:'권8:2',empty:false,r:0,feat:'특올 주택 채광굿 넓은베란다 3355'},
+  {id:197,type:'주택',name:'티케이1407',addr:'인천 부평구 부평동 464-40',struct:'방3화2',year:15,price:20500,loan:'권8:2',empty:false,r:0,feat:'주분 정남향 시장역구분 총1009'},
+  {id:198,type:'아파트',name:'미주아파트나603호1',addr:'인천 부평구 부평동 464-54',struct:'방3화1',year:17,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올 엘유'},
+  {id:199,type:'주택',name:'삼영하이즈501',addr:'인천 부평구 부평동 464-58',struct:'방3화1',year:2,price:11700,loan:'권8:2',empty:false,r:0,feat:'특올수리 골프전역5분'},
+  {id:200,type:'주택',name:'TJ미다스뷰1002주택',addr:'인천 부평구 부평동 468-10',struct:'방3화2',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광굿'},
+  {id:201,type:'주택',name:'앰타워506주택',addr:'인천 부평구 부평동 468-19',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 주부'},
+  {id:202,type:'주택',name:'우진202',addr:'인천 부평구 부평동 475-9',struct:'방2화1',year:2,price:9000,loan:'R7',empty:false,r:7,feat:'부평역8번R7'},
+  {id:203,type:'오피',name:'골드클래스402오피',addr:'인천 부평구 부평동 476-1',struct:'방3화2',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 올리모델 채광구조굿'},
+  {id:204,type:'오피',name:'골드클래스1동402오피',addr:'인천 부평구 부평동 476-1',struct:'방3화2',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 드래스롬 배2'},
+  {id:205,type:'오피',name:'우리드란702오피',addr:'인천 부평구 부평동 482-2',struct:'방3화2',year:16,price:22500,loan:'권8:2',empty:false,r:0,feat:'특올 통베란다'},
+  {id:206,type:'오피',name:'블루랑©A동1503오피',addr:'인천 부평구 부평동 482-11',struct:'방3화1',year:17,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:207,type:'오피',name:'센트럴빌701오피',addr:'인천 부평구 부평동 482-5',struct:'방3화2',year:16,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 뻥뷰'},
+  {id:208,type:'주택',name:'동방402',addr:'인천 부평구 부평동 482-2',struct:'방3화1',year:12,price:9900,loan:'권8:2',empty:false,r:0,feat:'기본상태 채광굿'},
+  {id:209,type:'주택',name:'스프링빌B/401',addr:'인천 부평구 부평동 484-3',struct:'방3화1',year:10,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광굿 4301#'},
+  {id:210,type:'주택',name:'동우401',addr:'인천 부평구 부평동 490-9',struct:'방3화1',year:2,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올 구조굿'},
+  {id:211,type:'주택',name:'대명아이빌203',addr:'인천 부평구 부평동 491-3',struct:'방3화2',year:2,price:14000,loan:'권8:2',empty:false,r:0,feat:'부평역10분 남서향 명삼초회자병원인근'},
+  {id:212,type:'주택',name:'헤르매스2동505',addr:'인천 부평구 부평동 495-10',struct:'방3화2',year:16,price:20500,loan:'권8:2',empty:false,r:0,feat:'부평역10분 채광굿 동4952 오피'},
+  {id:213,type:'주택',name:'헤르매스2동605',addr:'인천 부평구 부평동 495-10',struct:'방3화2',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올수리 부평역10분 채광굿 동4952 오피'},
+  {id:214,type:'주택',name:'헤르매스2동1006호',addr:'인천 부평구 부평동 495-10',struct:'방3화2',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'부평역10분 채광굿 동4952'},
+  {id:215,type:'주택',name:'헤르매스 비동1304호',addr:'인천 부평구 부평동 495-10',struct:'방3화2',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광굿 주택 동4951'},
+  {id:216,type:'주택',name:'서전역10분 (채광역2분)',addr:'인천 부평구 부평동 496-2',struct:'방2화1',year:16,price:16500,loan:'권8:2',empty:false,r:0,feat:'채광역 2-6~7시이 채광역정'},
+  {id:217,type:'오피',name:'휴플러스1차704오피',addr:'인천 부평구 부평동 496-6',struct:'방3화1',year:17,price:18700,loan:'권8:2',empty:false,r:0,feat:'특올 주부'},
+  {id:218,type:'오피',name:'휴플러스1차901오피',addr:'인천 부평구 부평동 496-6',struct:'방3화1',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 #2018'},
+  {id:219,type:'오피',name:'휴플러스1차903오피',addr:'인천 부평구 부평동 496-6',struct:'방3화1',year:17,price:19700,loan:'권8:2',empty:false,r:0,feat:'특올 주부'},
+  {id:220,type:'주택',name:'휴플러스1동18호',addr:'인천 부평구 부평동 496-6',struct:'방3화1',year:18,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:221,type:'주택',name:'삼진아이파트A동206',addr:'인천 부평구 부평동 497-2',struct:'방3화1',year:17,price:32000,loan:'권8:2',empty:false,r:0,feat:'현상태 가로주택재정비사업주진중'},
+  {id:222,type:'주택',name:'유안뷰 1302',addr:'인천 부평구 부평동 498-2',struct:'방3화2',year:17,price:23500,loan:'권8:2',empty:false,r:0,feat:'특올 동4982 보실패목신날벗고보세요'},
+  {id:223,type:'주택',name:'중앙빌라103동503',addr:'인천 부평구 부평동 499-3',struct:'방2화1',year:1,price:11000,loan:'권8:2',empty:false,r:0,feat:'2년전올수리'},
+  {id:224,type:'주택',name:'중앙104/302',addr:'인천 부평구 부평동 499-13',struct:'방2화1',year:2,price:9500,loan:'권8:2',empty:true,r:0,feat:'특올 공실'},
+  {id:225,type:'주택',name:'삼성캐슬1204주택',addr:'인천 부평구 부평동 500-1',struct:'방3화1',year:14,price:16800,loan:'권8:2',empty:false,r:0,feat:'특올 현#0508'},
+  {id:226,type:'주택',name:'로셈프라인1동1301주택',addr:'인천 부평구 부평동 500-1',struct:'방3화2',year:15,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 부평역10분 주택'},
+  {id:227,type:'주택',name:'메트로시티1동1402',addr:'인천 부평구 부평동 500-6',struct:'방3화2',year:15,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광굿 주택'},
+  {id:228,type:'주택',name:'부평역5분 주거분리',addr:'인천 부평구 부평동 500-6',struct:'방3화1',year:16,price:20700,loan:'R4',empty:false,r:4,feat:'부평역5분 주거분리'},
+  {id:229,type:'주택',name:'왈케슬603주택',addr:'인천 부평구 부평동 503-4',struct:'방3화2',year:15,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 부평역8분 구조굿 6달말이후 협의'},
+  {id:230,type:'주택',name:'현대타운402',addr:'인천 부평구 부평동 503-5',struct:'방2화1',year:2,price:12000,loan:'권8:2',empty:true,r:0,feat:'특올 채광구조굿 공실'},
+  {id:231,type:'주택',name:'로셈레뷰1 주택',addr:'인천 부평구 부평동 505-4',struct:'방3화1',year:9,price:15950,loan:'권8:2',empty:false,r:0,feat:'특올수리 서향 부평역10분 엘유'},
+  {id:232,type:'오피',name:'삼성캐슬401오피',addr:'인천 부평구 부평동 505-4',struct:'방3화1',year:13,price:15800,loan:'권8:2',empty:false,r:0,feat:'특올 반채광'},
+  {id:233,type:'오피',name:'미람팰리스 602오피',addr:'인천 부평구 부평동 508-1',struct:'방3화2',year:18,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 골포전역10분'},
+  {id:234,type:'주택',name:'델민뜨2동401',addr:'인천 부평구 부평동 508-9',struct:'방3화1',year:11,price:11000,loan:'권8:2',empty:false,r:0,feat:'기본수리'},
+  {id:235,type:'주택',name:'현대타운402',addr:'인천 부평구 부평동 503-5',struct:'방2화1',year:2,price:12000,loan:'권8:2',empty:true,r:0,feat:'특올 채광구조굿 공실'},
+  {id:236,type:'오피',name:'오페라503오피',addr:'인천 부평구 부평동 503-5',struct:'방3화2',year:13,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광구조굿'},
+  {id:237,type:'주택',name:'삽정402',addr:'인천 부평구 부평동 512-1',struct:'방2화1',year:2,price:10500,loan:'권8:2',empty:false,r:0,feat:'특올수리 부평역10분'},
+  {id:238,type:'오피',name:'스위트홈1동1206오피',addr:'인천 부평구 부평동 518-7',struct:'방3화2',year:15,price:21000,loan:'권8:2',empty:false,r:0,feat:'뻥뷰 주거분리 구조굿 이스팔리아가능#9753'},
+  {id:239,type:'주택',name:'벨라루체X주부',addr:'인천 부평구 부평동 519-9',struct:'방3화1',year:15,price:21000,loan:'R10',empty:false,r:10,feat:'특올 채광굿MX 주부 엘유 부평역10분'},
+  {id:240,type:'주택',name:'벨라루체407주택',addr:'인천 부평구 부평동 519-9',struct:'방3화2',year:15,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:241,type:'주택',name:'벨라루체1202주택',addr:'인천 부평구 부평동 519-9',struct:'방2화1',year:15,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 뻥뷰 채광굿'},
+  {id:242,type:'주택',name:'멤타워L나/501',addr:'인천 부평구 부평동 519-9',struct:'방3화1',year:9,price:19000,loan:'권8:2',empty:false,r:0,feat:'채광구조굿 시장 사방트임'},
+  {id:243,type:'주택',name:'더갤러리2동601호',addr:'인천 부평구 부평동 528-9',struct:'방3화1',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'현상태 채광굿'},
+  {id:244,type:'주택',name:'로제팰리스A301',addr:'인천 부평구 부평동 529-128',struct:'방3화2',year:9,price:24000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:245,type:'오피',name:'태강시티310오피',addr:'인천 부평구 부평동 531-1',struct:'방3화1',year:16,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:246,type:'오피',name:'메로니201호오피',addr:'인천 부평구 부평동 532-4',struct:'방3화1',year:23,price:22500,loan:'권8:2',empty:false,r:0,feat:'특올 반채광'},
+  {id:247,type:'오피',name:'메로니1002호오피',addr:'인천 부평구 부평동 532-4',struct:'방3화2',year:23,price:36000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 서향 막힘없음'},
+  {id:248,type:'주택',name:'아이홈 703호',addr:'인천 부평구 부평동 534-82',struct:'방3화2',year:19,price:27000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광굿 통배'},
+  {id:249,type:'아파트',name:'해오름아파트501',addr:'인천 부평구 부평동 542-62',struct:'방3화1',year:2,price:15000,loan:'권8:2',empty:false,r:0,feat:'수리탑 시장역3분'},
+  {id:250,type:'주택',name:'엘비스331동1102',addr:'인천 부평구 부평동 542-80',struct:'방2화1',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'시장역5분 올수리 갈꿈 엘유 오피'},
+  {id:251,type:'오피',name:'무한레뷰3차301오피',addr:'인천 부평구 부평동 543-12',struct:'방3화1',year:16,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유 시장역5분 반채광 10#9999#'},
+  {id:252,type:'오피',name:'무한레뷰B3차5101오피',addr:'인천 부평구 부평동 543-12',struct:'방3화1',year:13,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유 시장역5분 반채광 10#9999#'},
+  {id:253,type:'오피',name:'에드룸빌 507오피',addr:'인천 부평구 부평동 546-88',struct:'방3화2',year:16,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 공원뷰'},
+  {id:254,type:'주택',name:'해솔파크빌',addr:'인천 부평구 부평동 554',struct:'방3화1',year:16,price:16900,loan:'권8:2',empty:false,r:0,feat:'기본상태'},
+  {id:255,type:'주택',name:'해솔파크뷰4차1403',addr:'인천 부평구 부평동 554',struct:'방3화1',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 채광굿'},
+  {id:256,type:'주택',name:'금화505',addr:'인천 부평구 부평동 558-7',struct:'방2화1',year:2,price:7300,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:257,type:'주택',name:'엘링턴1510',addr:'인천 부평구 부평동 560-2',struct:'방3화2',year:22,price:28500,loan:'권8:2',empty:false,r:0,feat:'특올 서북향 주부'},
+  {id:258,type:'주택',name:'퍼스트리치56 1303호',addr:'인천 부평구 부평동 577-2',struct:'방3화1',year:15,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 엘유 주택 종#7856'},
+  {id:259,type:'주택',name:'부평더씩1002주택',addr:'인천 부평구 부평동 609-1',struct:'방3화2',year:20,price:29000,loan:'권8:2',empty:false,r:0,feat:'특올 부평역5분'},
+  {id:260,type:'주택',name:'무한레뷰1003주택',addr:'인천 부평구 부평동 609-1',struct:'방3화1',year:20,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 부평역5분'},
+  {id:261,type:'주택',name:'현대델라라트11/502',addr:'인천 부평구 부평동 611-5',struct:'방3화1',year:1,price:14500,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:262,type:'주택',name:'삼미104동504',addr:'인천 부평구 부평동 612-20',struct:'방2화1',year:2,price:8200,loan:'권8:2',empty:false,r:0,feat:'특올 통배란다 채광좋음'},
+  {id:263,type:'주택',name:'삼미102/404',addr:'인천 부평구 부평동 612-20',struct:'방2화1',year:2,price:8600,loan:'권8:2',empty:false,r:0,feat:'기본 전월세1000/32 월세안고'},
+  {id:264,type:'주택',name:'삼미104/504',addr:'인천 부평구 부평동 612-20',struct:'방2화1',year:2,price:8200,loan:'권8:2',empty:false,r:0,feat:'특올수리 채광굿 통배'},
+  {id:265,type:'주택',name:'프라임402주택',addr:'인천 부평구 부평동 623-25',struct:'방2화1',year:2,price:8500,loan:'권8:2',empty:false,r:0,feat:'엘무'},
+  {id:266,type:'오피',name:'태강702호오피',addr:'인천 부평구 부평동 642-12',struct:'방3화1',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 통배란다'},
+  {id:267,type:'주택',name:'다솜빌A동401',addr:'인천 부평구 부평동 653-3',struct:'방3화1',year:10,price:16000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 막힘없음 상태굿 부평역3분'},
+  {id:268,type:'오피',name:'프린스타운501오피',addr:'인천 부평구 부평동 655',struct:'방3화2',year:16,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:269,type:'주택',name:'프린스타운803호803호',addr:'인천 부평구 부평동 655',struct:'방3화2',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'상태꽤굿 트인집 넓고 채광좋음비번보유'},
+  {id:270,type:'오피',name:'해피드림1동806오피',addr:'인천 부평구 부평동 665-31',struct:'방3화2',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올 엘유 서향 채광구조굿 오피'},
+  {id:271,type:'오피',name:'휴안빌503오피',addr:'인천 부평구 부평동 669-7',struct:'방3화1',year:19,price:31000,loan:'권8:2',empty:false,r:0,feat:'특올 주부'},
+  {id:272,type:'주택',name:'베네스트브이자304',addr:'인천 부평구 부평동 673-55',struct:'방3화2',year:12,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 채광구조굿10#3255#'},
+  {id:273,type:'오피',name:'웨솔파크빌101동204오피',addr:'인천 부평구 부평동 674-11',struct:'방3화2',year:15,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 환함 채광굿 구조굿'},
+  {id:274,type:'주택',name:'서원A동B02호',addr:'인천 부평구 부평동 674-64',struct:'방3화1',year:2,price:7500,loan:'권8:2',empty:false,r:0,feat:'특올 배2 부평남부역5분'},
+  {id:275,type:'주택',name:'로즈찌슬 901주택',addr:'인천 부평구 부평동 747',struct:'방3화1',year:12,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:276,type:'주택',name:'플랜에이301',addr:'인천 부평구 부평동 747-13',struct:'방3화2',year:22,price:24900,loan:'권8:2',empty:false,r:0,feat:'특올 #2489'},
+  {id:277,type:'주택',name:'플랜에이501',addr:'인천 부평구 부평동 747-13',struct:'방3화1',year:22,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 뻥뷰 채광구조굿 중#2849'},
+  {id:278,type:'주택',name:'동원주택1/301',addr:'인천 부평구 부평동 750-144',struct:'방2화1',year:0,price:12000,loan:'권8:2',empty:false,r:0,feat:'올수리 비번보유'},
+  {id:279,type:'오피',name:'플랜에이즈502오피',addr:'인천 부평구 부평동 751-85',struct:'방3화2',year:16,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:280,type:'오피',name:'앨유901오피',addr:'인천 부평구 부평동 751',struct:'방3화1',year:18,price:21500,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 채광굿 시스템에어컨'},
+  {id:281,type:'오피',name:'캐슬런101동302호오피',addr:'인천 부평구 부평동 756-279',struct:'방3화1',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 엘유 구조굿 #2580#'},
+  {id:282,type:'오피',name:'DS가사901오피',addr:'인천 부평구 부평동 756-279',struct:'방3화2',year:18,price:21500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 정남향 채광굿 시스템에어컨'},
+  {id:283,type:'주택',name:'에리파뷰빌라302',addr:'인천 부평구 부평동 767-22',struct:'방3화1',year:97,price:6500,loan:'권8:2',empty:false,r:0,feat:'특올 백운역5분 환함 남향'},
+  {id:284,type:'주택',name:'중앙빌라5차402엘유',addr:'인천 부평구 부평동 767-56',struct:'방2화1',year:0,price:6500,loan:'권8:2',empty:false,r:0,feat:'올수리 안방남동향 동수역10분'},
+  {id:285,type:'주택',name:'현대하이즈101',addr:'인천 부평구 부평동 767-148',struct:'방2화1',year:0,price:10500,loan:'권8:2',empty:false,r:0,feat:'특올수리 채광있음'},
+  {id:286,type:'주택',name:'늘봄7동302호',addr:'인천 부평구 부평동 767-206',struct:'방2화1',year:2,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올 구청역8분'},
+  {id:287,type:'주택',name:'대상그린빌5동101',addr:'인천 부평구 부평동 768-279',struct:'방3화1',year:2,price:12000,loan:'권8:2',empty:false,r:0,feat:'특올 동수역10분'},
+  {id:288,type:'주택',name:'대상그린빌3동B02',addr:'인천 부평구 부평동 768-279',struct:'방3화1',year:2,price:5500,loan:'권8:2',empty:false,r:0,feat:'현시설상태 동수역10분'},
+  {id:289,type:'주택',name:'미상빌801',addr:'인천 부평구 부평동 798-4',struct:'방3화2',year:17,price:27500,loan:'권8:2',empty:false,r:0,feat:'기본상태 정남향 광교 넓음 부평구청역3분'},
+  {id:290,type:'오피',name:'우미란101동1003오피',addr:'인천 부평구 부평동 1002',struct:'방2화1',year:23,price:30500,loan:'R3',empty:false,r:3,feat:'특올 시스템에어컨3 채광굿'},
+  {id:291,type:'오피',name:'대명벨리온1416엘유오피',addr:'인천 부평구 부평동 954',struct:'방1.5화1',year:19,price:20900,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 인정가능'},
+  {id:292,type:'오피',name:'대명벨리온1617엘유오피',addr:'인천 부평구 부평동 954',struct:'방1.5화1',year:19,price:21900,loan:'권8:2',empty:true,r:0,feat:'올수리 주부 거실넓은플옵션 공실'},
+  {id:293,type:'주택',name:'삼원 가동102',addr:'인천 부평구 갈산동 29-32',struct:'방3화2',year:13,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 채광굿'},
+  {id:294,type:'주택',name:'하나로2동301',addr:'인천 부평구 갈산동 29-74',struct:'방2화1',year:1,price:10000,loan:'권8:2',empty:true,r:0,feat:'특올수리 채광구조굿 공실 베란다2'},
+  {id:295,type:'주택',name:'대신301',addr:'인천 부평구 갈산동 54-14',struct:'방3화1',year:11,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 현#5330'},
+  {id:296,type:'주택',name:'골든뷰701',addr:'인천 부평구 갈산동 151-1',struct:'방3화1',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 동향 통배'},
+  {id:297,type:'주택',name:'삼원301',addr:'인천 부평구 갈산동 94',struct:'방3화1',year:12,price:11500,loan:'권8:2',empty:false,r:0,feat:'특올 통배 채광굿'},
+  {id:298,type:'주택',name:'한원403',addr:'인천 부평구 갈산동 168-1',struct:'방3화1',year:11,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:299,type:'주택',name:'대원B동 501호',addr:'인천 부평구 갈산동 168-12',struct:'방3화1',year:2,price:8000,loan:'권8:2',empty:false,r:0,feat:'기본 채광굿 게단낮음 갈산역5분'},
+  {id:300,type:'주택',name:'대원104동402',addr:'인천 부평구 갈산동 169-30',struct:'방2화1',year:2,price:8500,loan:'권8:2',empty:false,r:0,feat:'특올 남향 채광좋음 이사'},
+  {id:301,type:'주택',name:'위드하우스501호 주택',addr:'인천 부평구 갈산동 172-13',struct:'방3화2',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 엘유 테라스 창고'},
+  {id:302,type:'주택',name:'뉴대우디자인101호',addr:'인천 부평구 갈산동 176-6',struct:'방1화3',year:14,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올수리 샷시포함 통배 갈산역2분'},
+  {id:303,type:'주택',name:'대우2동102',addr:'인천 부평구 갈산동 176-16',struct:'방2화1',year:10,price:10500,loan:'권8:2',empty:false,r:0,feat:'특올수리 샷시포함 통배 갈산역2분'},
+  {id:304,type:'주택',name:'삼화303',addr:'인천 부평구 갈산동 179',struct:'방3화1',year:13,price:12500,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 갈산역3분'},
+  {id:305,type:'주택',name:'세종7동302',addr:'인천 부평구 갈산동 182-10',struct:'방2화1',year:10,price:10500,loan:'권8:2',empty:false,r:0,feat:'올수리'},
+  {id:306,type:'주택',name:'세종8동401',addr:'인천 부평구 갈산동 182-10',struct:'방2화1',year:92,price:9500,loan:'권8:2',empty:false,r:0,feat:'올수리 채광굿 갈산역5분'},
+  {id:307,type:'주택',name:'해피리움703',addr:'인천 부평구 갈산동 441',struct:'방3화1',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올수리 갈산역5분 사방트임 오피'},
+  {id:308,type:'오피',name:'뮤브럭스102동502오피',addr:'인천 부평구 갈산동 161-2',struct:'방3화2',year:19,price:24000,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 구조채광굿'},
+  {id:309,type:'오피',name:'뮤브럭스102동1101오피',addr:'인천 부평구 갈산동 161-2',struct:'방3화1',year:19,price:24000,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 구조채광굿'},
+  {id:310,type:'오피',name:'뮤브럭스102동502오피',addr:'인천 부평구 작전동 161-2',struct:'방3화2',year:19,price:24000,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 구조채광굿'},
+  {id:311,type:'주택',name:'빌렐하이즈101',addr:'인천 부평구 작전동 386-15',struct:'방3화1',year:13,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올수리 작전역5분 채광굿'},
+  {id:312,type:'아파트',name:'미도아파트2/106',addr:'인천 부평구 작전동 420',struct:'방3화1',year:2,price:24000,loan:'권8:2',empty:true,r:0,feat:'특올 공실'},
+  {id:313,type:'오피',name:'해송1832호오피',addr:'인천 부평구 작전동 476-30',struct:'방3화2',year:19,price:23500,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 항시볼수없음'},
+  {id:314,type:'주택',name:'다채움2동303',addr:'인천 부평구 작전동 693-3',struct:'방3화1',year:9,price:14500,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 현#4089종'},
+  {id:315,type:'주택',name:'삼보1동412',addr:'인천 부평구 삼산동 56-3',struct:'방2화1',year:19,price:20700,loan:'권8:2',empty:false,r:0,feat:'특올수리 주거분리 삼산초연 채광굿'},
+  {id:316,type:'주택',name:'다숲프라임107동201',addr:'인천 부평구 삼산동 67-26',struct:'방3화2',year:2,price:14500,loan:'권8:2',empty:false,r:0,feat:'특올 주부 베란다2 주차굿'},
+  {id:317,type:'주택',name:'다숲프라임107동108/202',addr:'인천 부평구 삼산동 67-27',struct:'방3화2',year:2,price:14600,loan:'권8:2',empty:false,r:0,feat:'특올 주부 베란다2'},
+  {id:318,type:'주택',name:'다승113동 402',addr:'인천 부평구 삼산동 67-35',struct:'방2화1',year:2,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올 구조굿'},
+  {id:319,type:'주택',name:'삼산아트빌102동203호',addr:'인천 부평구 삼산동 117-8',struct:'방3화2',year:9,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 주차편리 비번보유'},
+  {id:320,type:'주택',name:'삼성프린스빌302',addr:'인천 부평구 삼산동 125-9',struct:'방3화1',year:14,price:15500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 막힘없음 주차편리'},
+  {id:321,type:'주택',name:'보우하트9동201',addr:'인천 부평구 삼산동 377-5',struct:'방3화1',year:13,price:11000,loan:'권8:2',empty:false,r:0,feat:'올수리 통배란다 대단지 정남향'},
+  {id:322,type:'주택',name:'광진빌라2동B02',addr:'인천 부평구 산곡동 251-43',struct:'방3화1',year:11,price:4800,loan:'권8:2',empty:false,r:0,feat:'기본수리 월세500/28임대중'},
+  {id:323,type:'주택',name:'대릎맨션1/301',addr:'인천 부평구 산곡동 251-58',struct:'방3화1',year:14,price:12000,loan:'권8:2',empty:false,r:0,feat:'특올 샷시포함 채광구조굿'},
+  {id:324,type:'주택',name:'수아트빌303주택',addr:'인천 부평구 산곡동 408-5',struct:'방3화2',year:15,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:325,type:'주택',name:'그린빌303',addr:'인천 부평구 산곡동 408-16',struct:'방2화1',year:12,price:11500,loan:'권8:2',empty:false,r:0,feat:'특올 구조역6분'},
+  {id:326,type:'오피',name:'우진드림캐슬302엘유오피',addr:'인천 부평구 청천동 6-16',struct:'방3화2',year:17,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 통배란다 채광굿'},
+  {id:327,type:'주택',name:'서보타운206',addr:'인천 부평구 청천동 177-15',struct:'방3화2',year:22,price:26000,loan:'권8:2',empty:false,r:0,feat:'상태굿 주부 앙테리스 주차굿'},
+  {id:328,type:'주택',name:'서보타운309',addr:'인천 부평구 청천동 177-15',struct:'방3화2',year:22,price:28700,loan:'R10',empty:false,r:10,feat:'특올 주부 서향 채광굿 역세권'},
+  {id:329,type:'주택',name:'아크로팰리스104동203',addr:'인천 부평구 청천동 179-11',struct:'방3화2',year:21,price:24500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 엘유 동향 빠른이사가능 오피'},
+  {id:330,type:'주택',name:'아크로팰리스103동/901',addr:'인천 부평구 청천동 179-11',struct:'방3화2',year:21,price:28500,loan:'권8:2',empty:false,r:0,feat:'특올 신국역7분 주부 채광구조굿'},
+  {id:331,type:'주택',name:'더프라임클래스303',addr:'인천 부평구 청천동 199-20',struct:'방3화2',year:17,price:27000,loan:'권8:2',empty:false,r:0,feat:'특올 오피 주택 주장굿 뻥뷰'},
+  {id:332,type:'주택',name:'아크로팰리스1505',addr:'인천 부평구 청천동 199-20',struct:'방3화2',year:17,price:28000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 환함 구조역4분'},
+  {id:333,type:'주택',name:'효성가동302',addr:'인천 부평구 청천동 234-11',struct:'방3화1',year:2,price:12800,loan:'권8:2',empty:false,r:0,feat:'특올수리 정남향 채광굿'},
+  {id:334,type:'주택',name:'삼청에이스빌402동503호',addr:'인천 부평구 청천동 234-27',struct:'방2화1',year:2,price:9600,loan:'권8:2',empty:false,r:0,feat:'특올 부평역5분 1층2580#'},
+  {id:335,type:'오피',name:'대안파크타운C동306오피',addr:'인천 부평구 청천동 379-13',struct:'방3화2',year:24,price:22700,loan:'R10',empty:false,r:10,feat:'특올 채광굿 엘유 항시봄'},
+  {id:336,type:'주택',name:'일의그린맨션401',addr:'인천 계양구 효성동 1-12',struct:'방3화1',year:95,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올 작전역5분 환함 남향'},
+  {id:337,type:'주택',name:'현대빌라3동302',addr:'인천 계양구 효성동 26-14',struct:'방3화1',year:90,price:8500,loan:'권8:2',empty:false,r:0,feat:'채광굿 샷시,화장실수리'},
+  {id:338,type:'주택',name:'원복7동B01',addr:'인천 계양구 효성동 167-24',struct:'방3화1',year:3,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 지하주차 베란다다창'},
+  {id:339,type:'주택',name:'동성팰리스402',addr:'인천 계양구 효성동 273-37',struct:'방3화2',year:22,price:22800,loan:'권8:2',empty:false,r:0,feat:'주거분리 정남향 시스템에어컨2대 주택'},
+  {id:340,type:'주택',name:'삼우 96동301',addr:'인천 계양구 효성동 273-96',struct:'방3화1',year:13,price:10500,loan:'권8:2',empty:false,r:0,feat:'특올 대단지 기준'},
+  {id:341,type:'주택',name:'인성빌라5동302',addr:'인천 계양구 효성동 277-13',struct:'방2화1',year:12,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올수리 올치6600가득 작전역5분'},
+  {id:342,type:'주택',name:'해달빌 태내남 리덩팰리 303',addr:'인천 계양구 효성동 494-107',struct:'방3화2',year:12,price:11700,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:343,type:'주택',name:'한성 다동B02',addr:'인천 계양구 효성동 495-13',struct:'방3화1',year:13,price:4500,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿'},
+  {id:344,type:'주택',name:'굿모닝25동 202',addr:'인천 계양구 효성동 511-25',struct:'방3화1',year:3,price:9600,loan:'R4',empty:false,r:4,feat:'특올수리'},
+  {id:345,type:'아파트',name:'경신아파트가동105호',addr:'인천 계양구 계산동 산37-6',struct:'방2화1',year:13,price:13300,loan:'권8:2',empty:false,r:0,feat:'특올수리 아파트 정남향'},
+  {id:346,type:'주택',name:'동남 5동503호',addr:'인천 계양구 계산동 55-1',struct:'방2화1',year:11,price:13500,loan:'권8:2',empty:false,r:0,feat:'특올 중문'},
+  {id:347,type:'주택',name:'중앙그린401',addr:'인천 계양구 계산동 295-1',struct:'방3화1',year:12,price:10600,loan:'권8:2',empty:false,r:0,feat:'특올수리 통배란다'},
+  {id:348,type:'주택',name:'정광숲나동 406',addr:'인천 계양구 계산동 731',struct:'방2화1',year:12,price:8500,loan:'권8:2',empty:false,r:0,feat:'기본 만2달말'},
+  {id:349,type:'주택',name:'경신행복맨션101동201',addr:'인천 계양구 계산동 897-3',struct:'방3화1',year:20,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:350,type:'주택',name:'행복맨션201',addr:'인천 계양구 계산동 897-19',struct:'방3화1',year:4,price:15800,loan:'권8:2',empty:true,r:0,feat:'특올 계산역5분 베란다2 환함 공실'},
+  {id:351,type:'주택',name:'삼성파크3동401',addr:'인천 계양구 계산동 897-109',struct:'방3화1',year:2,price:11900,loan:'권8:2',empty:false,r:0,feat:'특올 시방임입 주거분리 계산역10분'},
+  {id:352,type:'아파트',name:'신한아파트 나동402',addr:'인천 계양구 계산동 931-8',struct:'방3화1',year:21,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올수리 정남향 계산역'},
+  {id:353,type:'주택',name:'삼환빌라4동301',addr:'인천 계양구 계산동 931-85',struct:'방2화1',year:90,price:9000,loan:'권8:2',empty:true,r:0,feat:'특올 베란다2 정남향 공실'},
+  {id:354,type:'주택',name:'하이네스빌2동503벌세끼고',addr:'인천 계양구 계산동 959-40',struct:'방2화1',year:1,price:10700,loan:'권8:2',empty:false,r:0,feat:'특올 계산역10분 (1000/45)'},
+  {id:355,type:'주택',name:'그대유지세대102',addr:'인천 계양구 계산동 968-11',struct:'방2화1',year:11,price:7000,loan:'권8:2',empty:false,r:0,feat:'특올수리'},
+  {id:356,type:'주택',name:'그린휠타운3동102호',addr:'인천 계양구 계산동 981-52',struct:'방3화1',year:1,price:8500,loan:'권8:2',empty:false,r:0,feat:'채광구조굿'},
+  {id:357,type:'주택',name:'월스토러303',addr:'인천 계양구 귤현동 158-11',struct:'방3화2',year:10,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광구조굿'},
+  {id:358,type:'주택',name:'대지빌403',addr:'인천 계양구 귤현동 76-9',struct:'방2화1',year:10,price:7700,loan:'권8:2',empty:false,r:0,feat:'올수리 샷시포함 냉장고 세탁기 에어컨 옵션'},
+  {id:359,type:'주택',name:'그대파워빌라202',addr:'인천 계양구 귤현동 92-13',struct:'방2화1',year:20,price:16000,loan:'R6',empty:false,r:6,feat:'특올 채광구조굿  중#2020'},
+  {id:360,type:'주택',name:'용공아트202',addr:'인천 계양구 귤현동 118-11',struct:'방3화2',year:1,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올수리 통배란다 임학역6분'},
+  {id:361,type:'주택',name:'로얼하이즈2동502호',addr:'인천 계양구 귤현동 133-1',struct:'방3화2',year:20,price:22500,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:362,type:'주택',name:'에스빌102동301',addr:'인천 계양구 귤현동 158-16',struct:'방3화1',year:1,price:13500,loan:'권8:2',empty:true,r:0,feat:'올수리 주부 옥상방수공료 공실'},
+  {id:363,type:'주택',name:'우정그린101동404',addr:'인천 계양구 귤현동 166-2',struct:'방2화1',year:2,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올 환함 임학역10분'},
+  {id:364,type:'주택',name:'대지빌403',addr:'인천 계양구 귤현동 76-9',struct:'방2화1',year:10,price:7200,loan:'권8:2',empty:false,r:0,feat:'특올수리 샷시포함 세탁기 에어컨 옵션'},
+  {id:365,type:'주택',name:'킹스빌304동402',addr:'인천 계양구 박촌동 24-7',struct:'방3화1',year:15,price:12500,loan:'권8:2',empty:false,r:0,feat:'특올수리 대단지 박촌역5분'},
+  {id:366,type:'주택',name:'굿모닝맨션103동301',addr:'인천 계양구 박촌동 99-5',struct:'방3화2',year:20,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 박촌역3분'},
+  {id:367,type:'주택',name:'장미빌라B02',addr:'인천 계양구 방축동 176',struct:'방3화1',year:12,price:5500,loan:'권8:2',empty:false,r:0,feat:'특올 냉장고,에어컨 옵션'},
+  {id:368,type:'주택',name:'평화빌라 301',addr:'인천 계양구 방축동 167',struct:'방3화1',year:12,price:8100,loan:'권8:2',empty:false,r:0,feat:'올수리 전세6500거주중'},
+  {id:369,type:'주택',name:'조홍빌402',addr:'인천 계양구 임학동 244',struct:'방3화1',year:12,price:8600,loan:'권8:2',empty:false,r:0,feat:'특올수리 임학역5분'},
+  {id:370,type:'주택',name:'천지빌라 가동101',addr:'인천 계양구 임학동 28-8',struct:'방3화1',year:13,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올수리 임학서측재개발지역 임학역5분'},
+  {id:371,type:'주택',name:'삼성홈타운401',addr:'인천 동양동 635-5',struct:'방3화2',year:10,price:14500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 팍트임 현#0469'},
+  {id:372,type:'주택',name:'홍공아트빌202',addr:'인천 부평구 부개동 118-11',struct:'방3화2',year:1,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올수리 통배란다 임학역6분'},
+  {id:373,type:'주택',name:'에스빌102동401',addr:'인천 부평구 부개동 158-16',struct:'방3화1',year:1,price:13500,loan:'권8:2',empty:true,r:0,feat:'올수리 주부 옥상방수공료 공실'},
+  {id:374,type:'주택',name:'우정그린101동404',addr:'인천 부평구 부개동 166-2',struct:'방2화1',year:2,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올 환함 임학역10분'},
+{id:375,type:'주택',name:'명신102',addr:'인천 부평구 부평동 10-251',struct:'방3화1',year:11,price:11000,loan:'권8:2',empty:false,r:0,feat:'현상태 세입자끼고'},
+  {id:376,type:'주택',name:'명신나동202',addr:'인천 부평구 부평동 10-251',struct:'방3화1',year:90,price:9000,loan:'권8:2',empty:false,r:0,feat:'부수리 채광굿'},
+  {id:377,type:'주택',name:'진주302',addr:'인천 부평구 부평동 10-286',struct:'방3화1',year:14,price:12500,loan:'권8:2',empty:false,r:0,feat:'특올 배2 채광굿'},
+  {id:378,type:'주택',name:'장도A동401',addr:'인천 부평구 부평동 10-358',struct:'방3화1',year:1,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:379,type:'주택',name:'그린하이빌3/202',addr:'인천 부평구 부평동 10-614',struct:'방2화1',year:1,price:14500,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:380,type:'주택',name:'태종501호',addr:'인천 부평구 부평동 10-942',struct:'방3화1',year:9,price:13200,loan:'권8:2',empty:false,r:0,feat:'채광굿 구청역 골포전역 10분'},
+  {id:381,type:'주택',name:'부림302',addr:'인천 부평구 부평동 10-961',struct:'방2화1',year:92,price:9000,loan:'권8:2',empty:false,r:0,feat:'투자 입주가능 전세 4500'},
+  {id:382,type:'주택',name:'시티하우스 403',addr:'인천 부평구 부평동 12-1',struct:'방3화1',year:2,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:383,type:'주택',name:'장림A동201',addr:'인천 부평구 부평동 12-52',struct:'방2화1',year:10,price:12200,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:384,type:'주택',name:'승린401호',addr:'인천 부평구 부평동 13-26',struct:'방3화2',year:11,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 주부 채광구조굿'},
+  {id:385,type:'주택',name:'비밴트201',addr:'인천 부평구 부평동 13-52',struct:'방3화1',year:19,price:18200,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:386,type:'주택',name:'스카이빌라트109동502',addr:'인천 부평구 부평동 42-9',struct:'방3화1',year:2,price:14100,loan:'권8:2',empty:false,r:0,feat:'특올수리 서향'},
+  {id:387,type:'오피',name:'미울하버뷰 801오피',addr:'인천 부평구 부평동 61-7',struct:'방3화2',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'채광굿 뻥뷰 총1929'},
+  {id:388,type:'오피',name:'미울하버뷰1201호오피',addr:'인천 부평구 부평동 61-7',struct:'방3화2',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올수리 트인집 채광좋음 엘유 총1929'},
+  {id:389,type:'주택',name:'미울하버뷰1403',addr:'인천 부평구 부평동 61-7',struct:'방3화2',year:16,price:19200,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 동향 골포전역'},
+  {id:390,type:'오피',name:'로뎀403 엘유오피',addr:'인천 부평구 부평동 61-92',struct:'방3화1',year:14,price:17000,loan:'권8:2',empty:false,r:0,feat:'올수리'},
+  {id:391,type:'주택',name:'어반휴플러스802',addr:'인천 부평구 부평동 62-7',struct:'방3화2',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 엘유 오피'},
+  {id:392,type:'주택',name:'명신동101',addr:'인천 부평구 부평동 15',struct:'방1화3',year:15,price:12000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:393,type:'오피',name:'해송204 오피',addr:'인천 부평구 부평동 98-85',struct:'방3화2',year:15,price:18000,loan:'권8:2',empty:false,r:0,feat:'주분상태꽤굿골포전역10분현#1470# 엘유'},
+  {id:394,type:'오피',name:'해송405오피',addr:'인천 부평구 부평동 98-85',struct:'방3화1',year:15,price:18200,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 골포전역9분'},
+  {id:395,type:'주택',name:'해송806',addr:'인천 부평구 부평동 98-85',struct:'방3화1',year:15,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:396,type:'오피',name:'해송1003오피',addr:'인천 부평구 부평동 98-85',struct:'방3화1',year:15,price:16000,loan:'권8:2',empty:false,r:0,feat:'기본 주부'},
+  {id:397,type:'오피',name:'해송301오피',addr:'인천 부평구 부평동 98-24',struct:'방3화1',year:15,price:18800,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 서향 막힘없음 현#1470#'},
+  {id:398,type:'오피',name:'해송901오피',addr:'인천 부평구 부평동 98-86',struct:'방3화1',year:15,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 서향'},
+  {id:399,type:'주택',name:'해프라리402',addr:'인천 부평구 부평동 25',struct:'방3화1',year:10,price:16000,loan:'권8:2',empty:false,r:0,feat:'기본 채광굿 현#15988종'},
+  {id:400,type:'오피',name:'대명벨리온1416오피',addr:'인천 부평구 부평동 954',struct:'방1.5화1',year:19,price:20900,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 인정가능'},
+  {id:401,type:'오피',name:'대명벨리온1617오피',addr:'인천 부평구 부평동 954',struct:'방1.5화1',year:19,price:22000,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 풀옵션 주부 거실넓음'},
+  {id:402,type:'주택',name:'센트레빌 201주택',addr:'인천 부평구 부평동 112-9',struct:'방2화1',year:17,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올 구조굿'},
+  {id:403,type:'주택',name:'미주타운501',addr:'인천 부평구 부평동 112-47',struct:'방2화1',year:2,price:14000,loan:'권8:2',empty:true,r:0,feat:'특올 주부 채광굿 공실'},
+  {id:404,type:'오피',name:'노블레스2차301오피',addr:'인천 부평구 부평동 115-8',struct:'방3화2',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:405,type:'주택',name:'노블레스1404 주택',addr:'인천 부평구 부평동 115-8',struct:'방3화2',year:17,price:24000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 서향 막힘없음 채광좋음'},
+  {id:406,type:'오피',name:'센트레빌602호오피',addr:'인천 부평구 부평동 115-9',struct:'방2화1',year:13,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:407,type:'주택',name:'올리버아 701 근생',addr:'인천 부평구 부평동 116-7',struct:'방3화1',year:15,price:15000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:408,type:'오피',name:'CS캐슬 203호 오피',addr:'인천 부평구 부평동 116-12',struct:'방3화2',year:16,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 구조굿 반채광'},
+  {id:409,type:'아파트',name:'유니언아파트1003',addr:'인천 부평구 부평동 1063',struct:'방3화1',year:17,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 남향 주부 9/18이사 종5615'},
+  {id:410,type:'주택',name:'에덴캐슬 1303',addr:'인천 부평구 부평동 118-7',struct:'방3화1',year:17,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 오피'},
+  {id:411,type:'오피',name:'에덴캐슬 1405오피',addr:'인천 부평구 부평동 118-7',struct:'방3화1',year:17,price:17500,loan:'권8:2',empty:false,r:0,feat:'특올 오피 현#'},
+  {id:412,type:'주택',name:'에덴캐슬 1505',addr:'인천 부평구 부평동 118-7',struct:'방3화2',year:17,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 구조채광굿 오피 종5615'},
+  {id:413,type:'오피',name:'에덴캐슬405오피',addr:'인천 부평구 부평동 118-7',struct:'방3화2',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유'},
+  {id:414,type:'주택',name:'그린파크1304',addr:'인천 부평구 부평동 118-12',struct:'방3화1',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:415,type:'주택',name:'그린파크1405',addr:'인천 부평구 부평동 118-12',struct:'방3화2',year:16,price:21000,loan:'권8:2',empty:false,r:0,feat:'기거부비라 탑층 막힘없음 채광굿 엘유 오피'},
+  {id:416,type:'오피',name:'더플레이스뷰702오피',addr:'인천 부평구 부평동 118-22',struct:'방3화2',year:17,price:22700,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 엘유'},
+  {id:417,type:'오피',name:'더플레이스뷰702오피',addr:'인천 부평구 부평동 118-34',struct:'방3화2',year:17,price:22700,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 엘유'},
+  {id:418,type:'오피',name:'TJ더플레이스602오피',addr:'인천 부평구 부평동 118-43',struct:'방3화1',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 오피 현#1184'},
+  {id:419,type:'주택',name:'케림503',addr:'인천 부평구 부평동 118-45',struct:'방2화1',year:2,price:8800,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:420,type:'오피',name:'드림홈1301오피',addr:'인천 부평구 부평동 118-46',struct:'방3화1',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 엘유 골포전역7분'},
+  {id:421,type:'주택',name:'스위트홈603주택',addr:'인천 부평구 부평동 119-2',struct:'방3화1',year:14,price:17500,loan:'권8:2',empty:false,r:0,feat:'특올 채광좋음 북향 뻥뷰'},
+  {id:422,type:'오피',name:'스위트홈609오피',addr:'인천 부평구 부평동 119-2',struct:'방3화1',year:14,price:17500,loan:'권8:2',empty:false,r:0,feat:'특올 채광좋음 서향'},
+  {id:423,type:'오피',name:'뉴빌보무래오피',addr:'인천 부평구 부평동 119-40',struct:'방3화2',year:17,price:21000,loan:'R4',empty:false,r:4,feat:'특올 채광구조굿'},
+  {id:424,type:'오피',name:'마스터큐브801오피',addr:'인천 부평구 부평동 119-35',struct:'방3화2',year:16,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본 평일은6시이후'},
+  {id:425,type:'주택',name:'마스터큐브902',addr:'인천 부평구 부평동 119-52',struct:'방3화1',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'기본 채광굿 골포전역10분 오피 엘유'},
+  {id:426,type:'주택',name:'미성302전세안고',addr:'인천 부평구 부평동 119-40',struct:'방2화1',year:2,price:9300,loan:'권8:2',empty:false,r:0,feat:'특올 전세7030'},
+  {id:427,type:'주택',name:'케림A동502/5',addr:'인천 부평구 부평동 124-9',struct:'방3화2',year:2,price:12500,loan:'권8:2',empty:false,r:0,feat:'기본수리 시장역10분 도배중'},
+  {id:428,type:'오피',name:'신승캐슬1403오피',addr:'인천 부평구 부평동 124-13',struct:'방3화1',year:15,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿'},
+  {id:429,type:'주택',name:'신승캐슬702주택',addr:'인천 부평구 부평동 124-14',struct:'방3화1',year:14,price:16900,loan:'권8:2',empty:false,r:0,feat:'기본 꽤끗함 주부 엘유'},
+  {id:430,type:'오피',name:'엠브이804오피',addr:'인천 부평구 부평동 124-21',struct:'방3화2',year:15,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 채광좋음 주부'},
+  {id:431,type:'주택',name:'엠브이1208',addr:'인천 부평구 부평동 124-21',struct:'방3화2',year:15,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 주거 가운데1109'},
+  {id:432,type:'아파트',name:'블랙시아아파트905호',addr:'인천 부평구 부평동 124-32',struct:'방3화1',year:15,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 엘유 오피'},
+  {id:433,type:'아파트',name:'블랙시아아파트1504주택',addr:'인천 부평구 부평동 124-32',struct:'방3화1',year:15,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 북향'},
+  {id:434,type:'오피',name:'라온벨리온203오피',addr:'인천 부평구 부평동 126-6',struct:'방3화2',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 정남향'},
+  {id:435,type:'오피',name:'라온벨리온404오피',addr:'인천 부평구 부평동 126-6',struct:'방1화3',year:17,price:12000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 베란다2 남향'},
+  {id:436,type:'주택',name:'라온벨리온802',addr:'인천 부평구 부평동 126-6',struct:'방3화2',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 엘유오피'},
+  {id:437,type:'주택',name:'라온벨리온1204',addr:'인천 부평구 부평동 126-6',struct:'방3화1',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 엘유오피'},
+  {id:438,type:'주택',name:'부홍하파트106',addr:'인천 부평구 부평동 127-9',struct:'방2화1',year:15,price:13500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 막힘없음'},
+  {id:439,type:'주택',name:'인터빌 403주택',addr:'인천 부평구 부평동 127-11',struct:'방3화2',year:2,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올 시장역15분 엘무'},
+  {id:440,type:'주택',name:'그랜드켁슬 401',addr:'인천 부평구 부평동 132-17',struct:'방3화1',year:14,price:14000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 동향 엘유 오피'},
+  {id:441,type:'주택',name:'그랜드켁슬 602호',addr:'인천 부평구 부평동 132-17',struct:'방3화2',year:15,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿'},
+  {id:442,type:'주택',name:'주영하이즈빌502',addr:'인천 부평구 부평동 134-8',struct:'방3화2',year:12,price:16000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주 거분리 베란다2'},
+  {id:443,type:'오피',name:'금클래스602오피',addr:'인천 부평구 부평동 134-21',struct:'방3화2',year:13,price:16000,loan:'권8:2',empty:false,r:0,feat:'주거분리'},
+  {id:444,type:'주택',name:'DH씨밀레403호',addr:'인천 부평구 부평동 134-15',struct:'방3화2',year:13,price:16000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 알막힘 주택'},
+  {id:445,type:'주택',name:'DH씨밀레603주택',addr:'인천 부평구 부평동 134-15',struct:'방3화1',year:13,price:17000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 앞막힘 주택'},
+  {id:446,type:'주택',name:'DH씨밀레주택',addr:'인천 부평구 부평동 134-20',struct:'방3화1',year:13,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 구조채광굿 정남향'},
+  {id:447,type:'오피',name:'동원파어세204오피',addr:'인천 부평구 부평동 134-25',struct:'방3화2',year:13,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 부평역10분'},
+  {id:448,type:'주택',name:'대훈탑스빌4동302',addr:'인천 부평구 부평동 134-29',struct:'방2화1',year:1,price:10000,loan:'권8:2',empty:false,r:0,feat:'기본상태'},
+  {id:449,type:'주택',name:'대훈탑스빌3동202',addr:'인천 부평구 부평동 134-47',struct:'방2화1',year:1,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리 구조굿'},
+  {id:450,type:'주택',name:'대훈탑스빌1동503',addr:'인천 부평구 부평동 134-8',struct:'방3화1',year:1,price:12500,loan:'권8:2',empty:false,r:0,feat:'특올 부평역10분 꽤굿'},
+  {id:451,type:'주택',name:'플하우스빌601호',addr:'인천 부평구 부평동 134-47',struct:'방3화2',year:14,price:21000,loan:'권8:2',empty:false,r:0,feat:'새광구조 부평역10분 월세200/65 가능'},
+  {id:452,type:'주택',name:'TK리즈빌 602',addr:'인천 부평구 부평동 135-3',struct:'방3화1',year:14,price:16500,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:453,type:'주택',name:'TK리즈빌 802',addr:'인천 부평구 부평동 135-3',struct:'방2화1',year:14,price:12000,loan:'권8:2',empty:false,r:0,feat:'특올 반채광 주거분리'},
+  {id:454,type:'오피',name:'청담 403호오피',addr:'인천 부평구 부평동 135-8',struct:'방3화1',year:19,price:18000,loan:'권8:2',empty:false,r:0,feat:'채광굿 서향'},
+  {id:455,type:'주택',name:'대진302',addr:'인천 부평구 부평동 143-192',struct:'방3화1',year:2,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿'},
+  {id:456,type:'아파트',name:'미주아파트806주택',addr:'인천 부평구 부평동 146-6',struct:'방3화2',year:21,price:32000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 엘유 현#1234'},
+  {id:457,type:'오피',name:'헤리홈602오피',addr:'인천 부평구 부평동 146-7',struct:'방2화1',year:11,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:458,type:'주택',name:'금호503',addr:'인천 부평구 부평동 146-22',struct:'방2화1',year:2,price:8600,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:459,type:'주택',name:'리센시아 503호',addr:'인천 부평구 부평동 146-23',struct:'방3화1',year:16,price:15500,loan:'권8:2',empty:false,r:0,feat:'구조굿 반채광 종2580'},
+  {id:460,type:'주택',name:'로뎀레빌 501',addr:'인천 부평구 부평동 147-13',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 막힘없음'},
+  {id:461,type:'주택',name:'파인하우스 402호',addr:'인천 부평구 부평동 149-12',struct:'방3화1',year:1,price:13500,loan:'권8:2',empty:false,r:0,feat:'특올수리 시장역5분'},
+  {id:462,type:'주택',name:'파인하우스 6/201',addr:'인천 부평구 부평동 149-12',struct:'방3화1',year:1,price:17600,loan:'권8:2',empty:false,r:0,feat:'특올수리 시장역부평역5분 주거분리 환함'},
+  {id:463,type:'주택',name:'헤리홈206',addr:'인천 부평구 부평동 149-25',struct:'방3화2',year:11,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유 오피 시장역부평역10분'},
+  {id:464,type:'주택',name:'헤리홈406',addr:'인천 부평구 부평동 149-25',struct:'방3화2',year:17,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:465,type:'주택',name:'부홍2차 201',addr:'인천 부평구 부평동 149-31',struct:'방3화1',year:2,price:14000,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 집집'},
+  {id:466,type:'주택',name:'라이오플러스702',addr:'인천 부평구 부평동 149-12',struct:'방3화1',year:12,price:16500,loan:'권8:2',empty:false,r:0,feat:'기본 주부 부평역10분'},
+  {id:467,type:'주택',name:'길리슈빌 1201호',addr:'인천 부평구 부평동 150-4',struct:'방4화2',year:16,price:37000,loan:'권8:2',empty:false,r:0,feat:'특올 주택 채광구조굿 정남향'},
+  {id:468,type:'주택',name:'라이올볼러스2차408',addr:'인천 부평구 부평동 150-25',struct:'방3화1',year:13,price:13000,loan:'R4',empty:true,r:4,feat:'풀옵션 공실'},
+  {id:469,type:'주택',name:'JH타워806',addr:'인천 부평구 부평동 151-12',struct:'방3화2',year:15,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 반채광'},
+  {id:470,type:'주택',name:'시클레이크3차 501호',addr:'인천 부평구 부평동 151-14',struct:'방3화1',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 정남향'},
+  {id:471,type:'오피',name:'하이원 807오피',addr:'인천 부평구 부평동 158-1',struct:'방3화2',year:18,price:20500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:472,type:'오피',name:'하이원1106오피',addr:'인천 부평구 부평동 158-1',struct:'방3화2',year:18,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 뻥뷰 주차굿'},
+  {id:473,type:'주택',name:'지선504',addr:'인천 부평구 부평동 158-5',struct:'방2화1',year:2,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리'},
+  {id:474,type:'주택',name:'삼성아트빌402',addr:'인천 부평구 부평동 158-6',struct:'방3화2',year:2,price:14300,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 정남향 채광굿'},
+  {id:475,type:'주택',name:'마레302',addr:'인천 부평구 부평동 182-47',struct:'방2화1',year:2,price:14700,loan:'권8:2',empty:false,r:0,feat:'삼이구역 전세8000까고'},
+  {id:476,type:'오피',name:'해피하우스 1403오피',addr:'인천 부평구 부평동 178-9',struct:'방3화2',year:15,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:477,type:'주택',name:'뱰리지오 1402호주택',addr:'인천 부평구 부평동 178-8',struct:'방3화2',year:16,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 뻥뷰 부평역5분 종4454'},
+  {id:478,type:'주택',name:'해피하우스904주택',addr:'인천 부평구 부평동 179-8',struct:'방3화2',year:15,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 뻥뷰 부평역5분 종4454'},
+  {id:479,type:'오피',name:'해피하우스 1403오피',addr:'인천 부평구 부평동 178-9',struct:'방3화2',year:15,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:480,type:'주택',name:'메이처빌201주택',addr:'인천 부평구 부평동 180-20',struct:'방1화3',year:13,price:15500,loan:'권8:2',empty:false,r:0,feat:'기본 주부'},
+  {id:481,type:'주택',name:'가림502주택',addr:'인천 부평구 부평동 182',struct:'방3화1',year:2,price:14900,loan:'권8:2',empty:false,r:0,feat:'기본상태 구조쫭'},
+  {id:482,type:'주택',name:'대원레뷰3차501주택',addr:'인천 부평구 부평동 182-14',struct:'방3화1',year:14,price:21500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 막힘없음 테라스'},
+  {id:483,type:'주택',name:'프라이드904',addr:'인천 부평구 부평동 182-47',struct:'방2화1',year:2,price:15200,loan:'권8:2',empty:false,r:0,feat:'특올 주택'},
+  {id:484,type:'주택',name:'프라이드1001주택',addr:'인천 부평구 부평동 182-47',struct:'방2화1',year:2,price:15000,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:485,type:'주택',name:'세르누비앙703주택',addr:'인천 부평구 부평동 182-56',struct:'방3화1',year:14,price:18500,loan:'R4',empty:false,r:4,feat:'올수리 주부 통배란다 남향 현#8237'},
+  {id:486,type:'주택',name:'원레빌',addr:'인천 부평구 부평동 182-14',struct:'방3화1',year:16,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:487,type:'오피',name:'마루1303오피',addr:'인천 부평구 부평동 203-1',struct:'방3화2',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:488,type:'오피',name:'마루엘슐601호오피',addr:'인천 부평구 부평동 203-1',struct:'방3화1',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 부평역10분 채광굿'},
+  {id:489,type:'오피',name:'아이홈 706오피',addr:'인천 부평구 부평동 204-20',struct:'방3화2',year:16,price:23500,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 남향'},
+  {id:490,type:'오피',name:'아이홈1407호오피',addr:'인천 부평구 부평동 204-20',struct:'방3화2',year:24,price:21700,loan:'R10',empty:false,r:10,feat:'특올 시장역부평역10분 상태굿'},
+  {id:491,type:'주택',name:'남승리자빌501',addr:'인천 부평구 부평동 207-38',struct:'방2화1',year:10,price:8000,loan:'권8:2',empty:false,r:0,feat:'채광굿 빠른입주가능'},
+  {id:492,type:'주택',name:'해효',addr:'인천 부평구 부평동 202',struct:'방2화1',year:2,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올 구조굿'},
+  {id:493,type:'오피',name:'로렌하이뷰202오피',addr:'인천 부평구 부평동 209-1',struct:'방3화2',year:15,price:20500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:494,type:'주택',name:'로렌하이뷰505주택엘유',addr:'인천 부평구 부평동 209-1',struct:'방3화1',year:15,price:20400,loan:'R7',empty:false,r:7,feat:'특올 주부 평일6시이후 주말가능'},
+  {id:495,type:'주택',name:'플하우스609',addr:'인천 부평구 부평동 210-2',struct:'방3화2',year:20,price:30700,loan:'권8:2',empty:false,r:0,feat:'서향 막힘없음 채광굿 엘유 오피'},
+  {id:496,type:'주택',name:'플하우스1302',addr:'인천 부평구 부평동 210-2',struct:'방3화2',year:20,price:29000,loan:'권8:2',empty:false,r:0,feat:'특올 오피'},
+  {id:497,type:'오피',name:'플하우스1504오피',addr:'인천 부평구 부평동 210-2',struct:'방3화2',year:20,price:33000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:498,type:'아파트',name:'아미아파트나603호501주택',addr:'인천 부평구 부평동 217-39',struct:'방3화1',year:13,price:15000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 주차지주식주차'},
+  {id:499,type:'오피',name:'앤에스파크102/404오피',addr:'인천 부평구 부평동 217-3',struct:'방3화2',year:13,price:25000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:500,type:'주택',name:'킹스빌202',addr:'인천 부평구 부평동 217-4',struct:'방3화1',year:10,price:16000,loan:'권8:2',empty:false,r:0,feat:'시장역10분 근생 사방트임'},
+  {id:501,type:'오피',name:'앤에스파크205오피',addr:'인천 부평구 부평동 217-39',struct:'방3화1',year:19,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:502,type:'오피',name:'HB엘레뷰2차406오피',addr:'인천 부평구 부평동 222-3',struct:'방3화1',year:19,price:17400,loan:'권8:2',empty:false,r:0,feat:'특올 부평역10분 종#1234'},
+  {id:503,type:'오피',name:'HB엘레뷰2차B04오피',addr:'인천 부평구 부평동 222-3',struct:'방3화1',year:19,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 부평역10분'},
+  {id:504,type:'주택',name:'HB엘레뷰1702주택',addr:'인천 부평구 부평동 222-3',struct:'방3화2',year:19,price:33000,loan:'R10',empty:false,r:10,feat:'현상태 주부 서향 뻥뷰 북중 콘테라스엘유'},
+  {id:505,type:'주택',name:'노블레스1003주택',addr:'인천 부평구 부평동 135',struct:'방3화1',year:15,price:17500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 엘유오피'},
+  {id:506,type:'주택',name:'정원빌리아동404',addr:'인천 부평구 부평동 240-3',struct:'방3화1',year:2,price:12800,loan:'권8:2',empty:false,r:0,feat:'반수리 채광좋음'},
+  {id:507,type:'아파트',name:'하이빌아파트B동401',addr:'인천 부평구 부평동 240-4',struct:'방3화1',year:2,price:12000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 채광구조굿'},
+  {id:508,type:'주택',name:'마킨타워1103주택',addr:'인천 부평구 부평동 240-18',struct:'방3화2',year:17,price:25200,loan:'R6',empty:false,r:6,feat:'특올 채광구조굿  평일2시이후'},
+  {id:509,type:'주택',name:'DH씨밀레901주택',addr:'인천 부평구 부평동 241-2',struct:'방3화2',year:20,price:18000,loan:'권8:2',empty:false,r:0,feat:'상태굿 오피 엘유 주부 부평역도보10분'},
+  {id:510,type:'오피',name:'모던캐슬501오피',addr:'인천 부평구 부평동 241-3',struct:'방3화1',year:14,price:17500,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:511,type:'주택',name:'부민렉스타운901',addr:'인천 부평구 부평동 250-11',struct:'방3화2',year:12,price:19000,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:512,type:'오피',name:'보현나이즈403오피',addr:'인천 부평구 부평동 250-14',struct:'방3화2',year:3,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 남향 막힘없음'},
+  {id:513,type:'주택',name:'한승타워2차 201',addr:'인천 부평구 부평동 250-18',struct:'방3화2',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 막힘없음'},
+  {id:514,type:'주택',name:'한승타워505',addr:'인천 부평구 부평동 250-18',struct:'방3화2',year:17,price:22500,loan:'권8:2',empty:false,r:0,feat:'특올 막힘없음 채광굿 시장역5분 오피 엘유'},
+  {id:515,type:'주택',name:'한승타워1305',addr:'인천 부평구 부평동 250-18',struct:'방3화2',year:17,price:29500,loan:'권8:2',empty:false,r:0,feat:'기본 막힘없음 채광구조굿 시장역5분 주택 엘유'},
+  {id:516,type:'주택',name:'서광팰리스1002주택',addr:'인천 부평구 부평동 283-58',struct:'방3화2',year:15,price:23500,loan:'권8:2',empty:false,r:0,feat:'특올 왕테라스 창고있음'},
+  {id:517,type:'주택',name:'삼화스203',addr:'인천 부평구 부평동 341-2',struct:'방3화2',year:17,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 사방트임 구조굿'},
+  {id:518,type:'오피',name:'플하우스406오피',addr:'인천 부평구 부평동 341-12',struct:'방3화2',year:15,price:17600,loan:'권8:2',empty:false,r:0,feat:'기본 엘유 주부'},
+  {id:519,type:'오피',name:'퀸타입 502호오피',addr:'인천 부평구 부평동 341-42',struct:'방3화1',year:17,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 사방 채광구조굿'},
+  {id:520,type:'주택',name:'퀸스타운 1205호',addr:'인천 부평구 부평동 341-42',struct:'방3화1',year:17,price:24500,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:521,type:'주택',name:'하임스트리 705호',addr:'인천 부평구 부평동 341-88',struct:'방3화1',year:17,price:23400,loan:'권8:2',empty:false,r:0,feat:'특올 부평역5분 오피'},
+  {id:522,type:'주택',name:'리세홈507',addr:'인천 부평구 부평동 341-99',struct:'방3화2',year:17,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본상태 부평역5분 주차가능 오피 엘유'},
+  {id:523,type:'주택',name:'리세홈905',addr:'인천 부평구 부평동 341-99',struct:'방3화1',year:22,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본 동향 현#1616'},
+  {id:524,type:'주택',name:'브레인써티1102',addr:'인천 부평구 부평동 341-212',struct:'방3화2',year:17,price:22900,loan:'권8:2',empty:false,r:0,feat:'기본 오피'},
+  {id:525,type:'아파트',name:'슬림아파트401',addr:'인천 부평구 부평동 364-6',struct:'방2화1',year:2,price:11200,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:526,type:'주택',name:'굿플러스201호',addr:'인천 부평구 부평동 364-19',struct:'방3화2',year:17,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 오피 구조채광굿'},
+  {id:527,type:'아파트',name:'부광아파트2동504',addr:'인천 부평구 부평동 365-9',struct:'방3화1',year:2,price:13000,loan:'권8:2',empty:false,r:0,feat:'기본상태'},
+  {id:528,type:'주택',name:'원옥 가동402호',addr:'인천 부평구 부평동 366-14',struct:'방3화1',year:95,price:13000,loan:'권8:2',empty:false,r:0,feat:'삼이구역 기본'},
+  {id:529,type:'주택',name:'진흥스타홈601',addr:'인천 부평구 부평동 370-40',struct:'방3화2',year:18,price:24000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 오피'},
+  {id:530,type:'주택',name:'현대홈타운1203호',addr:'인천 부평구 부평동 372-12',struct:'방3화1',year:14,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올 주거분리 채광굿 시장역5분'},
+  {id:531,type:'오피',name:'솔레아1301오피',addr:'인천 부평구 부평동 373-5',struct:'방3화2',year:17,price:23500,loan:'권8:2',empty:false,r:0,feat:'특올 뻥뷰 막힘없음'},
+  {id:532,type:'주택',name:'예슴파크504주택',addr:'인천 부평구 부평동 375-2',struct:'방3화1',year:12,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 정남향'},
+  {id:533,type:'주택',name:'에슴파크805주택',addr:'인천 부평구 부평동 375-2',struct:'방3화1',year:12,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 뻥뷰 현#0610'},
+  {id:534,type:'주택',name:'예승1505주택',addr:'인천 부평구 부평동 375-2',struct:'방3화1',year:12,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 0610'},
+  {id:535,type:'주택',name:'피렌체201호',addr:'인천 부평구 부평동 375-22',struct:'방3화2',year:14,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 엘유 오피'},
+  {id:536,type:'주택',name:'씩씨원2 202호',addr:'인천 부평구 부평동 375-131',struct:'방3화1',year:17,price:16800,loan:'권8:2',empty:false,r:0,feat:'채광상태굿 골포전역10분 오피'},
+  {id:537,type:'주택',name:'씩씨원2 704호',addr:'인천 부평구 부평동 375-131',struct:'방3화1',year:17,price:18300,loan:'권8:2',empty:false,r:0,feat:'채광굿 종#8642 오피'},
+  {id:538,type:'주택',name:'테라스빌201',addr:'인천 부평구 부평동 375-139',struct:'방3화1',year:11,price:13000,loan:'권8:2',empty:false,r:0,feat:'기본 남향 상태좋음 근생'},
+  {id:539,type:'주택',name:'부홍402',addr:'인천 부평구 부평동 375-87',struct:'방2화1',year:1,price:9800,loan:'권8:2',empty:false,r:0,feat:'특올수리 시장역구청역 10분'},
+  {id:540,type:'주택',name:'앨캔빌리지 201호',addr:'인천 부평구 부평동 375-102',struct:'방3화1',year:12,price:13000,loan:'권8:2',empty:false,r:0,feat:'특올수리 채광굿 사방트임 근생주택 금매'},
+  {id:541,type:'주택',name:'효향복마을A동 501호',addr:'인천 부평구 부평동 376-1',struct:'방3화1',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 엘유 남향 오피 1월나감'},
+  {id:542,type:'주택',name:'효향복마을B동503주택',addr:'인천 부평구 부평동 376-1',struct:'방3화2',year:17,price:26000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 올리모델링 종#3761'},
+  {id:543,type:'오피',name:'엘도라도901오피',addr:'인천 부평구 부평동 377-5',struct:'방3화2',year:11,price:19000,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 통배란다 막힘없음'},
+  {id:544,type:'주택',name:'웨스트레뷰402',addr:'인천 부평구 부평동 377-8',struct:'방3화1',year:14,price:15000,loan:'권8:2',empty:false,r:0,feat:'기본 반채광 골포전역10분 엘유 오피'},
+  {id:545,type:'주택',name:'로뎀704',addr:'인천 부평구 부평동 377-17',struct:'방3화1',year:15,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 종7201'},
+  {id:546,type:'주택',name:'로뎀레빌1002',addr:'인천 부평구 부평동 377-17',struct:'방3화1',year:15,price:17500,loan:'권8:2',empty:false,r:0,feat:'엘유 주택 현 비번문의'},
+  {id:547,type:'주택',name:'케림202',addr:'인천 부평구 부평동 377-35',struct:'방3화1',year:2,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올 부평시장역4'},
+  {id:548,type:'주택',name:'청솔602',addr:'인천 부평구 부평동 379-3',struct:'방2화1',year:12,price:15000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:549,type:'주택',name:'무한레뷰 802호',addr:'인천 부평구 부평동 379-52',struct:'방3화1',year:14,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올 구조굿'},
+  {id:550,type:'주택',name:'무한1003주택',addr:'인천 부평구 부평동 379-52',struct:'방3화1',year:14,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 주택 #0329#'},
+  {id:551,type:'오피',name:'투엠레뷰504오피',addr:'인천 부평구 부평동 379-56',struct:'방2화1',year:10,price:14000,loan:'권8:2',empty:false,r:0,feat:'기본 반채광 엘유'},
+  {id:552,type:'오피',name:'케이아파트2동203호오피',addr:'인천 부평구 부평동 379-77',struct:'방3화2',year:14,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 채광있음 현#7942'},
+  {id:553,type:'주택',name:'케이@2-1302',addr:'인천 부평구 부평동 379-78',struct:'방3화2',year:19,price:21700,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 통배'},
+  {id:554,type:'주택',name:'현대302',addr:'인천 부평구 부평동 379-82',struct:'방3화1',year:2,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:555,type:'주택',name:'베네시안5차 205호',addr:'인천 부평구 부평동 379-82',struct:'방3화1',year:17,price:16500,loan:'권8:2',empty:false,r:0,feat:'특올수리 반채광 구조굿 오피'},
+  {id:556,type:'주택',name:'베네시안 604호',addr:'인천 부평구 부평동 379-82',struct:'방3화1',year:18,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:557,type:'오피',name:'베네시안701오피',addr:'인천 부평구 부평동 379-82',struct:'방3화1',year:18,price:19000,loan:'권8:2',empty:true,r:0,feat:'특올 공실'},
+  {id:558,type:'주택',name:'우주마루2차A동304',addr:'인천 부평구 부평동 379-104',struct:'방3화2',year:12,price:18500,loan:'R10',empty:false,r:10,feat:'기본 주부 엘유 베란다2 시장역5분 오피'},
+  {id:559,type:'오피',name:'현대302오피',addr:'인천 부평구 부평동 379-5',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:560,type:'주택',name:'맹신나동202',addr:'인천 부평구 부평동 396-11',struct:'방3화1',year:12,price:9000,loan:'권8:2',empty:false,r:0,feat:'기본 채굿'},
+  {id:561,type:'주택',name:'삼성301호',addr:'인천 부평구 부평동 397-1',struct:'방2화1',year:2,price:8700,loan:'권8:2',empty:false,r:0,feat:'올수리 시장역구 골포전역'},
+  {id:562,type:'주택',name:'정곡 503',addr:'인천 부평구 부평동 396-52',struct:'방2화1',year:1,price:8500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:563,type:'주택',name:'리머즈702',addr:'인천 부평구 부평동 396-2',struct:'방3화1',year:15,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 주부'},
+  {id:564,type:'주택',name:'우리603주택',addr:'인천 부평구 부평동 397-3',struct:'방3화1',year:13,price:10000,loan:'권8:2',empty:false,r:0,feat:'기본 엘무'},
+  {id:565,type:'오피',name:'해피플러스402오피',addr:'인천 부평구 부평동 397-33',struct:'방3화2',year:18,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 현#1602#'},
+  {id:566,type:'오피',name:'해피플러스501오피',addr:'인천 부평구 부평동 397-33',struct:'방3화1',year:16,price:16000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:567,type:'주택',name:'주호A/503',addr:'인천 부평구 부평동 399-17',struct:'방2화1',year:2,price:9000,loan:'권8:2',empty:false,r:0,feat:'특올수리 통배 채광구조굿'},
+  {id:568,type:'주택',name:'삼성타운B동501',addr:'인천 부평구 부평동 399-19',struct:'방2화1',year:0,price:6000,loan:'권8:2',empty:false,r:0,feat:'올수리 채광통좋음 게단넓은반지하'},
+  {id:569,type:'주택',name:'양지타운201',addr:'인천 부평구 부평동 399-21',struct:'방2화1',year:2,price:10000,loan:'권8:2',empty:true,r:0,feat:'기본 공실'},
+  {id:570,type:'주택',name:'삼성타운A동502',addr:'인천 부평구 부평동 400-6',struct:'방2화1',year:1,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올수리'},
+  {id:571,type:'주택',name:'맹신402호',addr:'인천 부평구 부평동 400-6',struct:'방2화1',year:2,price:10500,loan:'권8:2',empty:false,r:0,feat:'특올수리 채광구조굿'},
+  {id:572,type:'주택',name:'현대는동 101호근생',addr:'인천 부평구 부평동 400-8',struct:'방3화1',year:2,price:11000,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:573,type:'아파트',name:'지선아파트403',addr:'인천 부평구 부평동 400-11',struct:'방3화1',year:2,price:13500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:574,type:'주택',name:'삼성타운B동202',addr:'인천 부평구 부평동 400-12',struct:'방3화1',year:1,price:11500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:575,type:'주택',name:'대신탑스빌1동401',addr:'인천 부평구 부평동 400-19',struct:'방2화1',year:2,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올수리 남향 채광좋음 상태최상 비번문의'},
+  {id:576,type:'주택',name:'대신2/302호',addr:'인천 부평구 부평동 400-20',struct:'방2화1',year:2,price:10900,loan:'권8:2',empty:false,r:0,feat:'특올 통배란다 채광구조쫭'},
+  {id:577,type:'주택',name:'현대A402호',addr:'인천 부평구 부평동 400-20',struct:'방2화1',year:1,price:9500,loan:'권8:2',empty:false,r:0,feat:'특올 구조채광굿'},
+  {id:578,type:'주택',name:'현대A303',addr:'인천 부평구 부평동 400-30',struct:'방2화1',year:1,price:10600,loan:'권8:2',empty:false,r:0,feat:'특올'},
+  {id:579,type:'오피',name:'더뷰스테이트403오피',addr:'인천 부평구 부평동 401-2',struct:'방3화1',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 막힘없음 현#0135'},
+  {id:580,type:'오피',name:'테오빌 605오피',addr:'인천 부평구 부평동 401-3',struct:'방3화2',year:18,price:25000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:581,type:'오피',name:'프라디온603오피',addr:'인천 부평구 부평동 401-6',struct:'방3화1',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올 동향'},
+  {id:582,type:'주택',name:'상우502',addr:'인천 부평구 부평동 401-8',struct:'방3화1',year:2,price:11700,loan:'권8:2',empty:false,r:0,feat:'기본 통배 채광구조굿'},
+  {id:583,type:'주택',name:'뉴베베네스트101동602',addr:'인천 부평구 부평동 401-20',struct:'방3화1',year:10,price:16000,loan:'권8:2',empty:false,r:0,feat:'주거분리 뻥뷰 비번보유'},
+  {id:584,type:'주택',name:'플러스케슬601',addr:'인천 부평구 부평동 401-35',struct:'방3화2',year:10,price:20500,loan:'권8:2',empty:false,r:0,feat:'특올 남향 배2 막힘없음 현#0610'},
+  {id:585,type:'주택',name:'뉴베베네스트102동3동41엘유주택',addr:'인천 부평구 부평동 401-63',struct:'방3화1',year:10,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 엘유 시장역5분'},
+  {id:586,type:'주택',name:'정원빌리아동501호',addr:'인천 부평구 부평동 406-62',struct:'방3화2',year:9,price:17000,loan:'권8:2',empty:false,r:0,feat:'기본 사방트임 기본'},
+  {id:587,type:'주택',name:'플하우스801',addr:'인천 부평구 부평동 406-11',struct:'방3화2',year:16,price:18500,loan:'권8:2',empty:false,r:0,feat:'골포전역6분 주거분리 엘유 경열2580'},
+  {id:588,type:'주택',name:'플하우스1102',addr:'인천 부평구 부평동 406-11',struct:'방3화1',year:16,price:17000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유 채광굿 경열2580'},
+  {id:589,type:'주택',name:'케림501',addr:'인천 부평구 부평동 406-17',struct:'방2화1',year:2,price:10700,loan:'권8:2',empty:false,r:0,feat:'현상태 통배란다 남향'},
+  {id:590,type:'오피',name:'아미파크3604오피',addr:'인천 부평구 부평동 406-37',struct:'방3화2',year:17,price:21500,loan:'권8:2',empty:false,r:0,feat:'특올 동향 부평역시장10분 현#4037'},
+  {id:591,type:'오피',name:'아미파크1102오피',addr:'인천 부평구 부평동 406-37',struct:'방3화1',year:17,price:21500,loan:'권8:2',empty:false,r:0,feat:'기본 서향 막힘없음'},
+  {id:592,type:'오피',name:'더위즈502오피',addr:'인천 부평구 부평동 406-42',struct:'방2화1',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유만'},
+  {id:593,type:'주택',name:'16',addr:'인천 부평구 부평동 406-42더위즈803★오피',struct:'방3화1',year:18,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:594,type:'오피',name:'타워팰리스A동206오피',addr:'인천 부평구 부평동 407-5',struct:'방3화2',year:17,price:17500,loan:'권8:2',empty:false,r:0,feat:'특올 종#4075'},
+  {id:595,type:'오피',name:'타워팰리스A동301오피',addr:'인천 부평구 부평동 407-5',struct:'방3화1',year:17,price:17500,loan:'권8:2',empty:false,r:0,feat:'특올 종4075'},
+  {id:596,type:'오피',name:'타워팰리스A동306오피',addr:'인천 부평구 부평동 407-5',struct:'방3화2',year:17,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿 종#4075'},
+  {id:597,type:'주택',name:'타워팰리스A동603',addr:'인천 부평구 부평동 407-5',struct:'방1화3',year:17,price:18500,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:598,type:'주택',name:'타워팰리스A동1104호',addr:'인천 부평구 부평동 407-5',struct:'방3화1',year:17,price:23500,loan:'권8:2',empty:false,r:0,feat:'특올 정남향 엘유 오피'},
+  {id:599,type:'오피',name:'타워팰리스A동1201오피',addr:'인천 부평구 부평동 407-5',struct:'방3화2',year:17,price:18200,loan:'권8:2',empty:false,r:0,feat:'특올 채광구조굿'},
+  {id:600,type:'오피',name:'타워팰리스A동306오피',addr:'인천 부평구 부평동 407-9',struct:'방3화1',year:17,price:14000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주거분리 엘유 오피 종#4079'},
+  {id:601,type:'오피',name:'타워팰리스B/406오피',addr:'인천 부평구 부평동 407-9',struct:'방3화2',year:17,price:19200,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:602,type:'오피',name:'타워팰리스B동801오피',addr:'인천 부평구 부평동 407-9',struct:'방3화2',year:17,price:18000,loan:'권8:2',empty:false,r:0,feat:'기본 주부 엘유 종#4079'},
+  {id:603,type:'주택',name:'캐슬베리1401',addr:'인천 부평구 부평동 408-4',struct:'방1.5화1',year:12,price:13000,loan:'권8:2',empty:false,r:0,feat:'기본 1.5배 팔평거실 대형방 테라스6평 채광굿'},
+  {id:604,type:'주택',name:'대승파인502/6층',addr:'인천 부평구 부평동 408-14',struct:'방3화1',year:2,price:9800,loan:'권8:2',empty:false,r:0,feat:'올수리 베란다2 채광좋음빠른입주가능'},
+  {id:605,type:'주택',name:'시래크301엘유',addr:'인천 부평구 부평동 408-24',struct:'방3화2',year:17,price:21000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 통배 뻥뷰 현#전재세사'},
+  {id:606,type:'아파트',name:'수림아파트 비동601',addr:'인천 부평구 부평동 408-31',struct:'방3화1',year:3,price:9500,loan:'권8:2',empty:false,r:0,feat:'현상태'},
+  {id:607,type:'오피',name:'사방찰뒤 1402오피',addr:'인천 부평구 부평동 408-37',struct:'방3화1',year:17,price:20000,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 주부 막힘없음'},
+  {id:608,type:'오피',name:'탑클래스 703오피',addr:'인천 부평구 부평동 409',struct:'방3화1',year:16,price:18000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부 배2 #0307#'},
+  {id:609,type:'오피',name:'탑클래스1004오피',addr:'인천 부평구 부평동 409-1',struct:'방3화2',year:16,price:20000,loan:'권8:2',empty:false,r:0,feat:'기본 항시볼수있음'},
+  {id:610,type:'오피',name:'미래안위브303오피',addr:'인천 부평구 부평동 409-3',struct:'방3화2',year:17,price:21300,loan:'권8:2',empty:false,r:0,feat:'부평역6분 주부 엘유 채광굿 경열2580'},
+  {id:611,type:'주택',name:'성지101/501',addr:'인천 부평구 부평동 409-4',struct:'방2화1',year:2,price:7700,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿'},
+  {id:612,type:'주택',name:'성지위너스103/403',addr:'인천 부평구 부평동 409-5',struct:'방3화1',year:2,price:11000,loan:'권8:2',empty:true,r:0,feat:'특올 공실'},
+  {id:613,type:'주택',name:'성지위너스104/303',addr:'인천 부평구 부평동 409-5',struct:'방2화1',year:2,price:10500,loan:'권8:2',empty:false,r:0,feat:'특올 채광굿 현#12345'},
+  {id:614,type:'오피',name:'엘루이 302오피',addr:'인천 부평구 부평동 409-8',struct:'방3화2',year:20,price:21300,loan:'권8:2',empty:false,r:0,feat:'특올 부평역6분'},
+  {id:615,type:'오피',name:'엘루이1204오피',addr:'인천 부평구 부평동 409-8',struct:'방2화1',year:20,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올 시장역6분'},
+  {id:616,type:'주택',name:'엘루이1204',addr:'인천 부평구 부평동 409-8',struct:'방2화1',year:20,price:16700,loan:'권8:2',empty:false,r:0,feat:'특올 주부 오피 에어컨2대세탁기옵션'},
+  {id:617,type:'주택',name:'엘루이1401호',addr:'인천 부평구 부평동 409-8',struct:'방3화2',year:20,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 엘유 렌트하우스급뻥뷰'},
+  {id:618,type:'주택',name:'그랑빌301',addr:'인천 부평구 부평동 409-22',struct:'방3화2',year:17,price:19000,loan:'권8:2',empty:false,r:0,feat:'특올 주부 엘유'},
+  {id:619,type:'주택',name:'그랑빌1202',addr:'인천 부평구 부평동 409-22',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본 뻥뷰 이시쩝이 오피 엘유'},
+  {id:620,type:'주택',name:'성지위너스104동303',addr:'인천 부평구 부평동 409-32',struct:'방3화1',year:2,price:10500,loan:'권8:2',empty:true,r:0,feat:'특올 채광구조굿 공실 비번문의'},
+  {id:621,type:'주택',name:'세일행복해1003',addr:'인천 부평구 부평동 415-7',struct:'방3화2',year:16,price:16000,loan:'권8:2',empty:false,r:0,feat:'시장역5분 주거분리'},
+  {id:622,type:'아파트',name:'신영아파트302',addr:'인천 부평구 부평동 415-24',struct:'방3화1',year:2,price:12000,loan:'권8:2',empty:false,r:0,feat:'기본'},
+  {id:623,type:'주택',name:'민정하이즈302',addr:'인천 부평구 부평동 416-30',struct:'방3화1',year:0,price:15000,loan:'권8:2',empty:false,r:0,feat:'올수리 시장역5분 채광굿'},
+  {id:624,type:'오피',name:'리치카운터902오피',addr:'인천 부평구 부평동 416-31',struct:'방3화1',year:16,price:19000,loan:'권8:2',empty:false,r:0,feat:'기본 북향 트임'},
+  {id:625,type:'주택',name:'리치카운터 1402호',addr:'인천 부평구 부평동 416-31',struct:'방3화2',year:16,price:23000,loan:'권8:2',empty:false,r:0,feat:'특올 뻥뷰 오피 오전또는일올만'},
+  {id:626,type:'주택',name:'센트럴뷰1004엘유주택',addr:'인천 미추홀구 숭의동 159-35',struct:'방3화2',year:23,price:22000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 개인창고2평 현#4567'},
+  {id:627,type:'오피',name:'제일행복해403엘유오피',addr:'인천 미추홀구 숭의동 171-9',struct:'방3화2',year:17,price:17400,loan:'R7',empty:false,r:7,feat:'특올수리 주분트임  주말만볼수있어요'},
+  {id:628,type:'오피',name:'다우림201동1003엘유오피',addr:'인천 미추홀구 숭의동 182-4',struct:'방3화1',year:18,price:21500,loan:'권8:2',empty:true,r:0,feat:'특올수리 주부 안방드레스룸 공실'},
+  {id:629,type:'아파트',name:'세움아파트502엘유주택',addr:'인천 미추홀구 숭의동 187-50',struct:'방3화2',year:17,price:17000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 베란다2 막힘없음 항시봄'},
+  {id:630,type:'오피',name:'한선드림시티201엘유오피',addr:'인천 미추홀구 숭의동 434-11',struct:'방3화2',year:17,price:18000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부'},
+  {id:631,type:'주택',name:'대준블루온601엘유주택',addr:'인천 미추홀구 숭의동 490-37',struct:'방3화2',year:17,price:16500,loan:'권8:2',empty:false,r:0,feat:'기본상태 서향 빠른입주가능'},
+  {id:632,type:'아파트',name:'롯데아파트301엘유주택',addr:'인천 중구 신생33-9',struct:'방3화2',year:8,price:17200,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 신포역7분'},
+  {id:633,type:'주택',name:'미용시티뷰202엘유',addr:'경기 부천시 562-410',struct:'방3화2',year:3,price:14000,loan:'권8:2',empty:false,r:0,feat:'현상태 주부'},
+  {id:634,type:'주택',name:'금호솔릉고빌501',addr:'경기 부천시 괴안동2-10',struct:'방3화1',year:2,price:16500,loan:'권8:2',empty:false,r:0,feat:'올수리 베란다2 동남향 막힘없음 주차100%'},
+  {id:635,type:'주택',name:'일루미스테이트413동1604',addr:'경기 부천시 원미327',struct:'방3화2',year:24,price:82000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 아파트전용84 시스템에어컨5대'},
+  {id:636,type:'주택',name:'엘리타운502엘유주택',addr:'경기 부천시 원미190-23',struct:'방3화2',year:20,price:22000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 서향 채광굿'},
+  {id:637,type:'주택',name:'삼성빌리지503 공실',addr:'경기 부천시 원미79-1',struct:'방2화1',year:16,price:18000,loan:'권8:2',empty:true,r:0,feat:'특올수리 정남향 공실'},
+  {id:638,type:'주택',name:'거성팰리스504엘유주택',addr:'경기 부천시 원미63-24',struct:'방2화1',year:16,price:19500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부'},
+  {id:639,type:'주택',name:'세화드림빌1 301',addr:'경기 부천시 원미79-1',struct:'방3화2',year:18,price:27000,loan:'R3',empty:false,r:3,feat:'현상태 주부 동향 관리비4~5만 현#8888#'},
+  {id:640,type:'주택',name:'삼성베스트302',addr:'경기 부천시 원미82-6',struct:'방3화1',year:1,price:14600,loan:'권8:2',empty:false,r:0,feat:'신축급특올수리'},
+  {id:641,type:'주택',name:'이스트힐뷰301엘유주택',addr:'경기 부천시 원중253-3',struct:'방3화2',year:20,price:38700,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부'},
+  {id:642,type:'주택',name:'남양미라벨203',addr:'경기 부천시 원중352-2',struct:'방3화2',year:19,price:22500,loan:'권8:2',empty:false,r:0,feat:'올수리 주부 현#1012#'},
+  {id:643,type:'아파트',name:'현대아파트1동102',addr:'경기 부천시 원중362-4',struct:'방3화1',year:20,price:22000,loan:'권8:2',empty:false,r:0,feat:'현상태 재건축예정지'},
+  {id:644,type:'주택',name:'하이트A동502엘유주택',addr:'경기 부천시 심곡40-110',struct:'방2화1',year:15,price:19500,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부 통배란다'},
+  {id:645,type:'주택',name:'트윈케슬B동1405주택',addr:'경기 부천시 심곡138-2',struct:'방3화1',year:16,price:27000,loan:'권8:2',empty:false,r:0,feat:'특올수리 트림환경 주부 주차100% 부천역4분'},
+  {id:646,type:'주택',name:'중앙리더스 나동302',addr:'경기 부천시 심곡339-9',struct:'방3화2',year:16,price:23000,loan:'권8:2',empty:false,r:0,feat:'기본상태 주부'},
+  {id:647,type:'주택',name:'스타파크힐1203엘유주택',addr:'경기 부천시 심곡464-6',struct:'방3화2',year:18,price:37500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 동남향 채광굿 항시봄'},
+  {id:648,type:'주택',name:'유앤벨리아501엘유주택',addr:'경기 부천시 심곡448-11',struct:'방3화1',year:19,price:29500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 남향 자차좋음'},
+  {id:649,type:'주택',name:'DS미소가304엘유주택',addr:'경기 부천시 오정동112-3',struct:'방3화2',year:15,price:19200,loan:'권8:2',empty:false,r:0,feat:'특올수리 주분환환일요일은12시이후평일4시이후'},
+  {id:650,type:'주택',name:'용공빌라1동102',addr:'경기 부천시 오정614-3',struct:'방3화1',year:91,price:12700,loan:'R7',empty:false,r:7,feat:'기본상태 재개발보지기'},
+  {id:651,type:'주택',name:'제이케이이세어링409',addr:'경기 부천시 상동465-2',struct:'방1화1',year:12,price:6200,loan:'권8:2',empty:false,r:0,feat:'특올수리 복층원룸 용도 사무실'},
+  {id:652,type:'주택',name:'스카이빌502',addr:'경기 부천시 중동752',struct:'방3화2',year:9,price:16800,loan:'R7',empty:false,r:7,feat:'기본상태주부 상태좋음보일러교체 현#7521#'},
+  {id:653,type:'주택',name:'삼성106동202',addr:'경기 고양시 일산동구 사리현동636-5',struct:'방3화2',year:23,price:16500,loan:'R10',empty:false,r:10,feat:'기본상태 베란다2 채광굿'},
+  {id:654,type:'주택',name:'사신케슬301엘유주택',addr:'경기 안산시 상록구일동540',struct:'방2화1',year:24,price:25000,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 북동향'},
+  {id:655,type:'주택',name:'리치캐슬501엘유주택',addr:'경기 안산시 본오동804-4',struct:'방3화2',year:24,price:38500,loan:'권8:2',empty:false,r:0,feat:'특올수리 주부 정남향'},
+  {id:656,type:'주택',name:'아티스큐브2차1동2712',addr:'경기 안산시 단원구 곡성공동838-2',struct:'방2화1',year:23,price:21000,loan:'권8:2',empty:false,r:0,feat:'엘유오피 첫입주 오선뷰 분양가27600(vat포함)무한인정 가능'},
+  {id:657,type:'주택',name:'삼성아트빌501',addr:'경기 안산시 단원구 약동774-2',struct:'방2화1',year:13,price:14000,loan:'권8:2',empty:true,r:0,feat:'기본상태 주부 통배란다 채광굿 공실'},
+  {id:658,type:'주택',name:'스타파크빌102동',addr:'경기 의정부시 가능동590-27',struct:'방3화2',year:18,price:17000,loan:'R7',empty:false,r:7,feat:'203~4.5.6.7호(5세대)엘유주택 (3.3%공제)'},
 ];
 
-const PROP_KEY = 'dh_old_props_v2';
-const CUST_KEY = 'dh_old_custs_v2';
-let nxtId = 55;
-
-let props = JSON.parse(localStorage.getItem(PROP_KEY) || 'null') || INIT_PROPS;
-let custs = JSON.parse(localStorage.getItem(CUST_KEY) || '[]');
-let selCust = null;
-let cfFilter = '';
-
-function saveProps() { try{localStorage.setItem(PROP_KEY,JSON.stringify(props));}catch(e){} updateStats(); }
-function saveCusts() { try{localStorage.setItem(CUST_KEY,JSON.stringify(custs));}catch(e){} updateStats(); }
-
-function updateStats() {
-  document.getElementById('stProp').textContent = props.length;
-  document.getElementById('stEmpty').textContent = props.filter(p=>p.empty).length;
-  document.getElementById('stCust').textContent = custs.length;
+function getPriceBand(price){
+  if(price<13000)return{code:'1s',label:'1억초',cls:'pb-1s'};
+  if(price<20000)return{code:'1e',label:'1억후',cls:'pb-1e'};
+  if(price<25000)return{code:'2s',label:'2억초',cls:'pb-2s'};
+  if(price<30000)return{code:'2e',label:'2억후',cls:'pb-2e'};
+  return{code:'3p',label:'3억+',cls:'pb-3p'};
 }
+var PROP_KEY='dh_old_props_v3';
+var CUST_KEY='dh_old_custs_v2';
+var nxtId=659;
+var props=JSON.parse(localStorage.getItem(PROP_KEY)||'null')||INIT_PROPS;
+var custs=JSON.parse(localStorage.getItem(CUST_KEY)||'[]');
+var selCust=null;
+var cfFilter='';
+var activeTypeTab='';
 
-// ── 탭 ──────────────────────────────────────────────────
-function goTab(name,el) {
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const map={match:'paneMatch',prop:'paneProp',cust:'paneCust',map:'paneMap'};
+function saveProps(){try{localStorage.setItem(PROP_KEY,JSON.stringify(props));}catch(e){}updateStats();}
+function saveCusts(){try{localStorage.setItem(CUST_KEY,JSON.stringify(custs));}catch(e){}updateStats();}
+function updateStats(){
+  document.getElementById('stProp').textContent=props.length;
+  document.getElementById('stEmpty').textContent=props.filter(function(p){return p.empty;}).length;
+  document.getElementById('stCust').textContent=custs.length;
+}
+function goTab(name,el){
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  var map={match:'paneMatch',prop:'paneProp',cust:'paneCust',map:'paneMap'};
   document.getElementById(map[name]).classList.add('active');
   el.classList.add('active');
-  if(name==='prop') renderPropList();
-  if(name==='cust') renderCustDB();
-  if(name==='map') setTimeout(()=>{initLeafMap();renderMap();},80);
+  if(name==='prop')renderPropList();
+  if(name==='cust')renderCustDB();
+  if(name==='map')setTimeout(function(){initLeafMap();renderMap();},80);
 }
-
-// ── 고객DB 불러오기 ──────────────────────────────────────
-function loadCustomerDB(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const wb = XLSX.read(e.target.result, {type:'array'});
-    let loaded = 0;
-    wb.SheetNames.forEach(sn => {
-      const ws = wb.Sheets[sn];
-      const raw = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-      if (raw.length < 2) return;
-      // 헤더 찾기
-      let hRow = -1;
-      for (let i=0;i<Math.min(5,raw.length);i++) {
-        if (raw[i].some(c=>String(c).includes('연락처')||String(c).includes('희망지역'))) { hRow=i; break; }
+function setTypeTab(val,btn){
+  activeTypeTab=val;
+  document.querySelectorAll('.tt').forEach(function(t){t.classList.remove('on');});
+  btn.classList.add('on');
+  renderPropList();
+}
+function loadCustomerDB(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var wb=XLSX.read(e.target.result,{type:'array'});
+    var loaded=0;
+    wb.SheetNames.forEach(function(sn){
+      var ws=wb.Sheets[sn];
+      var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      if(raw.length<2)return;
+      var hRow=-1;
+      for(var i=0;i<Math.min(5,raw.length);i++){
+        if(raw[i].some(function(c){return String(c).includes('\uc5f0\ub77d\ucc98')||String(c).includes('\ud76c\ub9dd\uc9c0\uc5ed');})){hRow=i;break;}
       }
-      if (hRow<0) return;
-      const hs = raw[hRow].map(h=>String(h).trim());
-      const get = (row,nm) => { const i=hs.findIndex(h=>h.includes(nm)); return i>=0?String(row[i]||'').trim():''; };
-      for (let i=hRow+1;i<raw.length;i++) {
-        const row = raw[i];
-        if (row.every(c=>c===''||c===null)) continue;
-        const phone = get(row,'연락처');
-        if (!phone||phone==='연락처') continue;
-        if (custs.find(c=>c.phone===phone)) continue; // 중복 제외
-        custs.push({
-          id: Date.now()+i,
-          no: get(row,'No')||String(i),
-          date: get(row,'문의일')||get(row,'일'),
-          phone,
-          channel: get(row,'유입')||get(row,'채널'),
-          region: get(row,'희망지역'),
-          kcb: get(row,'KCB')||get(row,'신용점수(KCB)'),
-          nice: get(row,'나이스')||get(row,'신용점수(나이스)'),
-          debt: get(row,'기대출'),
-          cash: get(row,'가용현금'),
-          noinput: get(row,'무입주'),
-          income: get(row,'소득')||get(row,'직장'),
-          note: get(row,'특이사항')||get(row,'통화내용')||get(row,'조건'),
-          schedule: get(row,'이사일정'),
-          meeting: get(row,'미팅일정'),
-          priority: get(row,'우선순위'),
-          status: get(row,'관리현황')||get(row,'현황'),
-          matchedProps: [],
-        });
+      if(hRow<0)return;
+      var hs=raw[hRow].map(function(h){return String(h).trim();});
+      function get(row,nm){var i=hs.findIndex(function(h){return h.includes(nm);});return i>=0?String(row[i]||'').trim():'';}
+      for(var i=hRow+1;i<raw.length;i++){
+        var row=raw[i];
+        if(row.every(function(c){return c===''||c===null;}))continue;
+        var phone=get(row,'\uc5f0\ub77d\ucc98');
+        if(!phone||phone==='\uc5f0\ub77d\ucc98')continue;
+        if(custs.find(function(c){return c.phone===phone;}))continue;
+        custs.push({id:Date.now()+i,no:get(row,'No')||String(i),date:get(row,'\ubb38\uc758\uc77c')||get(row,'\uc77c'),phone:phone,
+          channel:get(row,'\uc720\uc785')||get(row,'\ucc44\ub110'),region:get(row,'\ud76c\ub9dd\uc9c0\uc5ed'),
+          kcb:get(row,'KCB')||get(row,'\uc2e0\uc6a9\uc810\uc218(KCB)'),debt:get(row,'\uae30\ub300\ucd9c'),
+          cash:get(row,'\uac00\uc6a9\ud604\uae08'),noinput:get(row,'\ubb34\uc785\uc8fc'),
+          note:get(row,'\ud2b9\uc774\uc0ac\ud56d')||get(row,'\ud1b5\ud654\ub0b4\uc6a9')||get(row,'\uc870\uac74'),
+          schedule:get(row,'\uc774\uc0ac\uc77c\uc815'),priority:get(row,'\uc6b0\uc120\uc21c\uc704'),
+          status:get(row,'\uad00\ub9ac\ud604\ud669')||get(row,'\ud604\ud669'),matchedProps:[]});
         loaded++;
       }
     });
-    saveCusts();
-    renderCustList();
-    renderCustDB();
-    toast(`✓ ${loaded}명 불러오기 완료`);
+    saveCusts();renderCustList();renderCustDB();
+    toast('\u2713 '+loaded+'\uba85 \ubd88\ub7ec\uc624\uae30 \uc644\ub8cc');
   };
   reader.readAsArrayBuffer(file);
   input.value='';
 }
-
-// ── 고객 목록 (매칭 탭 왼쪽) ───────────────────────────
-function toggleCF(btn, val) {
-  document.querySelectorAll('.cf').forEach(c=>c.classList.remove('on'));
-  btn.classList.add('on');
-  cfFilter = val;
-  renderCustList();
+function toggleCF(btn,val){
+  document.querySelectorAll('.cf').forEach(function(c){c.classList.remove('on');});
+  btn.classList.add('on');cfFilter=val;renderCustList();
 }
-
-function renderCustList() {
-  const kw = document.getElementById('custSearch').value.toLowerCase();
-  const filtered = custs.filter(c => {
-    if (cfFilter && !c.priority.includes(cfFilter)) return false;
-    if (kw && !c.phone.includes(kw) && !(c.region||'').toLowerCase().includes(kw) && !(c.note||'').toLowerCase().includes(kw)) return false;
+function renderCustList(){
+  var kw=document.getElementById('custSearch').value.toLowerCase();
+  var filtered=custs.filter(function(c){
+    if(cfFilter&&!c.priority.includes(cfFilter))return false;
+    if(kw&&!c.phone.includes(kw)&&!(c.region||'').toLowerCase().includes(kw)&&!(c.note||'').toLowerCase().includes(kw))return false;
     return true;
   });
-  document.getElementById('custListCount').textContent = filtered.length+'명';
-  const el = document.getElementById('custList');
-  if (!filtered.length) { el.innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:var(--muted)">고객 없음.<br>위에서 엑셀을 불러오세요.</div>'; return; }
-  el.innerHTML = filtered.map(c => {
-    const pri = c.priority||'';
-    const bCls = pri.includes('🔴')?'p-red':pri.includes('🟠')?'p-orange':pri.includes('🟡')?'p-yellow':'p-gray';
-    const isActive = selCust && selCust.id===c.id;
-    return `<div class="cust-card ${isActive?'active':''}" onclick="selectCust(${c.id})">
-      <div class="cc-top">
-        <span class="cc-phone">${c.phone}</span>
-        <span class="cc-badge ${bCls}">${pri.replace(/[🔴🟠🟡❌✅]/g,'').trim().slice(0,6)}</span>
-      </div>
-      <div class="cc-region">${c.region||'지역미정'}</div>
-      <div class="cc-cond">${(c.note||'').slice(0,35)}</div>
-    </div>`;
+  document.getElementById('custListCount').textContent=filtered.length+'\uba85';
+  var el=document.getElementById('custList');
+  if(!filtered.length){el.innerHTML='<div style="padding:20px;text-align:center;font-size:11px;color:var(--muted)">\uace0\uac1d \uc5c6\uc74c.<br>\uc704\uc5d0\uc11c \uc5d1\uc140\uc744 \ubd88\ub7ec\uc624\uc138\uc694.</div>';return;}
+  el.innerHTML=filtered.map(function(c){
+    var pri=c.priority||'';
+    var bCls=pri.includes('\ud83d\udd34')?'p-red':pri.includes('\ud83d\udfe0')?'p-orange':pri.includes('\ud83d\udfe1')?'p-yellow':'p-gray';
+    var isActive=selCust&&selCust.id===c.id;
+    return '<div class="cust-card '+(isActive?'active':'')+'" onclick="selectCust('+c.id+')"><div class="cc-top"><span class="cc-phone">'+c.phone+'</span><span class="cc-badge '+bCls+'">'+pri.replace(/[\ud83d\udd34\ud83d\udfe0\ud83d\udfe1\u274c\u2705]/g,'').trim().slice(0,6)+'</span></div><div class="cc-region">'+(c.region||'\uc9c0\uc5ed\ubbf8\uc815')+'</div><div class="cc-cond">'+(c.note||'').slice(0,35)+'</div></div>';
   }).join('');
 }
-
-function selectCust(id) {
-  selCust = custs.find(c=>c.id===id);
-  if (!selCust) return;
+function selectCust(id){
+  selCust=custs.find(function(c){return c.id===id;});if(!selCust)return;
   renderCustList();
   document.getElementById('noSel').style.display='none';
   document.getElementById('selCust').classList.add('on');
-  document.getElementById('scPhone').textContent = selCust.phone;
-  document.getElementById('scRegion').textContent = selCust.region||'지역미정';
-  const pri = selCust.priority||'';
-  const bCls = pri.includes('🔴')?'p-red':pri.includes('🟠')?'p-orange':pri.includes('🟡')?'p-yellow':'p-gray';
+  document.getElementById('scPhone').textContent=selCust.phone;
+  document.getElementById('scRegion').textContent=selCust.region||'\uc9c0\uc5ed\ubbf8\uc815';
+  var pri=selCust.priority||'';
+  var bCls=pri.includes('\ud83d\udd34')?'p-red':pri.includes('\ud83d\udfe0')?'p-orange':pri.includes('\ud83d\udfe1')?'p-yellow':'p-gray';
   document.getElementById('scBadge').className='cc-badge '+bCls;
-  document.getElementById('scBadge').textContent = pri;
-  // 칩
-  const chips = [];
-  if (selCust.kcb && selCust.kcb!=='-') chips.push(`<div class="cd-chip"><span>신용KCB</span> <strong>${selCust.kcb}</strong></div>`);
-  if (selCust.debt && selCust.debt!=='-') chips.push(`<div class="cd-chip"><span>기대출</span> <strong>${selCust.debt}</strong></div>`);
-  if (selCust.cash && selCust.cash!=='-') chips.push(`<div class="cd-chip"><span>가용현금</span> <strong>${selCust.cash}</strong></div>`);
-  if (selCust.noinput && selCust.noinput==='O') chips.push(`<div class="cd-chip" style="border-color:var(--green);color:var(--green)"><strong>✓ 무입주 가능</strong></div>`);
-  if (selCust.schedule && selCust.schedule!=='-') chips.push(`<div class="cd-chip"><span>이사</span> <strong>${selCust.schedule}</strong></div>`);
-  document.getElementById('scChips').innerHTML = chips.join('');
-  document.getElementById('scNote').textContent = selCust.note||'특이사항 없음';
-  // 자동 매칭
+  document.getElementById('scBadge').textContent=pri;
+  var chips=[];
+  if(selCust.kcb&&selCust.kcb!=='-')chips.push('<div class="cd-chip"><span>\uc2e0\uc6a9KCB</span> <strong>'+selCust.kcb+'</strong></div>');
+  if(selCust.debt&&selCust.debt!=='-')chips.push('<div class="cd-chip"><span>\uae30\ub300\ucd9c</span> <strong>'+selCust.debt+'</strong></div>');
+  if(selCust.cash&&selCust.cash!=='-')chips.push('<div class="cd-chip"><span>\uac00\uc6a9\ud604\uae08</span> <strong>'+selCust.cash+'</strong></div>');
+  if(selCust.noinput&&selCust.noinput==='O')chips.push('<div class="cd-chip" style="border-color:var(--green);color:var(--green)"><strong>\u2713 \ubb34\uc785\uc8fc \uac00\ub2a5</strong></div>');
+  if(selCust.schedule&&selCust.schedule!=='-')chips.push('<div class="cd-chip"><span>\uc774\uc0ac</span> <strong>'+selCust.schedule+'</strong></div>');
+  document.getElementById('scChips').innerHTML=chips.join('');
+  document.getElementById('scNote').textContent=selCust.note||'\ud2b9\uc774\uc0ac\ud56d \uc5c6\uc74c';
   runMatch();
 }
-
-// ── 매칭 엔진 ──────────────────────────────────────────
-function runMatch() {
-  if (!selCust) return;
-  const c = selCust;
-  const region = (c.region||'').toLowerCase();
-  const note = (c.note||'').toLowerCase();
-
-  // 예산 파싱
-  let budgetMax = 99999;
-  const bMatch = note.match(/(\d+(?:\.\d+)?)[억만]/g);
-  if (bMatch) {
-    const vals = bMatch.map(b => {
-      if (b.includes('억')) return parseFloat(b)*10000;
-      return parseFloat(b);
-    });
-    budgetMax = Math.max(...vals) * 1.15; // 15% 여유
-    if (budgetMax < 5000) budgetMax = 99999;
+function runMatch(){
+  if(!selCust)return;
+  var c=selCust;
+  var region=(c.region||'').toLowerCase();
+  var note=(c.note||'').toLowerCase();
+  var budgetMax=99999;
+  var bMatch=note.match(/(\d+(?:\.\d+)?)[\uc5b5\ub9cc]/g);
+  if(bMatch){
+    var vals=bMatch.map(function(b){return b.includes('\uc5b5')?parseFloat(b)*10000:parseFloat(b);});
+    budgetMax=Math.max.apply(null,vals)*1.15;
+    if(budgetMax<5000)budgetMax=99999;
   }
-
-  // 신용 파싱
-  const kcbRaw = c.kcb||'';
-  let kcb = 0;
-  const kcbMatch = kcbRaw.match(/\d+/);
-  if (kcbMatch) kcb = parseInt(kcbMatch[0]);
-  const lowCredit = kcb > 0 && kcb < 650;
-
-  // 무입주 원함?
-  const wantsEmpty = c.noinput === 'O' || note.includes('공실') || note.includes('무입주') || note.includes('전액대출');
-
-  // 방 구조 선호
-  const wants3room = note.includes('3룸') || note.includes('방3') || note.includes('쓰리룸') || note.includes('25평');
-  const wants2room = note.includes('2룸') || note.includes('방2') || note.includes('투룸');
-  const wantsBig = note.includes('넓') || note.includes('대형') || note.includes('30평') || note.includes('거실넓');
-
-  const results = props.map(p => {
-    let score = 0;
-    const why = [];
-
-    // 예산
-    if (p.price > budgetMax) return null;
-    score += 20; why.push('예산 범위 내');
-
-    // 지역 매칭 (핵심)
-    const pAddr = p.addr.toLowerCase();
-    const regionWords = region.split(/[\s·,\/]+/).filter(w=>w.length>1);
-    let regionMatch = false;
-    for (const rw of regionWords) {
-      if (pAddr.includes(rw) || rw.includes('지역무관') || rw.includes('어디든')) {
-        regionMatch = true; break;
-      }
-      // 광역 매칭
-      if (rw.includes('인천') && pAddr.includes('인천')) { regionMatch=true; break; }
-      if (rw.includes('서울') && pAddr.includes('서울')) { regionMatch=true; break; }
-      if (rw.includes('경기') && (pAddr.includes('경기')||pAddr.includes('부천')||pAddr.includes('안산')||pAddr.includes('수원')||pAddr.includes('파주'))) { regionMatch=true; break; }
+  var kcbRaw=c.kcb||'';var kcb=0;
+  var kcbMatch=kcbRaw.match(/\d+/);if(kcbMatch)kcb=parseInt(kcbMatch[0]);
+  var lowCredit=kcb>0&&kcb<650;
+  var wantsEmpty=c.noinput==='O'||note.includes('\uacf5\uc2e4')||note.includes('\ubb34\uc785\uc8fc')||note.includes('\uc804\uc561\ub300\ucd9c');
+  var wants3room=note.includes('3\ub8f8')||note.includes('\ubc003')||note.includes('\uc4f0\ub9ac\ub8f8');
+  var wants2room=note.includes('2\ub8f8')||note.includes('\ubc002')||note.includes('\ud22c\ub8f8');
+  var results=props.map(function(p){
+    var score=0;var why=[];
+    if(p.price>budgetMax)return null;
+    score+=20;why.push('\uc608\uc0b0 \ubc94\uc704 \ub0b4');
+    var pAddr=p.addr.toLowerCase();
+    var regionWords=region.split(/[\s\u00b7,\/]+/).filter(function(w){return w.length>1;});
+    var regionMatch=false;
+    for(var i=0;i<regionWords.length;i++){
+      var rw=regionWords[i];
+      if(pAddr.includes(rw)||rw.includes('\uc9c0\uc5ed\ubb34\uad00')||rw.includes('\uc5b4\ub514\ub4e0')){regionMatch=true;break;}
+      if(rw.includes('\uc778\ucc9c')&&pAddr.includes('\uc778\ucc9c')){regionMatch=true;break;}
+      if(rw.includes('\uc11c\uc6b8')&&pAddr.includes('\uc11c\uc6b8')){regionMatch=true;break;}
+      if(rw.includes('\uacbd\uae30')&&(pAddr.includes('\uacbd\uae30')||pAddr.includes('\ubd80\ucc9c')||pAddr.includes('\uc548\uc0b0')||pAddr.includes('\uc218\uc6d0')||pAddr.includes('\ud30c\uc8fc'))){regionMatch=true;break;}
     }
-    if (region.includes('지역무관') || region.includes('어디든') || region===''||region==='-') regionMatch=true;
-    if (regionMatch) { score+=30; why.push('희망 지역 일치'); }
-    else { score-=20; }
-
-    // 공실
-    if (wantsEmpty && p.empty) { score+=25; why.push('공실 가능'); }
-    else if (wantsEmpty && !p.empty) score-=10;
-    else if (p.empty) { score+=5; why.push('공실'); }
-
-    // 방 구조
-    if (wants3room && p.struct.startsWith('방3')) { score+=15; why.push('3룸 구조'); }
-    if (wants2room && p.struct.startsWith('방2')) { score+=15; why.push('2룸 구조'); }
-    if (wantsBig && (p.struct.includes('방3화2')||p.struct.includes('방4'))) { score+=10; why.push('넓은 구조'); }
-
-    // R
-    if (p.r > 0) { score+=8; why.push('R '+(p.r*100).toLocaleString()+'만'); }
-
-    // 저신용 → 대출비율 낮은 것 우선
-    if (lowCredit && (p.loan.includes('권9')||p.loan.startsWith('R'))) { score+=10; why.push('저신용 적합 대출구조'); }
-
-    // 특수 조건
-    if (note.includes('뷰') && p.feat.includes('뷰')) { score+=8; why.push('뷰'); }
-    if (note.includes('복층') && p.feat.includes('복층')) { score+=8; why.push('복층'); }
-    if (note.includes('테라스') && (p.feat.includes('테라스')||p.struct.includes('테'))) { score+=8; why.push('테라스'); }
-    if (note.includes('재개발') && p.feat.includes('재개발')) { score+=12; why.push('재개발'); }
-    if (note.includes('역세권') && p.feat.includes('역')) { score+=8; why.push('역세권'); }
-    if ((note.includes('저렴')||note.includes('1억')) && p.price < 15000) { score+=10; why.push('저가 매물'); }
-    if (note.includes('신축')||note.includes('준신축')) { if(p.year>=15) {score+=5; why.push('비교적 신축');} }
-
-    // 년식 보너스
-    if (p.year >= 18) score+=3;
-
-    return {...p, score, why};
-  }).filter(Boolean).sort((a,b)=>b.score-a.score);
-
-  document.getElementById('matchScore').textContent = `총 ${results.length}건`;
-
-  const el = document.getElementById('matchResults');
-  if (!results.length) {
-    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:12px">😅 조건에 맞는 매물이 없습니다.</div>';
-    return;
-  }
-
-  el.innerHTML = '<div class="mr-head"><span>매칭 결과 <strong>' + results.length + '</strong>건 (점수순)</span><span style="font-size:10px">클릭하면 상세보기</span></div>' +
-    results.slice(0,20).map((p,i) => {
-      const rCls = i===0?'r1':i===1?'r2':i===2?'r3':'';
-      const rEmoji = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
-      const tags = [];
-      if (p.empty) tags.push('<span class="rt rt-gr">공실</span>');
-      if (p.r>0) tags.push('<span class="rt rt-pu">R'+(p.r*100)+'만</span>');
-      if (p.feat.includes('뷰')) tags.push('<span class="rt rt-go">뷰</span>');
-      if (p.feat.includes('복층')) tags.push('<span class="rt rt-go">복층</span>');
-      if (p.feat.includes('재개발')) tags.push('<span class="rt" style="background:rgba(230,57,70,.15);color:var(--red)">재개발</span>');
-      if (p.feat.includes('역')) tags.push('<span class="rt rt-bl">역세권</span>');
+    if(region===''||region==='-'||region.includes('\uc9c0\uc5ed\ubb34\uad00'))regionMatch=true;
+    if(regionMatch){score+=30;why.push('\ud76c\ub9dd \uc9c0\uc5ed \uc77c\uce58');}else{score-=20;}
+    if(wantsEmpty&&p.empty){score+=25;why.push('\uacf5\uc2e4 \uac00\ub2a5');}
+    else if(wantsEmpty&&!p.empty){score-=10;}
+    else if(p.empty){score+=5;why.push('\uacf5\uc2e4');}
+    if(wants3room&&p.struct.startsWith('\ubc003')){score+=15;why.push('3\ub8f8 \uad6c\uc870');}
+    if(wants2room&&p.struct.startsWith('\ubc002')){score+=15;why.push('2\ub8f8 \uad6c\uc870');}
+    if(p.r>0){score+=8;why.push('R '+(p.r*100).toLocaleString()+'\ub9cc');}
+    if(lowCredit&&(p.loan.includes('\uad8910')||p.loan.startsWith('R'))){score+=10;why.push('\uc800\uc2e0\uc6a9 \uc801\ud569');}
+    if(note.includes('\ube68')||note.includes('\uc7ac\uac1c\ubc1c')&&p.feat.includes('\uc7ac\uac1c\ubc1c')){score+=12;}
+    if((note.includes('\uc800\ub834')||note.includes('1\uc5b5'))&&p.price<15000){score+=10;why.push('\uc800\uac00 \ub9e4\ubb3c');}
+    if(p.year>=18)score+=3;
+    var result=Object.assign({},p);result.score=score;result.why=why;
+    return result;
+  }).filter(function(x){return x!==null;}).sort(function(a,b){return b.score-a.score;});
+  document.getElementById('matchScore').textContent='\uc218 '+results.length+'\uac74';
+  var el=document.getElementById('matchResults');
+  if(!results.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted);font-size:12px">\ud83d\ude05 \uc870\uac74\uc5d0 \ub9de\ub294 \ub9e4\ubb3c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.</div>';return;}
+  el.innerHTML='<div class="mr-head"><span>\ub9e4\uce6d \uacb0\uacfc <strong>'+results.length+'</strong>\uac74</span><span style="font-size:10px">\ud074\ub9ad\ud558\uba74 \uc0c1\uc138\ubcf4\uae30</span></div>'+
+    results.slice(0,20).map(function(p,i){
+      var rCls=i===0?'r1':i===1?'r2':i===2?'r3':'';
+      var rEmoji=i===0?'\ud83e\udd47':i===1?'\ud83e\udd48':i===2?'\ud83e\udd49':'';
+      var pb=getPriceBand(p.price);
+      var tags=[];
+      if(p.empty)tags.push('<span class="rt rt-gr">\uacf5\uc2e4</span>');
+      if(p.r>0)tags.push('<span class="rt rt-pu">R'+(p.r*100)+'\ub9cc</span>');
       tags.push('<span class="rt rt-or">'+p.loan+'</span>');
       tags.push('<span class="rt rt-bl">'+p.struct+'</span>');
-      return `<div class="res-card ${rCls}" onclick="showDetail(${p.id})">
-        <div class="res-rank">${rEmoji}</div>
-        <div class="res-name">${p.name}</div>
-        <div class="res-addr">${p.addr}</div>
-        <div class="res-score">매칭 ${p.score}점</div>
-        <div class="res-tags">${tags.join('')}</div>
-        <div class="res-price">${p.price.toLocaleString()}만원</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${p.type} · ${p.year<10?'0'+p.year:p.year}년식${p.feat?' · '+p.feat.slice(0,20):''}</div>
-        <div class="res-why">${p.why.map(w=>`<div class="res-why-item"><span class="dot">✓</span>${w}</div>`).join('')}</div>
-      </div>`;
+      tags.push('<span class="rt '+pb.cls+'">'+pb.label+'</span>');
+      return '<div class="res-card '+rCls+'" onclick="showDetail('+p.id+')"><div class="res-rank">'+rEmoji+'</div><div class="res-name">'+p.name+'</div><div class="res-addr">'+p.addr+'</div><div class="res-score">\ub9e4\uce6d '+p.score+'\uc810</div><div class="res-tags">'+tags.join('')+'</div><div class="res-price">'+p.price.toLocaleString()+'\ub9cc\uc6d0</div><div style="font-size:10px;color:var(--muted);margin-top:3px">'+p.type+' \u00b7 '+(p.year<10?'0'+p.year:p.year)+'\ub144\uc2dd'+(p.feat?' \u00b7 '+p.feat.slice(0,20):'')+'</div><div class="res-why">'+p.why.map(function(w){return '<div class="res-why-item"><span class="dot">\u2713</span>'+w+'</div>';}).join('')+'</div></div>';
     }).join('');
 }
-
-// ── 매물 목록 ──────────────────────────────────────────
-function renderPropList() {
-  const type  = document.getElementById('flType').value;
-  const reg   = document.getElementById('flRegion').value;
-  const empty = document.getElementById('flEmpty').value;
-  const kw    = document.getElementById('flKw').value.toLowerCase();
-  const f = props.filter(p=>{
-    if(type && !p.type.includes(type)) return false;
-    if(reg && !p.addr.includes(reg)) return false;
-    if(empty==='공실' && !p.empty) return false;
-    if(empty==='거주' && p.empty) return false;
-    if(kw && !p.name.toLowerCase().includes(kw) && !p.addr.toLowerCase().includes(kw)) return false;
+function renderPropList(){
+  var reg=document.getElementById('flRegion').value;
+  var priceCode=document.getElementById('flPrice').value;
+  var kw=document.getElementById('flKw').value.toLowerCase();
+  var f=props.filter(function(p){
+    if(activeTypeTab==='\uacf5\uc2e4'&&!p.empty)return false;
+    if(activeTypeTab==='R'&&p.r===0)return false;
+    if(activeTypeTab&&activeTypeTab!=='\uacf5\uc2e4'&&activeTypeTab!=='R'&&!p.type.includes(activeTypeTab))return false;
+    if(reg&&!p.addr.includes(reg))return false;
+    if(priceCode&&getPriceBand(p.price).code!==priceCode)return false;
+    if(kw&&!p.name.toLowerCase().includes(kw)&&!p.addr.toLowerCase().includes(kw))return false;
     return true;
   });
-  document.getElementById('propListCount').innerHTML='<strong>'+f.length+'</strong>건';
-  const tbody=document.getElementById('propBody');
-  if(!f.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--muted)">매물 없음</td></tr>';return;}
-  tbody.innerHTML=f.map(p=>`
-    <tr onclick="openPropForm(${p.id})">
-      <td style="color:var(--muted)">${p.type}</td>
-      <td><strong>${p.name}</strong></td>
-      <td style="color:var(--muted);font-size:10px">${p.addr}</td>
-      <td>${p.struct}</td>
-      <td style="color:var(--muted)">${p.year<10?'0'+p.year:p.year}년식</td>
-      <td class="ph">${p.price.toLocaleString()}만</td>
-      <td style="font-size:10px">${p.loan}</td>
-      <td>${p.empty?'<span class="bdg b-empty">공실</span>':'<span class="bdg b-lived">거주중</span>'}</td>
-      <td>${p.r>0?'<span class="bdg b-r">R'+(p.r*100)+'만</span>':'-'}</td>
-      <td style="font-size:10px;color:var(--gold)">${p.feat||'-'}</td>
-    </tr>`).join('');
+  document.getElementById('propListCount').innerHTML='<strong>'+f.length+'</strong>\uac74';
+  var tbody=document.getElementById('propBody');
+  if(!f.length){tbody.innerHTML='<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--muted)">\ub9e4\ubb3c \uc5c6\uc74c</td></tr>';return;}
+  tbody.innerHTML=f.map(function(p){
+    var pb=getPriceBand(p.price);
+    var yr=p.year<10?'0'+p.year:p.year;
+    return '<tr onclick="openPropForm('+p.id+')"><td style="color:var(--muted)">'+p.type+'</td><td><strong>'+p.name+'</strong></td><td style="color:var(--muted);font-size:10px">'+p.addr+'</td><td>'+p.struct+'</td><td style="color:var(--muted)">'+yr+'\ub144\uc2dd</td><td class="ph">'+p.price.toLocaleString()+'\ub9cc</td><td><span class="price-badge '+pb.cls+'">'+pb.label+'</span></td><td style="font-size:10px">'+p.loan+'</td><td>'+(p.empty?'<span class="bdg b-empty">\uacf5\uc2e4</span>':'<span class="bdg b-lived">\uac70\uc8fc\uc911</span>')+'</td><td>'+(p.r>0?'<span class="bdg b-r">R'+(p.r*100)+'\ub9cc</span>':'-')+'</td><td style="font-size:10px;color:var(--gold)">'+(p.feat||'-')+'</td></tr>';
+  }).join('');
 }
-
-// ── 매물 폼 ────────────────────────────────────────────
-function openPropForm(id) {
-  goTab('prop', document.getElementById('tabProp'));
-  const p = id ? props.find(x=>x.id===id) : null;
-  document.getElementById('pfpTitle').textContent = p ? '✏️ 매물 수정' : '➕ 매물 등록';
-  document.getElementById('pfDelBtn').style.display = p ? '' : 'none';
-  document.getElementById('pfId').value = p ? p.id : '';
-  document.getElementById('pfType').value = p?.type||'주택';
-  document.getElementById('pfName').value = p?.name||'';
-  document.getElementById('pfAddr').value = p?.addr||'';
-  document.getElementById('pfStruct').value = p?.struct||'방3화2';
-  document.getElementById('pfYear').value = p?.year||'';
-  document.getElementById('pfPrice').value = p?.price||'';
-  document.getElementById('pfLoan').value = p?.loan||'권8:2';
-  document.getElementById('pfR').value = p?.r||'';
-  document.getElementById('pfRHint').textContent = p?.r ? '= '+(p.r*100).toLocaleString()+'만원' : '';
-  document.getElementById('pfFeat').value = p?.feat||'';
-  setOX2('pfEmpty', p?.empty ? 'O' : 'X');
+function openPropForm(id){
+  goTab('prop',document.getElementById('tabProp'));
+  var p=id?props.find(function(x){return x.id===id;}):null;
+  document.getElementById('pfpTitle').textContent=p?'\u270f\ufe0f \ub9e4\ubb3c \uc218\uc815':'\u2795 \ub9e4\ubb3c \ub4f1\ub85d';
+  document.getElementById('pfDelBtn').style.display=p?'':'none';
+  document.getElementById('pfId').value=p?p.id:'';
+  document.getElementById('pfType').value=p?p.type:'\uc8fc\ud0dd';
+  document.getElementById('pfName').value=p?p.name:'';
+  document.getElementById('pfAddr').value=p?p.addr:'';
+  document.getElementById('pfStruct').value=p?p.struct:'\ubc003\ud6542';
+  document.getElementById('pfYear').value=p?p.year:'';
+  document.getElementById('pfPrice').value=p?p.price:'';
+  document.getElementById('pfLoan').value=p?p.loan:'\uad8918:2';
+  document.getElementById('pfR').value=p?p.r:'';
+  document.getElementById('pfRHint').textContent=p&&p.r?'= '+(p.r*100).toLocaleString()+'\ub9cc\uc6d0':'';
+  document.getElementById('pfFeat').value=p?p.feat:'';
+  setOX2('pfEmpty',p&&p.empty?'O':'X');
 }
-
-function setOX(btn) {
-  const f = btn.dataset.f;
-  btn.closest('.ox').querySelectorAll('.ox-btn').forEach(b=>b.classList.remove('on'));
+function setOX(btn){
+  var f=btn.dataset.f;
+  btn.closest('.ox').querySelectorAll('.ox-btn').forEach(function(b){b.classList.remove('on');});
   btn.classList.add('on');
-  document.getElementById(f).value = btn.classList.contains('o') ? 'O' : 'X';
+  document.getElementById(f).value=btn.classList.contains('o')?'O':'X';
 }
-
-function setOX2(fieldId, val) {
-  document.getElementById(fieldId).value = val;
-  const grp = document.getElementById(fieldId).previousElementSibling;
-  if (!grp?.classList.contains('ox')) return;
-  grp.querySelectorAll('.ox-btn').forEach(b=>{
+function setOX2(fieldId,val){
+  document.getElementById(fieldId).value=val;
+  var grp=document.getElementById(fieldId).previousElementSibling;
+  if(!grp||!grp.classList.contains('ox'))return;
+  grp.querySelectorAll('.ox-btn').forEach(function(b){
     b.classList.remove('on');
-    if((val==='O'&&b.classList.contains('o'))||(val==='X'&&b.classList.contains('x'))) b.classList.add('on');
+    if((val==='O'&&b.classList.contains('o'))||(val==='X'&&b.classList.contains('x')))b.classList.add('on');
   });
 }
-
-function showRHint(v) {
-  const n=parseInt(v);
-  document.getElementById('pfRHint').textContent = n>0?'= '+(n*100).toLocaleString()+'만원':'';
-}
-
-function saveProp() {
-  const name = document.getElementById('pfName').value.trim();
-  const addr = document.getElementById('pfAddr').value.trim();
-  const price = document.getElementById('pfPrice').value;
-  if(!name||!addr||!price){toast('단지명, 주소, 매매가는 필수입니다.',true);return;}
-  const editId = document.getElementById('pfId').value;
-  const p = {
-    id: editId ? parseInt(editId) : nxtId++,
-    type: document.getElementById('pfType').value,
-    name, addr,
-    struct: document.getElementById('pfStruct').value,
-    year: parseInt(document.getElementById('pfYear').value)||0,
-    price: parseInt(price)||0,
-    loan: document.getElementById('pfLoan').value,
-    empty: document.getElementById('pfEmpty').value==='O',
-    r: parseInt(document.getElementById('pfR').value)||0,
-    feat: document.getElementById('pfFeat').value,
-  };
-  if(editId){const i=props.findIndex(x=>x.id===parseInt(editId));if(i>=0)props[i]=p;else props.push(p);}
+function showRHint(v){var n=parseInt(v);document.getElementById('pfRHint').textContent=n>0?'= '+(n*100).toLocaleString()+'\ub9cc\uc6d0':'';}
+function saveProp(){
+  var name=document.getElementById('pfName').value.trim();
+  var addr=document.getElementById('pfAddr').value.trim();
+  var price=document.getElementById('pfPrice').value;
+  if(!name||!addr||!price){toast('\ub2e8\uc9c0\uba85, \uc8fc\uc18c, \ub9e4\ub9e4\uac00\ub294 \ud544\uc218\uc785\ub2c8\ub2e4.',true);return;}
+  var editId=document.getElementById('pfId').value;
+  var p={id:editId?parseInt(editId):nxtId++,type:document.getElementById('pfType').value,name:name,addr:addr,
+    struct:document.getElementById('pfStruct').value,year:parseInt(document.getElementById('pfYear').value)||0,
+    price:parseInt(price)||0,loan:document.getElementById('pfLoan').value,
+    empty:document.getElementById('pfEmpty').value==='O',
+    r:parseInt(document.getElementById('pfR').value)||0,
+    feat:document.getElementById('pfFeat').value};
+  if(editId){var idx=props.findIndex(function(x){return x.id===parseInt(editId);});if(idx>=0)props[idx]=p;else props.push(p);}
   else props.push(p);
-  saveProps(); renderPropList();
-  toast(editId?'✅ 수정되었습니다!':'✅ 저장되었습니다!');
+  saveProps();renderPropList();
+  toast(editId?'\u2705 \uc218\uc815\ub418\uc5c8\uc2b5\ub2c8\ub2e4!':'\u2705 \uc800\uc7a5\ub418\uc5c8\uc2b5\ub2c8\ub2e4!');
 }
-
-function delProp() {
-  const id=parseInt(document.getElementById('pfId').value);
-  if(!id)return;
-  document.getElementById('cfmMsg').textContent='이 매물을 삭제할까요?';
+function delProp(){
+  var id=parseInt(document.getElementById('pfId').value);if(!id)return;
+  document.getElementById('cfmMsg').textContent='\uc774 \ub9e4\ubb3c\uc744 \uc0ad\uc81c\ud560\uae4c\uc694?';
   document.getElementById('cfmBg').classList.add('on');
-  document.getElementById('cfmOk').onclick=()=>{
-    props=props.filter(p=>p.id!==id);
-    saveProps(); renderPropList(); openPropForm(null);
-    document.getElementById('cfmBg').classList.remove('on');
-    toast('🗑️ 삭제되었습니다.');
+  document.getElementById('cfmOk').onclick=function(){
+    props=props.filter(function(p){return p.id!==id;});saveProps();renderPropList();openPropForm(null);
+    document.getElementById('cfmBg').classList.remove('on');toast('\ud83d\uddd1\ufe0f \uc0ad\uc81c\ub418\uc5c8\uc2b5\ub2c8\ub2e4.');
   };
 }
-
-// ── 고객 DB 탭 ─────────────────────────────────────────
-function renderCustDB() {
-  const pri = document.getElementById('cdbPri').value;
-  const kw  = document.getElementById('cdbKw').value.toLowerCase();
-  const f = custs.filter(c=>{
-    if(pri && !(c.priority||'').includes(pri)) return false;
-    if(kw && !c.phone.includes(kw) && !(c.region||'').toLowerCase().includes(kw) && !(c.note||'').toLowerCase().includes(kw)) return false;
+function renderCustDB(){
+  var pri=document.getElementById('cdbPri').value;
+  var kw=document.getElementById('cdbKw').value.toLowerCase();
+  var f=custs.filter(function(c){
+    if(pri&&!(c.priority||'').includes(pri))return false;
+    if(kw&&!c.phone.includes(kw)&&!(c.region||'').toLowerCase().includes(kw)&&!(c.note||'').toLowerCase().includes(kw))return false;
     return true;
   });
-  document.getElementById('cdbCount').innerHTML='<strong>'+f.length+'</strong>명';
-  const tbody=document.getElementById('custBody');
-  if(!f.length){tbody.innerHTML='<tr><td colspan="13" style="text-align:center;padding:30px;color:var(--muted)">고객 없음</td></tr>';return;}
-  const priColor=(p)=>p.includes('🔴')?'color:var(--red)':p.includes('🟠')?'color:var(--orange)':p.includes('🟡')?'color:var(--gold)':'color:var(--muted)';
-  tbody.innerHTML=f.map(c=>`
-    <tr onclick="selectCust(${c.id});goTab('match',document.getElementById('tabMatch'))">
-      <td style="color:var(--muted)">${c.no}</td>
-      <td style="color:var(--muted)">${c.date||'-'}</td>
-      <td style="font-weight:700">${c.phone}</td>
-      <td style="font-size:10px;color:var(--muted)">${c.channel||'-'}</td>
-      <td>${c.region||'-'}</td>
-      <td style="font-size:11px">${c.kcb||'-'}</td>
-      <td style="font-size:10px;color:var(--muted)">${c.debt||'-'}</td>
-      <td style="font-size:10px;color:var(--muted)">${c.cash||'-'}</td>
-      <td>${c.noinput==='O'?'<span style="color:var(--green);font-weight:700">O</span>':c.noinput||'-'}</td>
-      <td style="font-size:11px;font-weight:700;${priColor(c.priority||'')}">${c.priority||'-'}</td>
-      <td style="font-size:10px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.note||'-'}</td>
-      <td style="font-size:10px;color:var(--muted)">${c.schedule||'-'}</td>
-      <td style="font-size:10px;color:var(--gold)">${c.status||'-'}</td>
-    </tr>`).join('');
+  document.getElementById('cdbCount').innerHTML='<strong>'+f.length+'</strong>\uba85';
+  var tbody=document.getElementById('custBody');
+  if(!f.length){tbody.innerHTML='<tr><td colspan="13" style="text-align:center;padding:30px;color:var(--muted)">\uace0\uac1d \uc5c6\uc74c</td></tr>';return;}
+  function priColor(p){return p.includes('\ud83d\udd34')?'color:var(--red)':p.includes('\ud83d\udfe0')?'color:var(--orange)':p.includes('\ud83d\udfe1')?'color:var(--gold)':'color:var(--muted)';}
+  tbody.innerHTML=f.map(function(c){
+    return '<tr onclick="selectCust('+c.id+');goTab(\'match\',document.getElementById(\'tabMatch\'))"><td style="color:var(--muted)">'+(c.no||'')+'</td><td style="color:var(--muted)">'+(c.date||'-')+'</td><td style="font-weight:700">'+c.phone+'</td><td style="font-size:10px;color:var(--muted)">'+(c.channel||'-')+'</td><td>'+(c.region||'-')+'</td><td style="font-size:11px">'+(c.kcb||'-')+'</td><td style="font-size:10px;color:var(--muted)">'+(c.debt||'-')+'</td><td style="font-size:10px;color:var(--muted)">'+(c.cash||'-')+'</td><td>'+(c.noinput==='O'?'<span style="color:var(--green);font-weight:700">O</span>':c.noinput||'-')+'</td><td style="font-size:11px;font-weight:700;'+priColor(c.priority||'')+'">'+(c.priority||'-')+'</td><td style="font-size:10px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(c.note||'-')+'</td><td style="font-size:10px;color:var(--muted)">'+(c.schedule||'-')+'</td><td style="font-size:10px;color:var(--gold)">'+(c.status||'-')+'</td></tr>';
+  }).join('');
 }
-
-// ── 상세 모달 ──────────────────────────────────────────
-function showDetail(id) {
-  const p=props.find(x=>x.id===id);
-  if(!p) return;
-  const yr=p.year<10?'0'+p.year:p.year;
+function showDetail(id){
+  var p=props.find(function(x){return x.id===id;});if(!p)return;
+  var yr=p.year<10?'0'+p.year:p.year;var pb=getPriceBand(p.price);
   document.getElementById('modalContent').innerHTML=
-    '<div class="modal-name">'+p.name+'</div>'+
-    '<div class="modal-addr">'+p.addr+'</div>'+
-    '<div class="modal-pbox">'+
-      '<div style="font-size:10px;color:var(--muted);margin-bottom:2px">매매가</div>'+
-      '<div class="modal-p">'+p.price.toLocaleString()+'만원</div>'+
-      '<div class="modal-psub">'+p.loan+(p.r>0?' &nbsp;|&nbsp; R '+(p.r*100).toLocaleString()+'만':'')+'</div>'+
-    '</div>'+
-    '<div class="modal-grid">'+
-      '<div class="mi"><div class="mil">유형</div><div class="miv">'+p.type+'</div></div>'+
-      '<div class="mi"><div class="mil">구조</div><div class="miv or">'+p.struct+'</div></div>'+
-      '<div class="mi"><div class="mil">년식</div><div class="miv">'+yr+'년식</div></div>'+
-      '<div class="mi"><div class="mil">공실여부</div><div class="miv '+(p.empty?'gr':'')+'">'+(p.empty?'✓ 공실':'거주중')+'</div></div>'+
-    '</div>'+
-    (p.feat?'<div class="modal-feat">✨ '+p.feat+'</div>':'');
-  // 네이버지도 버튼
-  const btn = document.createElement('button');
-  btn.className = 'modal-mapbtn';
-  btn.textContent = '🗺️ 네이버지도에서 위치 확인';
-  btn.onclick = () => window.open('https://map.naver.com/p/search/'+encodeURIComponent(p.addr), '_blank');
+    '<div class="modal-name">'+p.name+'</div><div class="modal-addr">'+p.addr+'</div>'+
+    '<div class="modal-pbox"><div style="font-size:10px;color:var(--muted);margin-bottom:2px">\ub9e4\ub9e4\uac00</div>'+
+    '<div class="modal-p">'+p.price.toLocaleString()+'\ub9cc\uc6d0</div>'+
+    '<div class="modal-psub">'+p.loan+(p.r>0?' | R'+(p.r*100).toLocaleString()+'\ub9cc':'')+'</div>'+
+    '<div style="margin-top:6px"><span class="price-badge '+pb.cls+'">'+pb.label+'</span></div></div>'+
+    '<div class="modal-grid"><div class="mi"><div class="mil">\uc720\ud615</div><div class="miv">'+p.type+'</div></div>'+
+    '<div class="mi"><div class="mil">\uad6c\uc870</div><div class="miv or">'+p.struct+'</div></div>'+
+    '<div class="mi"><div class="mil">\ub144\uc2dd</div><div class="miv">'+yr+'\ub144\uc2dd</div></div>'+
+    '<div class="mi"><div class="mil">\uacf5\uc2e4\uc5ec\ubd80</div><div class="miv '+(p.empty?'gr':'')+'">'+(p.empty?'\u2713 \uacf5\uc2e4':'\uac70\uc8fc\uc911')+'</div></div></div>'+
+    (p.feat?'<div class="modal-feat">\u2728 '+p.feat+'</div>':'');
+  var btn=document.createElement('button');
+  btn.textContent='\ud83d\uddfa\ufe0f \ub124\uc774\ubc84\uc9c0\ub3c4\uc5d0\uc11c \uc704\uce58 \ud655\uc778';
+  btn.style.cssText='display:block;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:7px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;';
+  btn.onclick=function(){window.open('https://map.naver.com/p/search/'+encodeURIComponent(p.addr),'_blank');};
   document.getElementById('modalContent').appendChild(btn);
   document.getElementById('modalBg').classList.add('on');
 }
 function closeModal(){document.getElementById('modalBg').classList.remove('on');}
-
-// ── 엑셀 내보내기 ──────────────────────────────────────
 function doExport(){
-  if (typeof XLSX === 'undefined') { toast('잠시 후 다시 시도해주세요.', true); return; }
-  if(!props.length){toast('매물이 없습니다.',true);return;}
-  const h=['유형','단지명','주소','구조','년식','매매가(만원)','대출비율','공실여부','R금액(만원)','특징','마커설명'];
-  const rows=props.map(p=>{
-    const yr=p.year<10?'0'+p.year:p.year;
-    return[p.type,p.name,p.addr,p.struct,yr+'년식',p.price,p.loan,p.empty?'공실':'거주중',p.r>0?p.r*100:0,p.feat,
-      p.price.toLocaleString()+'만 | '+p.loan+(p.r>0?' | R'+(p.r*100)+'만':'')+(p.empty?' | 공실':'')+(p.feat?' | '+p.feat:'')];
+  if(typeof XLSX==='undefined'){toast('\uc78a\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.',true);return;}
+  if(!props.length){toast('\ub9e4\ubb3c\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.',true);return;}
+  var h=['\uc720\ud615','\ub2e8\uc9c0\uba85','\uc8fc\uc18c','\uad6c\uc870','\ub144\uc2dd','\ub9e4\ub9e4\uac00(\ub9cc\uc6d0)','\uac00\uaca9\ub300','\ub300\ucd9c\ube44\uc728','\uacf5\uc2e4\uc5ec\ubd80','R\uae08\uc561(\ub9cc\uc6d0)','\ud2b9\uc9d5'];
+  var rows=props.map(function(p){var yr=p.year<10?'0'+p.year:p.year;var pb=getPriceBand(p.price);return[p.type,p.name,p.addr,p.struct,yr+'\ub144\uc2dd',p.price,pb.label,p.loan,p.empty?'\uacf5\uc2e4':'\uac70\uc8fc\uc911',p.r>0?p.r*100:0,p.feat];});
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet([h].concat(rows));
+  ws['!cols']=[8,20,32,13,7,13,8,10,7,11,25].map(function(w){return{wch:w};});
+  XLSX.utils.book_append_sheet(wb,ws,'\uc804\uccb4\ub9e4\ubb3c');
+  var eRows=props.filter(function(p){return p.empty;}).map(function(p){var yr=p.year<10?'0'+p.year:p.year;var pb=getPriceBand(p.price);return[p.type,p.name,p.addr,p.struct,yr+'\ub144\uc2dd',p.price,pb.label,p.loan,'\uacf5\uc2e4',p.r>0?p.r*100:0,p.feat];});
+  var ws2=XLSX.utils.aoa_to_sheet([h].concat(eRows));ws2['!cols']=ws['!cols'];
+  XLSX.utils.book_append_sheet(wb,ws2,'\uacf5\uc2e4\ub9cc');
+  var bands=[{code:'1s',label:'1\uc5b5\ucd08'},{code:'1e',label:'1\uc5b5\ud6c4'},{code:'2s',label:'2\uc5b5\ucd08'},{code:'2e',label:'2\uc5b5\ud6c4'},{code:'3p',label:'3\uc5b5+'}];
+  bands.forEach(function(band){
+    var pRows=props.filter(function(p){return getPriceBand(p.price).code===band.code;}).map(function(p){var yr=p.year<10?'0'+p.year:p.year;var pb=getPriceBand(p.price);return[p.type,p.name,p.addr,p.struct,yr+'\ub144\uc2dd',p.price,pb.label,p.loan,p.empty?'\uacf5\uc2e4':'\uac70\uc8fc\uc911',p.r>0?p.r*100:0,p.feat];});
+    if(pRows.length){var ws3=XLSX.utils.aoa_to_sheet([h].concat(pRows));ws3['!cols']=ws['!cols'];XLSX.utils.book_append_sheet(wb,ws3,band.label);}
   });
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.aoa_to_sheet([h,...rows]);
-  ws['!cols']=[8,20,32,13,7,13,10,7,11,18,40].map(w=>({wch:w}));
-  XLSX.utils.book_append_sheet(wb,ws,'전체매물');
-  const eRows=props.filter(p=>p.empty).map(p=>{const yr=p.year<10?'0'+p.year:p.year;return[p.type,p.name,p.addr,p.struct,yr+'년식',p.price,p.loan,'공실',p.r>0?p.r*100:0,p.feat,p.price.toLocaleString()+'만 | '+p.loan+(p.r>0?' | R'+(p.r*100)+'만':'')+(p.feat?' | '+p.feat:'')];});
-  const ws2=XLSX.utils.aoa_to_sheet([h,...eRows]);
-  ws2['!cols']=ws['!cols'];
-  XLSX.utils.book_append_sheet(wb,ws2,'공실만');
-  XLSX.writeFile(wb,'돌고래_구옥_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  toast('엑셀 저장 완료 ✓');
+  XLSX.writeFile(wb,'\ub3cc\uace0\ub798_\uad6c\uc625_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toast('\uc5d1\uc140 \uc800\uc7a5 \uc644\ub8cc \u2713');
 }
-
-// ── 지도 ──────────────────────────────────────────────
-let leafMap = null, leafMarkers = {}, mapFilter = 'all';
-
-// 지역 → 대략 좌표 (주소 파싱 불가 시 폴백)
-const REGION_COORDS = {
-  '인천 미추홀구':[37.455,126.660],'인천 남동구':[37.449,126.731],
-  '인천 서구':[37.544,126.673],'인천 부평구':[37.508,126.722],
-  '인천 계양구':[37.537,126.738],'인천 연수구':[37.410,126.679],
-  '서울 강북구':[37.640,127.012],'서울 강서구':[37.551,126.850],
-  '서울 구로구':[37.495,126.888],'서울 금천구':[37.457,126.895],
-  '경기 김포시':[37.615,126.716],'경기 안산시':[37.322,126.831],
-  '경기 안양시':[37.394,126.955],'경기 부천시':[37.504,126.766],
-  '경기 수원시':[37.264,127.029],'경기 파주시':[37.760,126.780],
-  '경기 평택시':[36.992,127.113],
-};
-
-function getCoords(addr) {
-  // 주소에서 지역 추출해 대략 좌표 반환 + 지터 추가
-  for (const [key, coord] of Object.entries(REGION_COORDS)) {
-    const parts = key.split(' ');
-    if (addr.includes(parts[0]) && addr.includes(parts[1])) {
-      return [coord[0]+(Math.random()-.5)*.012, coord[1]+(Math.random()-.5)*.012];
-    }
-  }
-  // 광역만 매칭
-  if (addr.includes('인천')) return [37.456+(Math.random()-.5)*.02, 126.705+(Math.random()-.5)*.02];
-  if (addr.includes('서울')) return [37.560+(Math.random()-.5)*.03, 126.975+(Math.random()-.5)*.03];
-  if (addr.includes('경기')||addr.includes('부천')||addr.includes('안산')||addr.includes('수원')||addr.includes('파주')) {
-    return [37.400+(Math.random()-.5)*.04, 126.850+(Math.random()-.5)*.04];
-  }
-  return [37.50+(Math.random()-.5)*.05, 126.85+(Math.random()-.5)*.05];
+var leafMap=null,leafMarkers={},mapFilter='all';
+var REGION_COORDS={'인천 부평구':[37.507,126.724],'인천 계양구':[37.537,126.738],'인천 남동구':[37.449,126.731],'인천 미추홀구':[37.455,126.660],'인천 서구':[37.544,126.673],'인천 중구':[37.473,126.617],'서울 강북구':[37.640,127.012],'서울 강서구':[37.551,126.850],'서울 구로구':[37.495,126.888],'경기 부천시':[37.504,126.766],'경기 안산시':[37.322,126.831],'경기 안양시':[37.394,126.955],'경기 파주시':[37.760,126.780],'경기 수원시':[37.264,127.029],'경기 김포시':[37.615,126.716],'경기 고양시':[37.658,126.832],'경기 의정부시':[37.738,127.033]};
+function getCoords(addr){
+  var keys=Object.keys(REGION_COORDS);
+  for(var i=0;i<keys.length;i++){var key=keys[i];var parts=key.split(' ');var coord=REGION_COORDS[key];if(addr.includes(parts[0])&&addr.includes(parts[1])){return[coord[0]+(Math.random()-.5)*.012,coord[1]+(Math.random()-.5)*.012];}}
+  if(addr.includes('인천'))return[37.456+(Math.random()-.5)*.02,126.705+(Math.random()-.5)*.02];
+  if(addr.includes('서울'))return[37.560+(Math.random()-.5)*.03,126.975+(Math.random()-.5)*.03];
+  return[37.400+(Math.random()-.5)*.04,126.850+(Math.random()-.5)*.04];
 }
-
-function initLeafMap() {
-  if (leafMap) return;
-  leafMap = L.map('mapEl', {center:[37.47,126.73],zoom:11});
-  const TILES2 = [
-    { url:'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-      opts:{subdomains:'abcd',attribution:'© OpenStreetMap © CARTO',maxZoom:20,crossOrigin:true} },
-    { url:'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-      opts:{subdomains:'abcd',attribution:'© OpenStreetMap © CARTO',maxZoom:20} },
-    { url:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      opts:{subdomains:'abc',attribution:'© OpenStreetMap',maxZoom:19} }
-  ];
-  let tl2=null, ec2=0, ti2=0;
-  function tryTile2(i) {
-    if(i>=TILES2.length) return;
-    if(tl2) leafMap.removeLayer(tl2);
-    const t=TILES2[i]; ec2=0;
-    tl2=L.tileLayer(t.url,t.opts);
-    tl2.on('tileerror',()=>{ ec2++; if(ec2>=3&&i<TILES2.length-1) tryTile2(i+1); });
-    tl2.addTo(leafMap);
-  }
-  tryTile2(0);
+function initLeafMap(){
+  if(leafMap)return;
+  leafMap=L.map('mapEl',{center:[37.50,126.72],zoom:12});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',attribution:'© OpenStreetMap © CARTO',maxZoom:20}).addTo(leafMap);
 }
-
-function setMapFilter(val, btn) {
-  mapFilter = val;
-  document.querySelectorAll('#mapFilterWrap .cf').forEach(c=>c.classList.remove('on'));
-  btn.classList.add('on');
-  renderMap();
+function setMapFilter(val,btn){mapFilter=val;document.querySelectorAll('#mapFilterWrap .cf').forEach(function(c){c.classList.remove('on');});btn.classList.add('on');renderMap();}
+var activeMarkerId=null;
+function makeIcon(clr,active,struct){
+  var lbl=(struct||'방3').slice(0,3);
+  var sz=active?[44,54]:[28,36];var anc=active?[22,54]:[14,36];
+  var svg=active?'<svg width="44" height="54" viewBox="0 0 44 54" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="21" r="20" fill="#e63946" opacity=".25"/><path d="M22 2C12.611 2 5 9.611 5 19c0 6 3.1 11.3 7.7 14.6L22 52l9.3-18.4C36.9 30.3 39 25 39 19 39 9.611 31.389 2 22 2z" fill="'+clr+'" stroke="#e63946" stroke-width="3"/><circle cx="22" cy="19" r="9.5" fill="white" opacity=".95"/><text x="22" y="22.5" text-anchor="middle" font-size="7.5" font-weight="bold" fill="'+clr+'" font-family="Arial">'+lbl+'</text></svg>':'<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg"><path d="M14 0C6.268 0 0 6.268 0 14c0 4.667 2.333 8.867 5.833 11.433L14 36l8.167-10.567C25.667 22.867 28 18.667 28 14 28 6.268 21.732 0 14 0z" fill="'+clr+'"/><circle cx="14" cy="14" r="7" fill="white" opacity=".9"/><text x="14" y="17.5" text-anchor="middle" font-size="7" font-weight="bold" fill="'+clr+'" font-family="Arial">'+lbl+'</text></svg>';
+  return L.divIcon({html:svg,className:'',iconSize:sz,iconAnchor:anc});
 }
-
-let activeMarkerId = null;
-
-function makeIcon(clr, active, struct) {
-  const lbl = (struct||'방3').slice(0,3);
-  return L.divIcon({
-    html: active
-      // 강조: 빨간 테두리 + 바운스 + 크게
-      ? '<div style="animation:bounce .4s ease">' +
-        '<svg width="44" height="54" viewBox="0 0 44 54" xmlns="http://www.w3.org/2000/svg">' +
-        // 빨간 외곽 광선
-        '<circle cx="22" cy="21" r="20" fill="#e63946" opacity=".25"/>' +
-        // 핀 외곽 빨간 테두리
-        '<path d="M22 2C12.611 2 5 9.611 5 19c0 6 3.1 11.3 7.7 14.6L22 52l9.3-18.4C36.9 30.3 39 25 39 19 39 9.611 31.389 2 22 2z" fill="'+clr+'" stroke="#e63946" stroke-width="3"/>' +
-        // 흰 내부 원
-        '<circle cx="22" cy="19" r="9.5" fill="white" opacity=".95"/>' +
-        // 텍스트
-        '<text x="22" y="22.5" text-anchor="middle" font-size="7.5" font-weight="bold" fill="'+clr+'" font-family="Arial">'+lbl+'</text>' +
-        '</svg></div>'
-      // 기본
-      : '<svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg">' +
-        '<path d="M14 0C6.268 0 0 6.268 0 14c0 4.667 2.333 8.867 5.833 11.433L14 36l8.167-10.567C25.667 22.867 28 18.667 28 14 28 6.268 21.732 0 14 0z" fill="'+clr+'"/>' +
-        '<circle cx="14" cy="14" r="7" fill="white" opacity=".9"/>' +
-        '<text x="14" y="17.5" text-anchor="middle" font-size="7" font-weight="bold" fill="'+clr+'" font-family="Arial">'+lbl+'</text>' +
-        '</svg>',
-    className:'',
-    iconSize: active ? [44,54] : [28,36],
-    iconAnchor: active ? [22,54] : [14,36]
-  });
-}
-
-function renderMap() {
-  if (!leafMap) return;
-  activeMarkerId = null;
-  // 기존 마커 제거
-  Object.values(leafMarkers).forEach(m=>leafMap.removeLayer(m));
-  leafMarkers = {};
-
-  const regionF = document.getElementById('mapRegionFilter').value;
-  const filtered = props.filter(p => {
-    if (regionF && !p.addr.includes(regionF)) return false;
-    if (mapFilter==='empty' && !p.empty) return false;
-    if (mapFilter==='r' && p.r===0) return false;
+function renderMap(){
+  if(!leafMap)return;
+  activeMarkerId=null;
+  Object.values(leafMarkers).forEach(function(m){leafMap.removeLayer(m);});leafMarkers={};
+  var regionF=document.getElementById('mapRegionFilter').value;
+  var filtered=props.filter(function(p){
+    if(regionF&&!p.addr.includes(regionF))return false;
+    if(mapFilter==='empty'&&!p.empty)return false;
+    if(mapFilter==='r'&&p.r===0)return false;
     return true;
   });
-
-  // 왼쪽 리스트
-  const listEl = document.getElementById('mapPropList');
-  listEl.innerHTML = filtered.map(p => {
-    const color = p.empty ? 'var(--green)' : p.r>0 ? 'var(--purple)' : 'var(--muted)';
-    return `<div style="padding:9px 12px;border-bottom:1px solid rgba(30,58,95,.4);cursor:pointer;transition:background .1s;"
-      onmouseover="this.style.background='var(--card)'" onmouseout="this.style.background=''"
-      onclick="focusMapProp(${p.id})">
-      <div style="font-size:12px;font-weight:700;margin-bottom:2px">${p.name}</div>
-      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${p.addr}</div>
-      <div style="font-size:13px;font-weight:900;color:var(--orange)">${p.price.toLocaleString()}만
-        ${p.empty?'<span style="font-size:9px;color:'+color+';margin-left:4px">공실</span>':''}
-        ${p.r>0?'<span style="font-size:9px;color:var(--purple);margin-left:4px">R'+(p.r*100)+'만</span>':''}
-      </div>
-    </div>`;
+  var listEl=document.getElementById('mapPropList');
+  listEl.innerHTML=filtered.map(function(p){
+    var color=p.empty?'var(--green)':p.r>0?'var(--purple)':'var(--muted)';
+    return '<div style="padding:9px 12px;border-bottom:1px solid rgba(30,58,95,.4);cursor:pointer;" onmouseover="this.style.background=\'var(--card)\'" onmouseout="this.style.background=\'\'" onclick="focusMapProp('+p.id+')"><div style="font-size:12px;font-weight:700;margin-bottom:2px">'+p.name+'</div><div style="font-size:10px;color:var(--muted);margin-bottom:4px">'+p.addr+'</div><div style="font-size:13px;font-weight:900;color:var(--orange)">'+p.price.toLocaleString()+'만'+(p.empty?'<span style="font-size:9px;color:'+color+';margin-left:4px">공실</span>':'')+(p.r>0?'<span style="font-size:9px;color:var(--purple);margin-left:4px">R'+(p.r*100)+'만</span>':'')+'</div></div>';
   }).join('');
-
-  // 마커 생성
-  const bounds = [];
-  filtered.forEach(p => {
-    const coords = getCoords(p.addr);
-    p._coords = coords; // 재사용용 캐시
-    bounds.push(coords);
-    // 색상: 공실=초록, R있음=보라, 거주중=회색
-    const color = p.empty ? '#2dc653' : p.r>0 ? '#9b5de5' : '#7a9cc0';
-    const svgIcon = makeIcon(color, false, p.struct);
-    const marker = L.marker(coords, {icon:svgIcon}).addTo(leafMap);
-    // 클릭하면 강조 + 상세 표시
-    marker.on('click', () => {
-      // 이전 활성 마커 원상복구
-      if (activeMarkerId && leafMarkers[activeMarkerId]) {
-        const prev = props.find(x=>x.id===activeMarkerId);
-        if (prev) {
-          const prevColor = prev.empty ? '#2dc653' : prev.r>0 ? '#9b5de5' : '#7a9cc0';
-          leafMarkers[activeMarkerId].setIcon(makeIcon(prevColor, false, prev.struct));
-          leafMarkers[activeMarkerId].setZIndexOffset(0);
-        }
-      }
-      // 현재 마커 강조
-      activeMarkerId = p.id;
-      marker.setIcon(makeIcon(color, true, p.struct));
-      marker.setZIndexOffset(9999);
-      leafMap.setView(coords, Math.max(leafMap.getZoom(), 15), {animate:true});
-      showMapDetail(p.id);
+  var bounds=[];
+  filtered.slice(0,200).forEach(function(p){
+    var coords=getCoords(p.addr);p._coords=coords;bounds.push(coords);
+    var color=p.empty?'#2dc653':p.r>0?'#9b5de5':'#7a9cc0';
+    var marker=L.marker(coords,{icon:makeIcon(color,false,p.struct)}).addTo(leafMap);
+    marker.on('click',function(){
+      if(activeMarkerId&&leafMarkers[activeMarkerId]){var prev=props.find(function(x){return x.id===activeMarkerId;});if(prev){var pc=prev.empty?'#2dc653':prev.r>0?'#9b5de5':'#7a9cc0';leafMarkers[activeMarkerId].setIcon(makeIcon(pc,false,prev.struct));leafMarkers[activeMarkerId].setZIndexOffset(0);}}
+      activeMarkerId=p.id;marker.setIcon(makeIcon(color,true,p.struct));marker.setZIndexOffset(9999);
+      leafMap.setView(coords,Math.max(leafMap.getZoom(),15),{animate:true});showMapDetail(p.id);
     });
-    leafMarkers[p.id] = marker;
+    leafMarkers[p.id]=marker;
   });
-
-  if (bounds.length > 1) leafMap.fitBounds(bounds, {padding:[30,30]});
-  else if (bounds.length===1) leafMap.setView(bounds[0], 14);
+  if(bounds.length>1)leafMap.fitBounds(bounds,{padding:[30,30]});
+  else if(bounds.length===1)leafMap.setView(bounds[0],14);
 }
-
-function focusMapProp(id) {
-  const p = props.find(x=>x.id===id);
-  if (!p) return;
-  const coords = p._coords || getCoords(p.addr);
-  // 이전 강조 해제
-  if (activeMarkerId && leafMarkers[activeMarkerId] && activeMarkerId !== id) {
-    const prev = props.find(x=>x.id===activeMarkerId);
-    if (prev) {
-      const prevColor = prev.empty ? '#2dc653' : prev.r>0 ? '#9b5de5' : '#7a9cc0';
-      leafMarkers[activeMarkerId].setIcon(makeIcon(prevColor, false, prev.struct));
-      leafMarkers[activeMarkerId].setZIndexOffset(0);
-    }
-  }
-  // 현재 강조
-  activeMarkerId = id;
-  if (leafMarkers[id]) {
-    const color = p.empty ? '#2dc653' : p.r>0 ? '#9b5de5' : '#7a9cc0';
-    leafMarkers[id].setIcon(makeIcon(color, true, p.struct));
-    leafMarkers[id].setZIndexOffset(9999);
-  }
-  leafMap.flyTo(coords, 16, {animate:true, duration:0.6});
-  showMapDetail(id);
+function focusMapProp(id){
+  var p=props.find(function(x){return x.id===id;});if(!p)return;
+  var coords=p._coords||getCoords(p.addr);
+  if(activeMarkerId&&leafMarkers[activeMarkerId]&&activeMarkerId!==id){var prev=props.find(function(x){return x.id===activeMarkerId;});if(prev){var pc=prev.empty?'#2dc653':prev.r>0?'#9b5de5':'#7a9cc0';leafMarkers[activeMarkerId].setIcon(makeIcon(pc,false,prev.struct));leafMarkers[activeMarkerId].setZIndexOffset(0);}}
+  activeMarkerId=id;
+  if(leafMarkers[id]){var color=p.empty?'#2dc653':p.r>0?'#9b5de5':'#7a9cc0';leafMarkers[id].setIcon(makeIcon(color,true,p.struct));leafMarkers[id].setZIndexOffset(9999);}
+  leafMap.flyTo(coords,16,{animate:true,duration:0.6});showMapDetail(id);
 }
-
-function showMapDetail(id) {
-  const p = props.find(x=>x.id===id);
-  if (!p) return;
-  const detail = document.getElementById('mapDetail');
-  detail.style.display = 'flex';
-  document.getElementById('mapEditBtn').onclick = () => openPropForm(p.id);
-  const yr = p.year < 10 ? '0'+p.year : p.year;
-  document.getElementById('mapDetailContent').innerHTML =
-    '<div style="font-size:15px;font-weight:900;color:var(--orange);margin-bottom:3px">'+p.name+'</div>' +
-    '<div style="font-size:10px;color:var(--muted);margin-bottom:12px">'+p.addr+'</div>' +
-    '<div style="background:linear-gradient(135deg,rgba(255,107,53,.2),rgba(244,164,66,.1));border:1px solid rgba(255,107,53,.3);border-radius:8px;padding:12px;text-align:center;margin-bottom:11px;">' +
-      '<div style="font-size:10px;color:var(--muted);margin-bottom:2px">매매가</div>' +
-      '<div style="font-size:22px;font-weight:900;color:var(--orange)">'+p.price.toLocaleString()+'만</div>' +
-      '<div style="font-size:11px;color:var(--muted);margin-top:3px">'+p.loan+(p.r>0?' | R'+(p.r*100).toLocaleString()+'만':'')+'</div>' +
-    '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
-      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">유형</div><div style="font-size:12px;font-weight:700">'+p.type+'</div></div>' +
-      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">구조</div><div style="font-size:12px;font-weight:700;color:var(--orange)">'+p.struct+'</div></div>' +
-      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">년식</div><div style="font-size:12px;font-weight:700">'+yr+'년식</div></div>' +
-      '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">공실</div><div style="font-size:12px;font-weight:700;'+(p.empty?'color:var(--green)':'')+'">'+(p.empty?'✓ 공실':'거주중')+'</div></div>' +
-    '</div>' +
+function showMapDetail(id){
+  var p=props.find(function(x){return x.id===id;});if(!p)return;
+  var detail=document.getElementById('mapDetail');detail.style.display='flex';
+  document.getElementById('mapEditBtn').onclick=function(){openPropForm(p.id);};
+  var yr=p.year<10?'0'+p.year:p.year;var pb=getPriceBand(p.price);
+  document.getElementById('mapDetailContent').innerHTML=
+    '<div style="font-size:15px;font-weight:900;color:var(--orange);margin-bottom:3px">'+p.name+'</div>'+
+    '<div style="font-size:10px;color:var(--muted);margin-bottom:12px">'+p.addr+'</div>'+
+    '<div style="background:linear-gradient(135deg,rgba(255,107,53,.2),rgba(244,164,66,.1));border:1px solid rgba(255,107,53,.3);border-radius:8px;padding:12px;text-align:center;margin-bottom:11px;">'+
+    '<div style="font-size:22px;font-weight:900;color:var(--orange)">'+p.price.toLocaleString()+'만</div>'+
+    '<div style="font-size:11px;color:var(--muted)">'+p.loan+(p.r>0?' | R'+(p.r*100)+'만':'')+'</div>'+
+    '<span class="price-badge '+pb.cls+'" style="margin-top:5px;display:inline-block">'+pb.label+'</span></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">'+
+    '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">유형</div><div style="font-size:12px;font-weight:700">'+p.type+'</div></div>'+
+    '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">구조</div><div style="font-size:12px;font-weight:700;color:var(--orange)">'+p.struct+'</div></div>'+
+    '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">년식</div><div style="font-size:12px;font-weight:700">'+yr+'년식</div></div>'+
+    '<div style="background:var(--card);border-radius:6px;padding:7px 9px;"><div style="font-size:9px;color:var(--muted)">공실</div><div style="font-size:12px;font-weight:700;'+(p.empty?'color:var(--green)':'')+'">'+(p.empty?'✓ 공실':'거주중')+'</div></div></div>'+
     (p.feat?'<div style="background:rgba(244,164,66,.08);border:1px solid rgba(244,164,66,.2);border-radius:7px;padding:9px 11px;font-size:11px;color:var(--gold);line-height:1.6;margin-bottom:10px;">✨ '+p.feat+'</div>':'');
-  // 네이버지도 버튼 (별도로 추가해야 href 작동)
-  const navBtn = document.createElement('button');
-  navBtn.textContent = '🗺️ 네이버지도에서 위치 확인';
-  navBtn.style.cssText = 'background:var(--blue);border:none;color:#fff;border-radius:7px;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:4px;';
-  navBtn.onclick = () => window.open('https://map.naver.com/p/search/'+encodeURIComponent(p.addr), '_blank');
+  var navBtn=document.createElement('button');
+  navBtn.textContent='🗺️ 네이버지도 확인';
+  navBtn.style.cssText='background:var(--blue);border:none;color:#fff;border-radius:7px;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;';
+  navBtn.onclick=function(){window.open('https://map.naver.com/p/search/'+encodeURIComponent(p.addr),'_blank');};
   document.getElementById('mapDetailContent').appendChild(navBtn);
 }
-
 function toast(msg,isErr){
-  const el=document.getElementById('toastEl');
-  el.textContent=msg;
+  var el=document.getElementById('toastEl');el.textContent=msg;
   el.className='toast'+(isErr?' err':'')+' show';
-  setTimeout(()=>el.classList.remove('show'),2500);
+  setTimeout(function(){el.classList.remove('show');},2500);
 }
+updateStats();renderCustList();
 
-// 초기화
-updateStats();
-renderCustList();
 </script>
 </body>
 </html>
